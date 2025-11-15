@@ -1,0 +1,63 @@
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
+    <h1 class="text-3xl font-extrabold">Customers</h1>
+    <%= link_to "New Customer",
+        new_customer_path,
+        class: "inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700" %>
+  </div>
+
+  <!-- Search -->
+  <%= form_with url: customers_path, method: :get, local: true, class: "max-w-xl" do |f| %>
+    <div class="flex gap-2">
+      <%= text_field_tag :q, params[:q],
+          placeholder: "Search name, email, phone…",
+          class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100
+                  focus:border-blue-500 focus:ring-blue-500 px-3 py-2" %>
+      <%= submit_tag "Search",
+          class: "rounded-md bg-slate-700 px-4 py-2 text-slate-100 hover:bg-slate-600" %>
+      <% if params[:q].present? %>
+        <%= link_to "Clear", customers_path,
+            class: "rounded-md border border-slate-600 px-4 py-2 hover:bg-slate-800" %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <!-- Table -->
+  <div class="overflow-hidden rounded-xl border border-slate-800 bg-slate-900">
+    <table class="min-w-full divide-y divide-slate-800">
+      <thead class="bg-slate-900/50">
+        <tr>
+          <th class="px-4 py-3 text-left text-sm font-semibold text-slate-300">Name</th>
+          <th class="px-4 py-3 text-left text-sm font-semibold text-slate-300">Email</th>
+          <th class="px-4 py-3 text-left text-sm font-semibold text-slate-300">Phone</th>
+          <th class="px-4 py-3 text-left text-sm font-semibold text-slate-300">City</th>
+          <th class="px-4 py-3"></th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-800">
+        <% @customers.each do |c| %>
+          <tr class="hover:bg-slate-800/60">
+            <td class="px-4 py-3"><%= "#{c.first_name} #{c.last_name}" %></td>
+            <td class="px-4 py-3"><%= c.email.presence || "—" %></td>
+            <td class="px-4 py-3"><%= c.phone.presence || "—" %></td>
+            <td class="px-4 py-3"><%= c.city.presence  || "—" %></td>
+            <td class="px-4 py-3 text-right">
+              <div class="inline-flex gap-2">
+                <%= link_to "View", c, class: "rounded-md border border-slate-600 px-3 py-1.5 hover:bg-slate-800" %>
+                <%= link_to "Edit", edit_customer_path(c), class: "rounded-md border border-slate-600 px-3 py-1.5 hover:bg-slate-800" %>
+                <%= button_to "Delete", c, method: :delete,
+                      data: { turbo_confirm: "Delete this customer?" },
+                      class: "rounded-md bg-red-600 px-3 py-1.5 text-white hover:bg-red-700" %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+        <% if @customers.empty? %>
+          <tr>
+            <td colspan="5" class="px-4 py-6 text-center text-slate-400">No customers yet.</td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

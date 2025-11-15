@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html class="dark">
+  <head>
+  <title>BlueSealPro</title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+
+  <script>
+    // Dark by default; prefer saved choice if present.
+    (function () {
+      var saved = localStorage.getItem("bsp-theme");
+      var root  = document.documentElement;
+      if (saved === "light") { root.classList.remove("dark"); } else { root.classList.add("dark"); }
+      // Wire up toggle after DOM is ready
+      window.addEventListener("DOMContentLoaded", function () {
+        var btn = document.getElementById("theme-toggle");
+        if (!btn) return;
+        function label(){ btn.textContent = root.classList.contains("dark") ? "Light" : "Dark"; }
+        label();
+        btn.addEventListener("click", function () {
+          root.classList.toggle("dark");
+          localStorage.setItem("bsp-theme", root.classList.contains("dark") ? "dark" : "light");
+          label();
+        });
+      });
+    })();
+  </script>
+
+  <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+  <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
+  </head>
+
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
+<script>
+      // Apply saved theme before paint
+      (function(){
+        const t = localStorage.getItem("bsp-theme");
+        if (t === "dark" || (!t && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+          document.documentElement.classList.add("dark");
+        }
+      })();
+    </script>
+
+    <!-- Top Nav -->
+    <nav class="bg-white/80 backdrop-blur border-b border-slate-200 dark:bg-slate-900/70 dark:border-slate-800">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <div class="h-5 w-5 rounded-full bg-brand-500 ring-4 ring-brand-500/20"></div>
+          <span class="font-semibold">BlueSealPro</span>
+        </div>
+
+        <div class="flex items-center gap-3 text-sm">
+          <% if user_signed_in? %>
+          <%= link_to "Dashboard", dashboard_path, class: "hover:text-brand-400" %>
+          <%= link_to "Customers", customers_path, class: "hover:text-brand-400" %>
+
+          <%# Coming soon placeholders so we don't call undefined path helpers %>
+          <%= link_to "Jobs", "#",
+            class: "hover:text-brand-400 opacity-40 cursor-not-allowed",
+            title: "Jobs view coming soon" %>
+          <%= link_to "Invoices", "#",
+            class: "hover:text-brand-400 opacity-40 cursor-not-allowed",
+            title: "Invoices view coming soon" %>
+          <% end %>
+
+          <%# Theme toggle %>
+          <button id="theme-toggle"
+                  class="inline-flex items-center rounded-md border border-slate-300/60 dark:border-slate-700
+                        px-3 py-1.5 text-sm text-slate-700 dark:text-slate-200
+                        hover:bg-slate-100 dark:hover:bg-slate-800">
+          Light
+          </button>
+
+          <% if user_signed_in? %>
+            <%= button_to "Logout", destroy_user_session_path, method: :delete,
+                  class: "ml-1 inline-flex items-center rounded-md bg-red-600 px-3 py-1.5 text-white hover:bg-red-700" %>
+          <% else %>
+            <%= link_to "Login", new_user_session_path,
+                  class: "inline-flex items-center rounded-md bg-brand-500 px-3 py-1.5 text-white hover:bg-brand-600" %>
+          <% end %>
+        </div>
+      </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto p-6">
+      <%= yield %>
+    </main>
+  </body>
+
+</html>

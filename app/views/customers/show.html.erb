@@ -1,0 +1,35 @@
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
+    <h1 class="text-3xl font-extrabold"><%= @customer.first_name %> <%= @customer.last_name %></h1>
+    <div class="inline-flex gap-2">
+      <%= link_to "Edit", edit_customer_path(@customer),
+          class: "rounded-md border border-slate-600 px-4 py-2 hover:bg-slate-800" %>
+      <%= link_to "All Customers", customers_path,
+          class: "rounded-md border border-slate-600 px-4 py-2 hover:bg-slate-800" %>
+    </div>
+  </div>
+
+  <div class="grid md:grid-cols-2 gap-6">
+    <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
+      <h2 class="font-semibold mb-3">Contact</h2>
+      <div class="space-y-1 text-slate-300">
+        <div><span class="text-slate-400">Email:</span> <%= @customer.email.presence || "—" %></div>
+        <div><span class="text-slate-400">Phone:</span> <%= @customer.phone.presence || "—" %></div>
+      </div>
+    </div>
+
+    <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
+      <h2 class="font-semibold mb-3">Address</h2>
+      <div class="space-y-1 text-slate-300">
+        <div><%= @customer.address1 %></div>
+        <div><%= @customer.address2 %></div>
+        <div><%= [@customer.city, @customer.state, @customer.zip].compact_blank.join(", ") %></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
+    <h2 class="font-semibold mb-3">Notes</h2>
+    <p class="text-slate-300 whitespace-pre-wrap"><%= @customer.notes.presence || "—" %></p>
+  </div>
+</div>

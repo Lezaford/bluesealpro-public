@@ -1,0 +1,131 @@
+<!-- Hero Section -->
+<section class="bg-slate-950 text-slate-100 border-b border-slate-800">
+  <div class="max-w-7xl mx-auto px-6 py-14">
+
+    <!-- Branding + Login -->
+    <nav class="flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <div class="h-6 w-6 rounded-full bg-blue-600 ring-4 ring-blue-600/30"></div>
+        <span class="font-semibold text-lg">BlueSealPro</span>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <%= link_to "Login", new_user_session_path,
+              class: "inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700" %>
+      </div>
+    </nav>
+
+    <!-- Hero Content -->
+    <div class="mt-14 grid lg:grid-cols-2 gap-10 items-center">
+      <div>
+        <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight">
+          Smart CRM for Appliance & HVAC Pros
+        </h1>
+
+        <p class="mt-5 text-slate-300 text-lg leading-relaxed">
+          Scheduling, troubleshooting, invoicing, and routing —
+          built by a technician for technicians.
+        </p>
+
+        <!-- Buttons -->
+        <div class="mt-8 flex flex-wrap gap-4">
+          <a href="#beta"
+             class="inline-flex items-center rounded-md bg-blue-600 px-6 py-3 text-white font-medium hover:bg-blue-700">
+            Sign Up for Beta
+          </a>
+
+          <%= link_to "Login", new_user_session_path,
+              class: "inline-flex items-center rounded-md border border-slate-700 bg-slate-900 px-6 py-3
+                      font-medium text-slate-200 hover:bg-slate-800" %>
+        </div>
+
+        <!-- Feature Bullets -->
+        <ul class="mt-10 space-y-2 text-slate-400">
+          <li>• Model-specific troubleshooting</li>
+          <li>• Offline-first with cloud sync</li>
+          <li>• Flat-rate pricing + simple invoices</li>
+          <li>• Built-in routing for technicians</li>
+        </ul>
+      </div>
+
+      <!-- Schedule Demo Card -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+        <h3 class="font-semibold mb-4 text-lg">Today’s Route</h3>
+        <div class="divide-y divide-slate-800 text-slate-300">
+          <div class="py-3">
+            <span class="font-semibold text-blue-400">08:00</span> — Johnson Residence · Drain error
+          </div>
+          <div class="py-3">
+            <span class="font-semibold text-blue-400">10:30</span> — Midtown Deli · Warm case
+          </div>
+          <div class="py-3">
+            <span class="font-semibold text-blue-400">13:00</span> — Rivera Residence · No cool
+          </div>
+          <div class="py-3">
+            <span class="font-semibold text-blue-400">15:30</span> — Lakeside Condos · No drain
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BETA SIGNUP FORM -->
+<section id="beta" class="mt-12">
+  <h2 class="text-2xl font-bold mb-4">Request Beta Access</h2>
+
+  <%= form_with model: BetaRequest.new,
+                url: beta_requests_path,
+                local: true,
+                html: { class: "grid grid-cols-1 gap-6 max-w-3xl" } do |f| %>
+
+    <!-- Name -->
+    <div>
+      <%= f.label :name, "Name", class: "block text-sm font-medium text-slate-200" %>
+      <%= f.text_field :name,
+            class: "mt-1 w-full rounded-md bg-slate-900 border border-slate-700 text-slate-100" %>
+    </div>
+
+    <!-- Email -->
+    <div>
+      <%= f.label :email, "Email", class: "block text-sm font-medium text-slate-200" %>
+      <%= f.email_field :email,
+            class: "mt-1 w-full rounded-md bg-slate-900 border border-slate-700 text-slate-100" %>
+    </div>
+
+    <!-- Company -->
+    <div>
+      <%= f.label :company, "Company", class: "block text-sm font-medium text-slate-200" %>
+      <%= f.text_field :company,
+            class: "mt-1 w-full rounded-md bg-slate-900 border border-slate-700 text-slate-100" %>
+    </div>
+
+    <!-- Phone -->
+    <div>
+      <%= f.label :phone, "Phone", class: "block text-sm font-medium text-slate-200" %>
+      <%= f.telephone_field :phone,
+            class: "mt-1 w-full rounded-md bg-slate-900 border border-slate-700 text-slate-100" %>
+    </div>
+
+    <!-- Message -->
+    <div>
+      <%= f.label :message, "Message", class: "block text-sm font-medium text-slate-200" %>
+      <%= f.text_area :message, rows: 4,
+            class: "mt-1 w-full rounded-md bg-slate-900 border border-slate-700 text-slate-100" %>
+    </div>
+
+    <!-- reCAPTCHA -->
+    <div class="mt-2">
+      <%= recaptcha_tags %>
+    </div>
+
+    <!-- Submit -->
+    <div class="mt-4">
+      <%= f.submit "Request Beta Access",
+            class: "inline-flex items-center rounded-md bg-blue-600 px-6 py-3 text-white font-semibold hover:bg-blue-700" %>
+    </div>
+  <% end %>
+</section>
+
+  </div>
+</section>

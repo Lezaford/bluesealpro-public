@@ -1,0 +1,80 @@
+<div class="min-h-[calc(100vh-3.5rem)] bg-slate-950 text-slate-100">
+  <div class="max-w-7xl mx-auto px-6 py-12">
+    <!-- Top breadcrumb / brand -->
+    <div class="mb-8 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <div class="h-6 w-6 rounded-full bg-blue-600 ring-4 ring-blue-600/30"></div>
+        <%= link_to "BlueSealPro", root_path, class: "font-semibold text-slate-100 hover:text-blue-400" %>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <%= link_to "Back to site", root_path,
+            class: "inline-flex items-center rounded-md border border-slate-700 bg-slate-900 px-4 py-2 hover:bg-slate-800" %>
+        <a href="<%= root_path %>#beta"
+           class="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">
+          Sign up for beta
+        </a>
+      </div>
+    </div>
+
+    <!-- Card -->
+    <div class="mx-auto max-w-md rounded-2xl bg-slate-900 border border-slate-800 p-8 shadow-xl">
+      <h1 class="text-2xl font-bold mb-1">Log in</h1>
+      <p class="text-slate-400 mb-6">Use your BlueSealPro account to access the dashboard.</p>
+
+      <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+        <% if flash[:alert].present? %>
+          <div class="mb-4 rounded-md bg-red-50/5 border border-red-400/30 text-red-300 px-4 py-3">
+            <%= flash[:alert] %>
+          </div>
+        <% end %>
+
+        <div class="space-y-4">
+          <!-- Email -->
+          <div>
+            <label for="user_email" class="block text-sm text-slate-300 mb-1">Email</label>
+            <%= f.email_field :email, autofocus: true, autocomplete: "email",
+                  class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100
+                          focus:border-blue-500 focus:ring-blue-500" %>
+          </div>
+
+          <!-- Password -->
+          <div>
+            <div class="flex items-center justify-between">
+              <label for="user_password" class="block text-sm text-slate-300 mb-1">Password</label>
+              <% if devise_mapping.recoverable? %>
+                <%= link_to "Forgot?", new_password_path(resource_name),
+                    class: "text-sm text-blue-400 hover:text-blue-300" %>
+              <% end %>
+            </div>
+            <%= f.password_field :password, autocomplete: "current-password",
+                  class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100
+                          focus:border-blue-500 focus:ring-blue-500" %>
+          </div>
+
+          <!-- Remember me -->
+          <% if devise_mapping.rememberable? %>
+            <label class="inline-flex items-center gap-2 text-sm text-slate-300">
+              <%= f.check_box :remember_me, class: "rounded border-slate-700 bg-slate-800
+                       text-blue-600 focus:ring-blue-500 focus:ring-offset-0" %>
+              Remember me
+            </label>
+          <% end %>
+
+          <!-- Submit -->
+          <div class="pt-2">
+            <%= f.submit "Log in",
+                  class: "w-full inline-flex items-center justify-center rounded-md bg-blue-600
+                          px-5 py-3 text-white font-semibold hover:bg-blue-700" %>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Alt actions -->
+      <div class="mt-6 text-center text-sm text-slate-400">
+        Don’t have an account yet?
+        <a href="<%= root_path %>#beta" class="text-blue-400 hover:text-blue-300">Request beta access</a>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,30 @@
+<div class="space-y-6">
+  <h1 class="text-4xl font-extrabold tracking-tight">BlueSealPro Dashboard</h1>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <%# Card component %>
+    <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 shadow-card">
+      <h2 class="text-xl font-semibold">Customers</h2>
+      <p class="text-sm text-slate-600 dark:text-slate-400 mt-1 mb-4">Manage your client list.</p>
+      <%= link_to "View Customers", customers_path,
+          class: "inline-block rounded-md bg-brand-500 px-3 py-2 text-white hover:bg-brand-600" %>
+    </div>
+    
+    <!-- Jobs placeholder card -->
+    <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 shadow-card">
+      <h2 class="text-xl font-semibold">Jobs / Scheduling</h2>
+      <p class="text-sm text-slate-600 dark:text-slate-400 mt-1 mb-4">Create & assign service calls.</p>
+      <%= link_to "View Jobs", "#",
+          class: "inline-block rounded-md bg-brand-500/40 px-3 py-2 text-white cursor-not-allowed",
+      title: "Jobs view coming soon" %>
+    </div>
+
+    <!-- Invoices placeholder card -->
+    <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 shadow-card">
+      <h2 class="text-xl font-semibold">Invoices & Payments</h2>
+      <p class="text-sm text-slate-600 dark:text-slate-400 mt-1 mb-4">Generate & track invoices.</p>
+      <%= link_to "View Invoices", "#",
+         class: "inline-block rounded-md bg-brand-500/40 px-3 py-2 text-white cursor-not-allowed",
+      title: "Invoices view coming soon" %>
+    </div>
+</div>
