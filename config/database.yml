@@ -1,20 +1,24 @@
 default: &default
   adapter: postgresql
   encoding: unicode
-  host: 127.0.0.1
-  port: 5432
-  username: blueseal
-  password: blueseal
   pool: 5
 
 development:
   primary:
     <<: *default
+    host: 127.0.0.1
+    port: 5432
+    username: blueseal
+    password: blueseal
     database: bluesealpro_development
 
 test:
   primary:
     <<: *default
+    host: 127.0.0.1
+    port: 5432
+    username: blueseal
+    password: blueseal
     database: bluesealpro_test
 
 production:
