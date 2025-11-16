@@ -20,4 +20,9 @@ test:
 production:
   primary:
     <<: *default
-    database: bluesealpro
+    url: <%= ENV["DATABASE_URL"] %>
+
+  cable:
+    <<: *default
+    url: <%= ENV["DATABASE_URL"] %>
+
