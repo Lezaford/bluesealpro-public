@@ -23,4 +23,4 @@ console_command = '/rails/bin/rails console'
   cpus = 1
 
 [deploy]
-  release_command = "rails db:migrate"
+  release_command = "bin/rails db:migrate"
