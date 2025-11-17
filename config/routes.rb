@@ -14,7 +14,13 @@ Rails.application.routes.draw do
   authenticate :user do
     get "/dashboard", to: "dashboard#show", as: :dashboard
 
-    resources :customers
+    resources :customers do
+      collections do
+        post :import # POST /customers/import
+        get :export # GET /customers/export
+      end
+    end
+
     # resources :jobs
     # resources :invoices
     # resources :technicians  # if you later add this

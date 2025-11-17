@@ -4,17 +4,38 @@ class CustomersController < ApplicationController
 
   # GET /customers
   def index
-    scope = Current.company.customers.order(last_name: :asc, first_name: :asc)
-    if params[:q].present?
-      q = "%#{params[:q].strip}%"
-      scope = scope.where(
-        "LOWER(first_name) LIKE LOWER(?) OR LOWER(last_name) LIKE LOWER(?) OR LOWER(email) LIKE LOWER(?) OR phone LIKE ?",
-        q, q, q, q
-      )
+    @query         = params[:q].to_s.strip
+    @customer_type = params[:customer_type].to_s.strip
+    @lead_source   = params[:lead_source].to_s.strip
+
+    # options for dropdowns
+    base = Current.company.customers
+    @customer_types = base.distinct.pluck(:customer_type).compact_blank.sort
+    @lead_sources   = base.distinct.pluck(:lead_source).compact_blank.sort
+
+    scope = base_scope
+    @customers = scope.order(last_name: :asc, first_name: :asc)
+  end
+
+
+  # POST /customers/import
+  def import
+    if params[:file].present?
+      Customer.import(params[:file], company: Current.company)
+      redirect_to customers_path, notice: "Customers imported successfully."
+    else
+      redirect_to customers_path, alert: "Please choose a CSV file to import."
     end
-    @customers = scope
-    # If you're using pagination (e.g., kaminari), uncomment:
-    # @customers = scope.page(params[:page]).per(25)
+  end
+
+  # GET /customers/export
+  def export
+    scope = base_scope
+
+    csv = Customer.to_csv(scope)
+    send_data csv,
+              filename: "customers-#{Time.current.to_date}.csv",
+              type: "text/csv"
   end
 
   # GET /customers/:id
@@ -64,11 +85,92 @@ class CustomersController < ApplicationController
     @customer = Current.company.customers.find(params[:id])
   end
 
+  # Shared base scope for index + export (search + filters)
+  def base_scope
+    scope = Current.company.customers
+
+    if params[:q].present?
+      q = "%#{params[:q].strip.downcase}%"
+      scope = scope.where(
+        "LOWER(first_name) LIKE :q OR LOWER(last_name) LIKE :q OR " \
+        "LOWER(email) LIKE :q OR LOWER(phone) LIKE :q OR " \
+        "LOWER(display_name) LIKE :q OR LOWER(company_name) LIKE :q",
+        q: q
+      )
+    end
+
+    if params[:customer_type].present?
+      scope = scope.where(customer_type: params[:customer_type])
+    end
+
+    if params[:lead_source].present?
+      scope = scope.where(lead_source: params[:lead_source])
+    end
+
+    scope
+  end
+
   def customer_params
     params.require(:customer).permit(
-      :first_name, :last_name, :email, :phone,
-      :address1, :address2, :city, :state, :zip,
-      :notes
+      # existing fields
+      :first_name,
+      :last_name,
+      :email,
+      :phone,
+      :address1,
+      :address2,
+      :city,
+      :state,
+      :zip,
+      :notes,
+
+      # new CSV-related fields
+      :display_name,
+      :mobile_number,
+      :home_number,
+      :additional_emails,
+      :company_name,
+      :role,
+      :work_number,
+      :bills_to,
+      :accepts_bills_from,
+      :tags,
+      :external_id,
+      :customer_type,
+      :customer_notifications_enabled,
+      :customer_is_contractor,
+      :lead_source,
+      :customer_created_at,
+      :last_service_date,
+      :lifetime_value,
+      :address_1_street_line_1,
+      :address_1_street_line_2,
+      :address_1_city,
+      :address_1_state,
+      :address_1_postal_code,
+      :address_1_billing,
+      :address_1_notes,
+      :address_2_street_line_1,
+      :address_2_street_line_2,
+      :address_2_city,
+      :address_2_state,
+      :address_2_postal_code,
+      :address_2_billing,
+      :address_2_notes,
+      :address_3_street_line_1,
+      :address_3_street_line_2,
+      :address_3_city,
+      :address_3_state,
+      :address_3_postal_code,
+      :address_3_billing,
+      :address_3_notes,
+      :address_4_street_line_1,
+      :address_4_street_line_2,
+      :address_4_city,
+      :address_4_state,
+      :address_4_postal_code,
+      :address_4_billing,
+      :address_4_notes
     )
   end
 end
