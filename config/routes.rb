@@ -15,7 +15,7 @@ Rails.application.routes.draw do
     get "/dashboard", to: "dashboard#show", as: :dashboard
 
     resources :customers do
-      collections do
+      collection do
         post :import # POST /customers/import
         get :export # GET /customers/export
       end
