@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_15_211554) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_17_161416) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -37,15 +37,71 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_15_211554) do
   end
 
   create_table "customers", force: :cascade do |t|
+    t.string "accepts_bills_from"
+    t.text "additional_emails"
     t.string "address"
+    t.string "address1"
+    t.string "address2"
+    t.boolean "address_1_billing", default: true
+    t.string "address_1_city"
+    t.text "address_1_notes"
+    t.string "address_1_postal_code"
+    t.string "address_1_state"
+    t.string "address_1_street_line_1"
+    t.string "address_1_street_line_2"
+    t.boolean "address_2_billing", default: false
+    t.string "address_2_city"
+    t.text "address_2_notes"
+    t.string "address_2_postal_code"
+    t.string "address_2_state"
+    t.string "address_2_street_line_1"
+    t.string "address_2_street_line_2"
+    t.boolean "address_3_billing", default: false
+    t.string "address_3_city"
+    t.text "address_3_notes"
+    t.string "address_3_postal_code"
+    t.string "address_3_state"
+    t.string "address_3_street_line_1"
+    t.string "address_3_street_line_2"
+    t.boolean "address_4_billing", default: false
+    t.string "address_4_city"
+    t.text "address_4_notes"
+    t.string "address_4_postal_code"
+    t.string "address_4_state"
+    t.string "address_4_street_line_1"
+    t.string "address_4_street_line_2"
+    t.string "bills_to"
+    t.string "city"
     t.bigint "company_id", null: false
+    t.string "company_name"
     t.datetime "created_at", null: false
+    t.datetime "customer_created_at"
+    t.boolean "customer_is_contractor", default: false, null: false
+    t.boolean "customer_notifications_enabled", default: true, null: false
+    t.string "customer_type"
+    t.string "display_name"
     t.string "email"
+    t.string "external_id"
+    t.string "first_name"
+    t.string "home_number"
+    t.string "last_name"
+    t.date "last_service_date"
+    t.string "lead_source"
+    t.decimal "lifetime_value", precision: 12, scale: 2, default: "0.0"
+    t.string "mobile_number"
     t.string "name"
     t.text "notes"
     t.string "phone"
+    t.string "role"
+    t.string "state"
+    t.string "tags"
     t.datetime "updated_at", null: false
+    t.string "work_number"
+    t.string "zip"
     t.index ["company_id"], name: "index_customers_on_company_id"
+    t.index ["display_name"], name: "index_customers_on_display_name"
+    t.index ["email"], name: "index_customers_on_email"
+    t.index ["external_id"], name: "index_customers_on_external_id", unique: true
   end
 
   create_table "invoices", force: :cascade do |t|
