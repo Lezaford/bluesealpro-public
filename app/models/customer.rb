@@ -3,10 +3,18 @@ require "csv"
 
 class Customer < ApplicationRecord
   belongs_to :company
-  has_many :jobs, dependent: :restrict_with_error # when you add jobs
+  has_many :jobs, dependent: :restrict_with_error  # no :optional here
 
-  validates :first_name, :last_name, presence: true
+  # Validations
+  validates :first_name, :last_name, presence: true, unless: -> { display_name.present? }
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
+
+  # Convenience name
+  def full_name
+    display_name.presence ||
+      [ first_name, last_name ].compact.join(" ").presence ||
+      name
+  end
 
   CSV_HEADERS = [
     "First Name", "Last Name", "Display Name",
@@ -33,78 +41,67 @@ class Customer < ApplicationRecord
     "Address_4 Billing?", "Address_4 Notes"
   ].freeze
 
-  # simple search helper for controller
-  scope :text_search, lambda { |q|
-    return all if q.blank?
-
-    q = "%#{q.downcase}%"
-    where(
-      "LOWER(display_name) LIKE :q OR LOWER(first_name) LIKE :q OR LOWER(last_name) LIKE :q OR LOWER(email) LIKE :q OR LOWER(company_name) LIKE :q",
-      q: q
-    )
-  }
-
+  # --- CSV IMPORT (DB is still the source of truth) ------------------------
   def self.import(file, company:)
     CSV.foreach(file.path, headers: true) do |row|
       attrs = {
         company: company,
-        first_name: row["First Name"],
-        last_name: row["Last Name"],
-        display_name: row["Display Name"],
-        mobile_number: row["Mobile Number"],
-        home_number: row["Home Number"],
-        email: row["Email"],
-        additional_emails: row["Additional Emails"],
-        company_name: row["Company"],
-        role: row["Role"],
-        work_number: row["Work Number"],
-        bills_to: row["Bills to"],
-        accepts_bills_from: row["Accepts bills from"],
-        tags: row["Tags"],
-        notes: row["Notes"],
-        external_id: row["ID"],
-        customer_type: row["Customer Type"],
+        first_name:          row["First Name"],
+        last_name:           row["Last Name"],
+        display_name:        row["Display Name"],
+        mobile_number:       row["Mobile Number"],
+        home_number:         row["Home Number"],
+        email:               row["Email"],
+        additional_emails:   row["Additional Emails"],
+        company_name:        row["Company"],
+        role:                row["Role"],
+        work_number:         row["Work Number"],
+        bills_to:            row["Bills to"],
+        accepts_bills_from:  row["Accepts bills from"],
+        tags:                row["Tags"],
+        notes:               row["Notes"], # existing notes column
+        external_id:         row["ID"],
+        customer_type:       row["Customer Type"],
         customer_notifications_enabled: truthy?(row["Customer notifications enabled"]),
-        customer_is_contractor: truthy?(row["Customer is Contractor"]),
-        lead_source: row["Lead Source"],
+        customer_is_contractor:        truthy?(row["Customer is Contractor"]),
+        lead_source:         row["Lead Source"],
         customer_created_at: row["Customer created at"],
-        last_service_date: row["Last service date"],
-        lifetime_value: row["Lifetime value"],
+        last_service_date:   row["Last service date"],
+        lifetime_value:      row["Lifetime value"],
 
         address_1_street_line_1: row["Address_1 Street Line 1"],
         address_1_street_line_2: row["Address_1 Street Line 2"],
-        address_1_city: row["Address_1 City"],
-        address_1_state: row["Address_1 State"],
-        address_1_postal_code: row["Address_1 Postal Code"],
-        address_1_billing: truthy?(row["Address_1 Billing?"]),
-        address_1_notes: row["Address_1 Notes"],
+        address_1_city:          row["Address_1 City"],
+        address_1_state:         row["Address_1 State"],
+        address_1_postal_code:   row["Address_1 Postal Code"],
+        address_1_billing:       truthy?(row["Address_1 Billing?"]),
+        address_1_notes:         row["Address_1 Notes"],
 
         address_2_street_line_1: row["Address_2 Street Line 1"],
         address_2_street_line_2: row["Address_2 Street Line 2"],
-        address_2_city: row["Address_2 City"],
-        address_2_state: row["Address_2 State"],
-        address_2_postal_code: row["Address_2 Postal Code"],
-        address_2_billing: truthy?(row["Address_2 Billing?"]),
-        address_2_notes: row["Address_2 Notes"],
+        address_2_city:          row["Address_2 City"],
+        address_2_state:         row["Address_2 State"],
+        address_2_postal_code:   row["Address_2 Postal Code"],
+        address_2_billing:       truthy?(row["Address_2 Billing?"]),
+        address_2_notes:         row["Address_2 Notes"],
 
         address_3_street_line_1: row["Address_3 Street Line 1"],
         address_3_street_line_2: row["Address_3 Street Line 2"],
-        address_3_city: row["Address_3 City"],
-        address_3_state: row["Address_3 State"],
-        address_3_postal_code: row["Address_3 Postal Code"],
-        address_3_billing: truthy?(row["Address_3 Billing?"]),
-        address_3_notes: row["Address_3 Notes"],
+        address_3_city:          row["Address_3 City"],
+        address_3_state:         row["Address_3 State"],
+        address_3_postal_code:   row["Address_3 Postal Code"],
+        address_3_billing:       truthy?(row["Address_3 Billing?"]),
+        address_3_notes:         row["Address_3 Notes"],
 
         address_4_street_line_1: row["Address_4 Street Line 1"],
         address_4_street_line_2: row["Address_4 Street Line 2"],
-        address_4_city: row["Address_4 City"],
-        address_4_state: row["Address_4 State"],
-        address_4_postal_code: row["Address_4 Postal Code"],
-        address_4_billing: truthy?(row["Address_4 Billing?"]),
-        address_4_notes: row["Address_4 Notes"]
+        address_4_city:          row["Address_4 City"],
+        address_4_state:         row["Address_4 State"],
+        address_4_postal_code:   row["Address_4 Postal Code"],
+        address_4_billing:       truthy?(row["Address_4 Billing?"]),
+        address_4_notes:         row["Address_4 Notes"]
       }
 
-      # use external_id if present, fall back to email
       lookup_key = attrs[:external_id].presence || attrs[:email]
 
       customer = company.customers.find_or_initialize_by(external_id: lookup_key)
@@ -113,6 +110,7 @@ class Customer < ApplicationRecord
     end
   end
 
+  # --- CSV EXPORT ----------------------------------------------------------
   def self.to_csv(scope = all)
     CSV.generate(headers: true) do |csv|
       csv << CSV_HEADERS
@@ -174,7 +172,6 @@ class Customer < ApplicationRecord
     end
   end
 
-  # helper for flexible boolean parsing
   def self.truthy?(value)
     value.to_s.strip.downcase.in?(%w[true t yes y 1])
   end
