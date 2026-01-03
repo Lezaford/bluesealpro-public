@@ -51,6 +51,6 @@ class Admin::UsersController < ApplicationController
   end
 
   def authorize_admin!
-    redirect_to dashboard_path, alert: "Not authorized" unless current_user.owner_role? || current_user.admin_role?
+    redirect_to dashboard_path, alert: "Not authorized" unless current_user.role_owner? || current_user.role_admin?
   end
 end
