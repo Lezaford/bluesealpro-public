@@ -1,6 +1,6 @@
 class CustomersController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_customer, only: [:show, :edit, :update, :destroy]
+  before_action :set_customer, only: [ :show, :edit, :update, :destroy ]
 
   # GET /customers
   def index
@@ -8,10 +8,10 @@ class CustomersController < ApplicationController
     @customer_type = params[:customer_type].to_s.strip
     @lead_source   = params[:lead_source].to_s.strip
 
-    # options for dropdowns
+    # options for dropdowns - safely handle empty results
     base = Current.company.customers
-    @customer_types = base.distinct.pluck(:customer_type).compact_blank.sort
-    @lead_sources   = base.distinct.pluck(:lead_source).compact_blank.sort
+    @customer_types = base.where.not(customer_type: nil).distinct.pluck(:customer_type).compact_blank.sort
+    @lead_sources   = base.where.not(lead_source: nil).distinct.pluck(:lead_source).compact_blank.sort
 
     scope = base_scope
     @customers = scope.order(last_name: :asc, first_name: :asc)

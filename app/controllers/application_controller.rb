@@ -16,6 +16,11 @@ class ApplicationController < ActionController::Base
     Current.company
   end
 
+  # Redirect to dashboard after sign in
+  def after_sign_in_path_for(resource)
+    dashboard_path
+  end
+
   # lets Devise accept :name now; you can add more later
   def configure_permitted_parameters
     devise_parameter_sanitizer.permit(:sign_up,        keys: [ :name ])

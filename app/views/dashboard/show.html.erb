@@ -10,21 +10,38 @@
           class: "inline-block rounded-md bg-brand-500 px-3 py-2 text-white hover:bg-brand-600" %>
     </div>
     
-    <!-- Jobs placeholder card -->
+    <!-- Jobs card -->
     <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 shadow-card">
       <h2 class="text-xl font-semibold">Jobs / Scheduling</h2>
       <p class="text-sm text-slate-600 dark:text-slate-400 mt-1 mb-4">Create & assign service calls.</p>
-      <%= link_to "View Jobs", "#",
-          class: "inline-block rounded-md bg-brand-500/40 px-3 py-2 text-white cursor-not-allowed",
-      title: "Jobs view coming soon" %>
+      <%= link_to "View Jobs", schedule_path,
+          class: "inline-block rounded-md bg-brand-500 px-3 py-2 text-white hover:bg-brand-600" %>
     </div>
 
-    <!-- Invoices placeholder card -->
+    <!-- Invoices card -->
     <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 shadow-card">
       <h2 class="text-xl font-semibold">Invoices & Payments</h2>
       <p class="text-sm text-slate-600 dark:text-slate-400 mt-1 mb-4">Generate & track invoices.</p>
-      <%= link_to "View Invoices", "#",
-         class: "inline-block rounded-md bg-brand-500/40 px-3 py-2 text-white cursor-not-allowed",
-      title: "Invoices view coming soon" %>
+      <%= link_to "View Invoices", jobs_path,
+         class: "inline-block rounded-md bg-brand-500 px-3 py-2 text-white hover:bg-brand-600" %>
     </div>
+
+    <!-- Technicians card -->
+    <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 shadow-card">
+      <h2 class="text-xl font-semibold">Technicians</h2>
+      <p class="text-sm text-slate-600 dark:text-slate-400 mt-1 mb-4">Manage your service team.</p>
+      <%= link_to "View Technicians", technicians_path,
+          class: "inline-block rounded-md bg-brand-500 px-3 py-2 text-white hover:bg-brand-600" %>
+    </div>
+
+    <% if current_user.owner? || current_user.admin? %>
+      <!-- Admin Users card -->
+      <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 shadow-card">
+        <h2 class="text-xl font-semibold">User Management</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-400 mt-1 mb-4">Create & manage team members.</p>
+        <%= link_to "Manage Users", admin_users_path,
+            class: "inline-block rounded-md bg-purple-600 px-3 py-2 text-white hover:bg-purple-700" %>
+      </div>
+    <% end %>
+  </div>
 </div>
