@@ -74,7 +74,7 @@
           <%= link_to "Technicians", technicians_path, class: "hover:text-brand-400" %>
           <%= link_to "Schedule", schedule_path, class: "hover:text-brand-400" %>
 
-          <% if current_user.owner? || current_user.admin? %>
+          <% if current_user&.role == 'owner' || current_user&.role == 'admin' %>
             <%= link_to "Users", admin_users_path, class: "hover:text-purple-400 font-semibold" %>
           <% end %>
           <% end %>
