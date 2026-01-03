@@ -1,0 +1,42 @@
+<div class="p-6">
+  <div class="mb-6">
+    <h1 class="text-3xl font-bold"><%= @technician.name %></h1>
+  </div>
+
+  <div class="card bg-base-100 shadow-lg max-w-md">
+    <div class="card-body">
+      <div class="mb-4">
+        <h2 class="text-sm font-semibold text-gray-600">Phone</h2>
+        <p class="text-lg"><%= @technician.phone %></p>
+      </div>
+
+      <% if @technician.email.present? %>
+        <div class="mb-4">
+          <h2 class="text-sm font-semibold text-gray-600">Email</h2>
+          <p class="text-lg"><%= mail_to @technician.email %></p>
+        </div>
+      <% end %>
+
+      <div class="mb-4">
+        <h2 class="text-sm font-semibold text-gray-600">Status</h2>
+        <p>
+          <span class="<%= @technician.active? ? 'badge badge-success' : 'badge badge-gray' %>">
+            <%= @technician.active? ? "Active" : "Inactive" %>
+          </span>
+        </p>
+      </div>
+
+      <% if @technician.notes.present? %>
+        <div class="mb-4">
+          <h2 class="text-sm font-semibold text-gray-600">Notes</h2>
+          <p><%= simple_format(@technician.notes) %></p>
+        </div>
+      <% end %>
+
+      <div class="card-actions">
+        <%= link_to "Edit", edit_technician_path(@technician), class: "btn btn-primary" %>
+        <%= link_to "Back to Technicians", technicians_path, class: "btn btn-outline" %>
+      </div>
+    </div>
+  </div>
+</div>

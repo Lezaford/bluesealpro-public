@@ -13,6 +13,7 @@ Rails.application.routes.draw do
   # -------------------------------
   authenticate :user do
     get "/dashboard", to: "dashboard#show", as: :dashboard
+    get "/schedule", to: "schedule#index", as: :schedule
 
     resources :customers do
       collection do
@@ -21,9 +22,9 @@ Rails.application.routes.draw do
       end
     end
 
-    # resources :jobs
+    resources :technicians
+    resources :jobs
     # resources :invoices
-    # resources :technicians  # if you later add this
     # resources :settings, only: [:index, :update] # company settings panel
   end
 end

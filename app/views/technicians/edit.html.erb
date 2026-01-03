@@ -1,0 +1,74 @@
+<div class="p-6">
+  <div class="mb-6">
+    <h1 class="text-3xl font-bold">Edit Technician</h1>
+  </div>
+
+  <% if @technician.errors.any? %>
+    <div class="alert alert-error mb-4">
+      <div>
+        <h3 class="font-semibold"><%= pluralize(@technician.errors.count, "error") %> prohibited this technician:</h3>
+        <ul class="list-disc list-inside mt-2">
+          <% @technician.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="card bg-base-100 shadow-lg max-w-md">
+    <div class="card-body">
+      <form action="<%= technician_path(@technician) %>" method="post">
+        <input type="hidden" name="_method" value="patch">
+        <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+
+        <div class="form-control mb-4">
+          <label class="label">
+            <span class="label-text">Name</span>
+          </label>
+          <input type="text" name="technician[name]" value="<%= @technician.name %>" 
+                 class="input input-bordered" required>
+        </div>
+
+        <div class="form-control mb-4">
+          <label class="label">
+            <span class="label-text">Phone</span>
+          </label>
+          <input type="tel" name="technician[phone]" value="<%= @technician.phone %>" 
+                 class="input input-bordered" required>
+        </div>
+
+        <div class="form-control mb-4">
+          <label class="label">
+            <span class="label-text">Email</span>
+          </label>
+          <input type="email" name="technician[email]" value="<%= @technician.email %>" 
+                 class="input input-bordered">
+        </div>
+
+        <div class="form-control mb-4">
+          <label class="label">
+            <span class="label-text">Notes</span>
+          </label>
+          <textarea name="technician[notes]" class="textarea textarea-bordered"><%= @technician.notes %></textarea>
+        </div>
+
+        <div class="form-control mb-6">
+          <label class="label cursor-pointer">
+            <span class="label-text">Active</span>
+            <input type="checkbox" name="technician[active]" value="1" 
+                   class="checkbox" <%= "checked" if @technician.active? %>>
+          </label>
+        </div>
+
+        <div class="form-control">
+          <button type="submit" class="btn btn-primary">Update Technician</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="mt-6">
+    <%= link_to "Back to Technicians", technicians_path, class: "btn btn-outline" %>
+  </div>
+</div>

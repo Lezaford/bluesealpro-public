@@ -1,0 +1,61 @@
+<div class="p-6">
+  <div class="mb-6 flex items-center justify-between">
+    <h1 class="text-3xl font-bold">Technicians</h1>
+    <%= link_to "Add Technician", new_technician_path, class: "btn btn-primary" %>
+  </div>
+
+  <% if notice %>
+    <div class="alert alert-success mb-4">
+      <p><%= notice %></p>
+    </div>
+  <% end %>
+
+  <% if alert %>
+    <div class="alert alert-error mb-4">
+      <p><%= alert %></p>
+    </div>
+  <% end %>
+
+  <% if @technicians.any? %>
+    <div class="overflow-x-auto">
+      <table class="table table-zebra w-full">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Email</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @technicians.each do |technician| %>
+            <tr>
+              <td class="font-semibold"><%= technician.name %></td>
+              <td><%= technician.phone %></td>
+              <td><%= technician.email %></td>
+              <td>
+                <span class="<%= technician.active? ? 'badge badge-success' : 'badge badge-gray' %>">
+                  <%= technician.active? ? "Active" : "Inactive" %>
+                </span>
+              </td>
+              <td class="space-x-2">
+                <%= link_to "View", technician_path(technician), class: "btn btn-sm btn-ghost" %>
+                <%= link_to "Edit", edit_technician_path(technician), class: "btn btn-sm btn-ghost" %>
+                <%= link_to "Delete", technician_path(technician), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-sm btn-error btn-outline" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="alert alert-info">
+      <p>No technicians yet. <%= link_to "Create one", new_technician_path, class: "link" %></p>
+    </div>
+  <% end %>
+
+  <div class="mt-6">
+    <%= link_to "Back to Dashboard", dashboard_path, class: "btn btn-outline" %>
+  </div>
+</div>
