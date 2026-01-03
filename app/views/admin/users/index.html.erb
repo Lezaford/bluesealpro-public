@@ -1,0 +1,59 @@
+<div class="p-6">
+  <div class="mb-6 flex items-center justify-between">
+    <h1 class="text-3xl font-bold">User Management</h1>
+    <%= link_to "Add User", new_admin_user_path, class: "btn btn-primary" %>
+  </div>
+
+  <% if notice %>
+    <div class="alert alert-success mb-4">
+      <p><%= notice %></p>
+    </div>
+  <% end %>
+
+  <% if alert %>
+    <div class="alert alert-error mb-4">
+      <p><%= alert %></p>
+    </div>
+  <% end %>
+
+  <% if @users.any? %>
+    <div class="overflow-x-auto">
+      <table class="table table-zebra w-full">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @users.each do |user| %>
+            <tr>
+              <td class="font-semibold"><%= user.name %></td>
+              <td><%= user.email %></td>
+              <td>
+                <span class="badge <%= role_badge_class(user.role) %>">
+                  <%= user.role.humanize %>
+                </span>
+              </td>
+              <td class="space-x-2">
+                <%= link_to "View", admin_user_path(user), class: "btn btn-sm btn-ghost" %>
+                <%= link_to "Edit", edit_admin_user_path(user), class: "btn btn-sm btn-ghost" %>
+                <%= link_to "Delete", admin_user_path(user), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-sm btn-error btn-outline" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="alert alert-info">
+      <p>No users yet. <%= link_to "Create one", new_admin_user_path, class: "link" %></p>
+    </div>
+  <% end %>
+
+  <div class="mt-6">
+    <%= link_to "Back to Dashboard", dashboard_path, class: "btn btn-outline" %>
+  </div>
+</div>

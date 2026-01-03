@@ -1,0 +1,80 @@
+<div class="p-6">
+  <div class="mb-6">
+    <h1 class="text-3xl font-bold">Edit User</h1>
+  </div>
+
+  <% if @user.errors.any? %>
+    <div class="alert alert-error mb-4">
+      <div>
+        <h3 class="font-semibold"><%= pluralize(@user.errors.count, "error") %> prohibited this user:</h3>
+        <ul class="list-disc list-inside mt-2">
+          <% @user.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="card bg-base-100 shadow-lg max-w-md">
+    <div class="card-body">
+      <form action="<%= admin_user_path(@user) %>" method="post">
+        <input type="hidden" name="_method" value="patch">
+        <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+
+        <div class="form-control mb-4">
+          <label class="label">
+            <span class="label-text">Name</span>
+          </label>
+          <input type="text" name="user[name]" value="<%= @user.name %>" 
+                 class="input input-bordered" required>
+        </div>
+
+        <div class="form-control mb-4">
+          <label class="label">
+            <span class="label-text">Email</span>
+          </label>
+          <input type="email" name="user[email]" value="<%= @user.email %>" 
+                 class="input input-bordered" required>
+        </div>
+
+        <div class="form-control mb-4">
+          <label class="label">
+            <span class="label-text">Role</span>
+          </label>
+          <select name="user[role]" class="select select-bordered" required>
+            <option value="">Select a role</option>
+            <option value="owner" <%= "selected" if @user.role == "owner" %>>Owner</option>
+            <option value="admin" <%= "selected" if @user.role == "admin" %>>Admin</option>
+            <option value="tech" <%= "selected" if @user.role == "tech" %>>Technician</option>
+            <option value="viewer" <%= "selected" if @user.role == "viewer" %>>Viewer</option>
+          </select>
+        </div>
+
+        <div class="form-control mb-4">
+          <label class="label">
+            <span class="label-text">Password (Leave blank to keep current)</span>
+          </label>
+          <input type="password" name="user[password]" 
+                 class="input input-bordered">
+        </div>
+
+        <div class="form-control mb-6">
+          <label class="label">
+            <span class="label-text">Confirm Password</span>
+          </label>
+          <input type="password" name="user[password_confirmation]" 
+                 class="input input-bordered">
+        </div>
+
+        <div class="form-control">
+          <button type="submit" class="btn btn-primary">Update User</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="mt-6">
+    <%= link_to "Back to Users", admin_users_path, class: "btn btn-outline" %>
+  </div>
+</div>

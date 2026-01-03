@@ -26,5 +26,10 @@ Rails.application.routes.draw do
     resources :jobs
     # resources :invoices
     # resources :settings, only: [:index, :update] # company settings panel
+
+    # Admin panel (only owners/admins)
+    namespace :admin do
+      resources :users
+    end
   end
 end
