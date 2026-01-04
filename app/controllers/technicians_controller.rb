@@ -88,5 +88,3 @@ class TechniciansController < ApplicationController
     params.require(:technician).permit(:name, :phone, :email, :notes, :active)
   end
 end
-  end
-end
