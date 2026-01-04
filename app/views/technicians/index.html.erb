@@ -1,48 +1,68 @@
-<div class="p-6">
-  <div class="mb-6 flex items-center justify-between">
-    <h1 class="text-3xl font-bold">Technicians</h1>
-    <%= link_to "Add Technician", new_technician_path, class: "btn btn-primary" %>
+<div class="space-y-6">
+  <!-- Header + actions -->
+  <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+    <div>
+      <h1 class="text-3xl font-extrabold">Technicians</h1>
+      <p class="mt-1 text-sm text-slate-400">
+        Manage your field service team and their assignments.
+      </p>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-3">
+      <!-- New Technician -->
+      <%= link_to "Add Technician",
+          new_technician_path,
+          class: "inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700" %>
+    </div>
   </div>
 
+  <!-- Alerts -->
   <% if notice %>
-    <div class="alert alert-success mb-4">
+    <div class="rounded-md border border-green-500/30 bg-green-50/5 px-4 py-3 text-green-300">
       <p><%= notice %></p>
     </div>
   <% end %>
 
   <% if alert %>
-    <div class="alert alert-error mb-4">
+    <div class="rounded-md border border-red-500/30 bg-red-50/5 px-4 py-3 text-red-300">
       <p><%= alert %></p>
     </div>
   <% end %>
 
+  <!-- Table -->
   <% if @technicians.any? %>
-    <div class="overflow-x-auto">
-      <table class="table table-zebra w-full">
-        <thead>
+    <div class="overflow-hidden rounded-xl border border-slate-800 bg-slate-900">
+      <table class="min-w-full divide-y divide-slate-800">
+        <thead class="bg-slate-900/50">
           <tr>
-            <th>Name</th>
-            <th>Phone</th>
-            <th>Email</th>
-            <th>Status</th>
-            <th>Actions</th>
+            <th class="px-4 py-3 text-left text-sm font-semibold text-slate-300">Name</th>
+            <th class="px-4 py-3 text-left text-sm font-semibold text-slate-300">Phone</th>
+            <th class="px-4 py-3 text-left text-sm font-semibold text-slate-300">Email</th>
+            <th class="px-4 py-3 text-left text-sm font-semibold text-slate-300">Status</th>
+            <th class="px-4 py-3"></th>
           </tr>
         </thead>
-        <tbody>
+        <tbody class="divide-y divide-slate-800">
           <% @technicians.each do |technician| %>
-            <tr>
-              <td class="font-semibold"><%= technician.name %></td>
-              <td><%= technician.phone %></td>
-              <td><%= technician.email %></td>
-              <td>
-                <span class="<%= technician.active? ? 'badge badge-success' : 'badge badge-gray' %>">
+            <tr class="hover:bg-slate-800/60">
+              <td class="px-4 py-3 font-medium text-slate-100"><%= technician.name %></td>
+              <td class="px-4 py-3 text-sm text-slate-100"><%= technician.phone %></td>
+              <td class="px-4 py-3 text-sm text-slate-100"><%= technician.email.presence || "—" %></td>
+              <td class="px-4 py-3 text-sm">
+                <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium <%= technician.active? ? "bg-green-500/20 text-green-300" : "bg-slate-500/20 text-slate-300" %>">
                   <%= technician.active? ? "Active" : "Inactive" %>
                 </span>
               </td>
-              <td class="space-x-2">
-                <%= link_to "View", technician_path(technician), class: "btn btn-sm btn-ghost" %>
-                <%= link_to "Edit", edit_technician_path(technician), class: "btn btn-sm btn-ghost" %>
-                <%= link_to "Delete", technician_path(technician), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-sm btn-error btn-outline" %>
+              <td class="px-4 py-3 text-right">
+                <div class="inline-flex gap-2">
+                  <%= link_to "View", technician_path(technician),
+                        class: "rounded-md border border-slate-600 px-3 py-1.5 text-xs text-slate-100 hover:bg-slate-800" %>
+                  <%= link_to "Edit", edit_technician_path(technician),
+                        class: "rounded-md border border-slate-600 px-3 py-1.5 text-xs text-slate-100 hover:bg-slate-800" %>
+                  <%= button_to "Delete", technician_path(technician), method: :delete,
+                        data: { turbo_confirm: "Delete this technician?" },
+                        class: "rounded-md bg-red-600 px-3 py-1.5 text-xs text-white hover:bg-red-700" %>
+                </div>
               </td>
             </tr>
           <% end %>
@@ -50,12 +70,10 @@
       </table>
     </div>
   <% else %>
-    <div class="alert alert-info">
-      <p>No technicians yet. <%= link_to "Create one", new_technician_path, class: "link" %></p>
+    <div class="rounded-md border border-slate-700 bg-slate-800/50 px-6 py-8 text-center">
+      <p class="text-slate-300 mb-4">No technicians yet.</p>
+      <%= link_to "Create your first technician", new_technician_path,
+            class: "inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700" %>
     </div>
   <% end %>
-
-  <div class="mt-6">
-    <%= link_to "Back to Dashboard", dashboard_path, class: "btn btn-outline" %>
-  </div>
 </div>

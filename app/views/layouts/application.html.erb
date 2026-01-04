@@ -54,14 +54,93 @@
 
         <div class="flex items-center gap-3 text-sm text-white">
           <% if user_signed_in? %>
-          <%= link_to "Dashboard", dashboard_path, class: "hover:text-brand-400" %>
-          <%= link_to "Customers", customers_path, class: "hover:text-brand-400" %>
-          <%= link_to "Technicians", technicians_path, class: "hover:text-brand-400" %>
-          <%= link_to "Schedule", schedule_path, class: "hover:text-brand-400" %>
+          <!-- New Button Dropdown -->
+          <div class="relative">
+            <button id="new-btn"
+                    class="inline-flex items-center gap-1 rounded-md bg-blue-700 px-3 py-2 text-sm font-semibold hover:bg-blue-800 transition-colors"
+                    title="Create new item">
+              <span>+ New</span>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+              </svg>
+            </button>
 
-          <% if current_user&.role_owner? || current_user&.role_admin? %>
-            <%= link_to "Users", admin_users_path, class: "hover:text-purple-400 font-semibold" %>
-          <% end %>
+            <!-- New Dropdown Menu -->
+            <div id="new-menu"
+                 class="hidden absolute left-0 mt-2 w-48 bg-slate-800 border border-slate-700 rounded-lg shadow-xl z-50">
+              <div class="p-2 space-y-1">
+                <%= link_to new_customer_path, class: "flex items-center gap-3 px-4 py-2.5 rounded-md hover:bg-slate-700 transition-colors" do %>
+                  <span class="text-lg">👥</span>
+                  <span>New Customer</span>
+                <% end %>
+                
+                <%= link_to new_technician_path, class: "flex items-center gap-3 px-4 py-2.5 rounded-md hover:bg-slate-700 transition-colors" do %>
+                  <span class="text-lg">🔧</span>
+                  <span>New Technician</span>
+                <% end %>
+                
+                <%= link_to new_job_path, class: "flex items-center gap-3 px-4 py-2.5 rounded-md hover:bg-slate-700 transition-colors" do %>
+                  <span class="text-lg">📋</span>
+                  <span>New Job</span>
+                <% end %>
+              </div>
+            </div>
+          </div>
+
+          <!-- App Launcher Menu -->
+          <div class="relative">
+            <button id="app-launcher-btn"
+                    class="inline-flex items-center justify-center w-10 h-10 rounded-full hover:bg-blue-700 transition-colors"
+                    title="Open menu">
+              <!-- 9-dot grid icon -->
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                <circle cx="3" cy="3" r="1.5"/>
+                <circle cx="12" cy="3" r="1.5"/>
+                <circle cx="21" cy="3" r="1.5"/>
+                <circle cx="3" cy="12" r="1.5"/>
+                <circle cx="12" cy="12" r="1.5"/>
+                <circle cx="21" cy="12" r="1.5"/>
+                <circle cx="3" cy="21" r="1.5"/>
+                <circle cx="12" cy="21" r="1.5"/>
+                <circle cx="21" cy="21" r="1.5"/>
+              </svg>
+            </button>
+
+            <!-- Dropdown Menu -->
+            <div id="app-launcher-menu"
+                 class="hidden absolute right-0 mt-2 w-48 bg-slate-800 border border-slate-700 rounded-lg shadow-xl z-50">
+              <div class="p-2 space-y-1">
+                <%= link_to dashboard_path, class: "flex items-center gap-3 px-4 py-2.5 rounded-md hover:bg-slate-700 transition-colors" do %>
+                  <span class="text-lg">📊</span>
+                  <span>Dashboard</span>
+                <% end %>
+                
+                <%= link_to customers_path, class: "flex items-center gap-3 px-4 py-2.5 rounded-md hover:bg-slate-700 transition-colors" do %>
+                  <span class="text-lg">👥</span>
+                  <span>Customers</span>
+                <% end %>
+                
+                <%= link_to technicians_path, class: "flex items-center gap-3 px-4 py-2.5 rounded-md hover:bg-slate-700 transition-colors" do %>
+                  <span class="text-lg">🔧</span>
+                  <span>Technicians</span>
+                <% end %>
+                
+                <%= link_to schedule_path, class: "flex items-center gap-3 px-4 py-2.5 rounded-md hover:bg-slate-700 transition-colors" do %>
+                  <span class="text-lg">📅</span>
+                  <span>Schedule</span>
+                <% end %>
+
+                <% if current_user&.role_owner? || current_user&.role_admin? %>
+                  <div class="border-t border-slate-700 my-1"></div>
+                  <%= link_to admin_users_path, class: "flex items-center gap-3 px-4 py-2.5 rounded-md hover:bg-slate-700 transition-colors font-semibold text-purple-300" do %>
+                    <span class="text-lg">👤</span>
+                    <span>Users</span>
+                  <% end %>
+                <% end %>
+              </div>
+            </div>
+          </div>
+
           <% end %>
 
           <% if user_signed_in? %>
@@ -78,6 +157,60 @@
     <main class="max-w-7xl mx-auto p-6">
       <%= yield %>
     </main>
+
+    <script>
+      // App launcher menu toggle
+      const launcherBtn = document.getElementById('app-launcher-btn');
+      const launcherMenu = document.getElementById('app-launcher-menu');
+      
+      // New button dropdown toggle
+      const newBtn = document.getElementById('new-btn');
+      const newMenu = document.getElementById('new-menu');
+
+      // Launcher menu
+      if (launcherBtn && launcherMenu) {
+        launcherBtn.addEventListener('click', () => {
+          launcherMenu.classList.toggle('hidden');
+          newMenu?.classList.add('hidden'); // Close new menu if open
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+          if (!launcherBtn.contains(e.target) && !launcherMenu.contains(e.target)) {
+            launcherMenu.classList.add('hidden');
+          }
+        });
+
+        // Close menu when a link is clicked
+        launcherMenu.querySelectorAll('a').forEach(link => {
+          link.addEventListener('click', () => {
+            launcherMenu.classList.add('hidden');
+          });
+        });
+      }
+
+      // New button menu
+      if (newBtn && newMenu) {
+        newBtn.addEventListener('click', () => {
+          newMenu.classList.toggle('hidden');
+          launcherMenu?.classList.add('hidden'); // Close app launcher if open
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+          if (!newBtn.contains(e.target) && !newMenu.contains(e.target)) {
+            newMenu.classList.add('hidden');
+          }
+        });
+
+        // Close menu when a link is clicked
+        newMenu.querySelectorAll('a').forEach(link => {
+          link.addEventListener('click', () => {
+            newMenu.classList.add('hidden');
+          });
+        });
+      }
+    </script>
   </body>
 
 </html>

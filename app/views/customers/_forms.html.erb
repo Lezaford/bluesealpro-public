@@ -10,58 +10,135 @@
     </div>
   <% end %>
 
-  <div class="grid md:grid-cols-2 gap-4">
-    <div>
-      <label class="block text-sm text-slate-300 mb-1">First name</label>
-      <%= f.text_field :first_name, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+  <!-- Basic Information -->
+  <div class="space-y-4">
+    <h2 class="text-lg font-semibold text-slate-200">Basic Information</h2>
+    
+    <div class="grid md:grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">First Name *</label>
+        <%= f.text_field :first_name, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+      </div>
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">Last Name *</label>
+        <%= f.text_field :last_name, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+      </div>
     </div>
+
     <div>
-      <label class="block text-sm text-slate-300 mb-1">Last name</label>
-      <%= f.text_field :last_name, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+      <label class="block text-sm text-slate-300 mb-1">Display Name</label>
+      <%= f.text_field :display_name, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-4">
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">Email</label>
+        <%= f.email_field :email, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+      </div>
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">Mobile Number</label>
+        <%= f.telephone_field :mobile_number, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+      </div>
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">Home Number</label>
+        <%= f.telephone_field :home_number, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">Company Name</label>
+        <%= f.text_field :company_name, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+      </div>
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">Customer Type</label>
+        <%= f.text_field :customer_type, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500", placeholder: "e.g. Residential, Commercial" %>
+      </div>
     </div>
   </div>
 
-  <div class="grid md:grid-cols-2 gap-4">
+  <!-- Address Information -->
+  <div class="space-y-4">
+    <h2 class="text-lg font-semibold text-slate-200">Primary Address</h2>
+    
     <div>
-      <label class="block text-sm text-slate-300 mb-1">Email</label>
-      <%= f.email_field :email, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+      <label class="block text-sm text-slate-300 mb-1">Street Line 1</label>
+      <%= f.text_field :address_1_street_line_1, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
     </div>
+
     <div>
-      <label class="block text-sm text-slate-300 mb-1">Phone</label>
-      <%= f.telephone_field :phone, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+      <label class="block text-sm text-slate-300 mb-1">Street Line 2</label>
+      <%= f.text_field :address_1_street_line_2, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-4">
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">City</label>
+        <%= f.text_field :address_1_city, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+      </div>
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">State</label>
+        <%= f.text_field :address_1_state, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+      </div>
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">Postal Code</label>
+        <%= f.text_field :address_1_postal_code, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+      </div>
+    </div>
+
+    <div>
+      <label class="block text-sm text-slate-300 mb-1">Address Notes</label>
+      <%= f.text_area :address_1_notes, rows: 2, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
     </div>
   </div>
 
-  <div>
-    <label class="block text-sm text-slate-300 mb-1">Address line 1</label>
-    <%= f.text_field :address1, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
-  </div>
-  <div>
-    <label class="block text-sm text-slate-300 mb-1">Address line 2</label>
-    <%= f.text_field :address2, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+  <!-- Additional Information -->
+  <div class="space-y-4">
+    <h2 class="text-lg font-semibold text-slate-200">Additional Information</h2>
+    
+    <div class="grid md:grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">Work Number</label>
+        <%= f.telephone_field :work_number, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+      </div>
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">Lead Source</label>
+        <%= f.text_field :lead_source, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500", placeholder: "e.g. Google, Referral, Facebook" %>
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">Last Service Date</label>
+        <%= f.datetime_field :last_service_date, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+      </div>
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">Lifetime Value</label>
+        <%= f.number_field :lifetime_value, step: 0.01, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+      </div>
+    </div>
+
+    <div>
+      <label class="block text-sm text-slate-300 mb-1">Notes</label>
+      <%= f.text_area :notes, rows: 4, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <label class="flex items-center gap-2 text-sm text-slate-300">
+        <%= f.check_box :customer_notifications_enabled, class: "rounded" %>
+        Enable customer notifications
+      </label>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <label class="flex items-center gap-2 text-sm text-slate-300">
+        <%= f.check_box :customer_is_contractor, class: "rounded" %>
+        Is contractor
+      </label>
+    </div>
   </div>
 
-  <div class="grid md:grid-cols-3 gap-4">
-    <div>
-      <label class="block text-sm text-slate-300 mb-1">City</label>
-      <%= f.text_field :city, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
-    </div>
-    <div>
-      <label class="block text-sm text-slate-300 mb-1">State</label>
-      <%= f.text_field :state, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
-    </div>
-    <div>
-      <label class="block text-sm text-slate-300 mb-1">ZIP</label>
-      <%= f.text_field :zip, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
-    </div>
-  </div>
-
-  <div>
-    <label class="block text-sm text-slate-300 mb-1">Notes</label>
-    <%= f.text_area :notes, rows: 4, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
-  </div>
-
-  <div class="flex items-center gap-3">
+  <div class="flex items-center gap-3 pt-4">
     <%= f.submit (@customer.new_record? ? "Create Customer" : "Save Changes"),
         class: "rounded-md bg-blue-600 px-5 py-2.5 text-white hover:bg-blue-700" %>
     <%= link_to "Cancel", (@customer.new_record? ? customers_path : @customer),

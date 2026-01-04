@@ -1,74 +1,52 @@
-<div class="p-6">
-  <div class="mb-6">
-    <h1 class="text-3xl font-bold">Edit Technician</h1>
-  </div>
+<div class="space-y-6">
+  <h1 class="text-3xl font-extrabold">Edit Technician</h1>
+  <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
+    <%= form_with model: @technician, local: true, class: "space-y-6" do |f| %>
+      <% if @technician.errors.any? %>
+        <div class="rounded-md border border-red-500/30 bg-red-50/5 px-4 py-3 text-red-300">
+          <p class="font-semibold mb-1"><%= pluralize(@technician.errors.count, "error") %> prevented saving:</p>
+          <ul class="list-disc pl-5">
+            <% @technician.errors.full_messages.each do |m| %>
+              <li><%= m %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
 
-  <% if @technician.errors.any? %>
-    <div class="alert alert-error mb-4">
-      <div>
-        <h3 class="font-semibold"><%= pluralize(@technician.errors.count, "error") %> prohibited this technician:</h3>
-        <ul class="list-disc list-inside mt-2">
-          <% @technician.errors.full_messages.each do |message| %>
-            <li><%= message %></li>
-          <% end %>
-        </ul>
+      <div class="grid md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm text-slate-300 mb-1">Name *</label>
+          <%= f.text_field :name, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+        </div>
+        <div>
+          <label class="block text-sm text-slate-300 mb-1">Phone *</label>
+          <%= f.telephone_field :phone, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+        </div>
       </div>
-    </div>
-  <% end %>
 
-  <div class="card bg-base-100 shadow-lg max-w-md">
-    <div class="card-body">
-      <form action="<%= technician_path(@technician) %>" method="post">
-        <input type="hidden" name="_method" value="patch">
-        <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">Email</label>
+        <%= f.email_field :email, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+      </div>
 
-        <div class="form-control mb-4">
-          <label class="label">
-            <span class="label-text">Name</span>
-          </label>
-          <input type="text" name="technician[name]" value="<%= @technician.name %>" 
-                 class="input input-bordered" required>
-        </div>
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">Notes</label>
+        <%= f.text_area :notes, rows: 4, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+      </div>
 
-        <div class="form-control mb-4">
-          <label class="label">
-            <span class="label-text">Phone</span>
-          </label>
-          <input type="tel" name="technician[phone]" value="<%= @technician.phone %>" 
-                 class="input input-bordered" required>
-        </div>
+      <div class="flex items-center gap-2">
+        <label class="flex items-center gap-2 text-sm text-slate-300">
+          <%= f.check_box :active, class: "rounded" %>
+          Active technician
+        </label>
+      </div>
 
-        <div class="form-control mb-4">
-          <label class="label">
-            <span class="label-text">Email</span>
-          </label>
-          <input type="email" name="technician[email]" value="<%= @technician.email %>" 
-                 class="input input-bordered">
-        </div>
-
-        <div class="form-control mb-4">
-          <label class="label">
-            <span class="label-text">Notes</span>
-          </label>
-          <textarea name="technician[notes]" class="textarea textarea-bordered"><%= @technician.notes %></textarea>
-        </div>
-
-        <div class="form-control mb-6">
-          <label class="label cursor-pointer">
-            <span class="label-text">Active</span>
-            <input type="checkbox" name="technician[active]" value="1" 
-                   class="checkbox" <%= "checked" if @technician.active? %>>
-          </label>
-        </div>
-
-        <div class="form-control">
-          <button type="submit" class="btn btn-primary">Update Technician</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <div class="mt-6">
-    <%= link_to "Back to Technicians", technicians_path, class: "btn btn-outline" %>
+      <div class="flex items-center gap-3 pt-4">
+        <%= f.submit "Save Changes",
+            class: "rounded-md bg-blue-600 px-5 py-2.5 text-white hover:bg-blue-700" %>
+        <%= link_to "Cancel", technicians_path,
+            class: "rounded-md border border-slate-600 px-5 py-2.5 hover:bg-slate-800" %>
+      </div>
+    <% end %>
   </div>
 </div>
