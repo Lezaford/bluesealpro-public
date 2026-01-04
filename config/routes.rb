@@ -1,4 +1,3 @@
-Rails.application.routes.draw do
   # Devise auth – normal login, no public registration
   devise_for :users, skip: [ :registrations ]
 
@@ -7,6 +6,9 @@ Rails.application.routes.draw do
 
   # Public form for beta interest
   resources :beta_requests, only: :create
+
+  # Password change (for first-time tech setup)
+  resource :password_change, only: [ :show, :update ]
 
   # -------------------------------
   # Internal authenticated app

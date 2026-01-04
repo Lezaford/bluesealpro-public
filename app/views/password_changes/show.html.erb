@@ -1,0 +1,43 @@
+<div class="space-y-6 max-w-md mx-auto">
+  <div>
+    <h1 class="text-3xl font-extrabold">Set Your Password</h1>
+    <p class="mt-2 text-slate-400">Welcome to BlueSealPro! Please create a secure password for your account.</p>
+  </div>
+
+  <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
+    <%= form_with model: @user, local: true, url: password_change_path, method: :patch, class: "space-y-6" do |f| %>
+      <% if @user.errors.any? %>
+        <div class="rounded-md border border-red-500/30 bg-red-50/5 px-4 py-3 text-red-300">
+          <p class="font-semibold mb-1"><%= pluralize(@user.errors.count, "error") %> prevented saving:</p>
+          <ul class="list-disc pl-5">
+            <% @user.errors.full_messages.each do |m| %>
+              <li><%= m %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">Current Password *</label>
+        <%= f.password_field :current_password, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+        <p class="mt-1 text-xs text-slate-400">Enter the temporary password you received in your welcome email</p>
+      </div>
+
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">New Password *</label>
+        <%= f.password_field :password, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+        <p class="mt-1 text-xs text-slate-400">Minimum 6 characters</p>
+      </div>
+
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">Confirm Password *</label>
+        <%= f.password_field :password_confirmation, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+      </div>
+
+      <div class="flex items-center gap-3 pt-4">
+        <%= f.submit "Set Password",
+            class: "rounded-md bg-blue-600 px-5 py-2.5 text-white hover:bg-blue-700" %>
+      </div>
+    <% end %>
+  </div>
+</div>
