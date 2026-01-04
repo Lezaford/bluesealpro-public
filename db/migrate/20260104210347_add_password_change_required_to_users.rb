@@ -1,5 +1,5 @@
 class AddPasswordChangeRequiredToUsers < ActiveRecord::Migration[8.1]
   def change
-    add_column :users, :password_change_required, :boolean
+    add_column :users, :password_change_required, :boolean, default: false
   end
 end
