@@ -20,11 +20,16 @@ class CustomersController < ApplicationController
 
   # POST /customers/import
   def import
-    if params[:file].present?
-      Customer.import(params[:file], company: Current.company)
-      redirect_to customers_path, notice: "Customers imported successfully."
-    else
+    if params[:import_file].blank?
       redirect_to customers_path, alert: "Please choose a CSV file to import."
+      return
+    end
+
+    begin
+      count = Customer.import(params[:import_file], company: Current.company)
+      redirect_to customers_path, notice: "Successfully imported #{count} customer(s)."
+    rescue => e
+      redirect_to customers_path, alert: "Import failed: #{e.message}"
     end
   end
 

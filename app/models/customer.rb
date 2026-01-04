@@ -43,7 +43,10 @@ class Customer < ApplicationRecord
 
   # --- CSV IMPORT (DB is still the source of truth) ------------------------
   def self.import(file, company:)
+    count = 0
     CSV.foreach(file.path, headers: true) do |row|
+      next if row.to_h.values.all?(&:blank?)  # Skip blank rows
+
       attrs = {
         company: company,
         first_name:          row["First Name"],
@@ -103,11 +106,18 @@ class Customer < ApplicationRecord
       }
 
       lookup_key = attrs[:external_id].presence || attrs[:email]
+      next if lookup_key.blank?  # Skip if no identifier
 
-      customer = company.customers.find_or_initialize_by(external_id: lookup_key)
+      customer = company.customers.find_or_initialize_by(external_id: lookup_key) if attrs[:external_id].present?
+      customer ||= company.customers.find_or_initialize_by(email: attrs[:email]) if attrs[:email].present?
+      customer ||= company.customers.new
+
       customer.assign_attributes(attrs)
-      customer.save!
+      if customer.save
+        count += 1
+      end
     end
+    count
   end
 
   # --- CSV EXPORT ----------------------------------------------------------

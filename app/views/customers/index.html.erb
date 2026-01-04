@@ -18,12 +18,15 @@
       <%= form_with url: import_customers_path,
                     multipart: true,
                     local: true,
-                    class: "flex items-center gap-2" do |f| %>
-        <%= f.file_field :file,
-              accept: ".csv",
-              class: "block w-40 text-xs text-slate-300 file:mr-3 file:rounded-md file:border-0 file:bg-slate-700 file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-slate-100 hover:file:bg-slate-600" %>
-        <%= f.submit "Import CSV",
-              class: "inline-flex items-center rounded-md bg-slate-700 px-3 py-2 text-xs font-medium text-slate-100 hover:bg-slate-600" %>
+                    id: "import-form",
+                    class: "contents" do |f| %>
+        <label class="inline-flex items-center rounded-md bg-slate-700 px-4 py-2 text-sm font-semibold text-slate-100 hover:bg-slate-600 cursor-pointer transition-colors">
+          Import CSV
+          <%= f.file_field :import_file,
+                accept: ".csv",
+                class: "hidden",
+                onchange: "document.getElementById('import-form').submit()" %>
+        </label>
       <% end %>
 
       <!-- New Customer -->

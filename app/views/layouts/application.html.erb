@@ -42,8 +42,8 @@
     </script>
 
     <!-- Top Nav -->
-    <nav class="bg-white/80 backdrop-blur border-b border-slate-200 dark:bg-slate-900/70 dark:border-slate-800">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
+    <nav class="bg-blue-600 border-b border-blue-700">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-28 flex items-center justify-between">
         <div class="flex items-center gap-2">
           <picture>
             <!-- Dark mode: white/black logo -->
@@ -60,14 +60,12 @@
             <img 
               src="<%= asset_path('BlueSealPro/BlueSealPro_transparent.png') %>" 
               alt="BlueSealPro Logo"
-              class="h-6 w-auto select-none">
+              class="h-10 w-auto select-none">
           </picture>
-
-          <span class="font-semibold">BlueSealPro</span>
         </div>
 
 
-        <div class="flex items-center gap-3 text-sm">
+        <div class="flex items-center gap-3 text-sm text-white">
           <% if user_signed_in? %>
           <%= link_to "Dashboard", dashboard_path, class: "hover:text-brand-400" %>
           <%= link_to "Customers", customers_path, class: "hover:text-brand-400" %>
