@@ -1,3 +1,4 @@
+Rails.application.routes.draw do
   # Devise auth – normal login, no public registration
   devise_for :users, skip: [ :registrations ]
 
