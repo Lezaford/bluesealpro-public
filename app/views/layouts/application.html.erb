@@ -45,23 +45,10 @@
     <nav class="bg-blue-600 border-b border-blue-700">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-28 flex items-center justify-between">
         <div class="flex items-center gap-2">
-          <picture>
-            <!-- Dark mode: white/black logo -->
-            <source 
-              srcset="<%= asset_path('BlueSealPro/BlueSealPro_blackwhite.png') %>" 
-              media="(prefers-color-scheme: dark)">
-    
-            <!-- Light mode: full-color transparent version -->
-            <source 
-              srcset="<%= asset_path('BlueSealPro/BlueSealPro_transparent.png') %>" 
-              media="(prefers-color-scheme: light)">
-    
-            <!-- Fallback (light mode default) -->
-            <img 
-              src="<%= asset_path('BlueSealPro/BlueSealPro_transparent.png') %>" 
-              alt="BlueSealPro Logo"
-              class="h-10 w-auto select-none">
-          </picture>
+          <img 
+            src="<%= asset_path('BlueSealPro/BlueSealPro_primary.png') %>" 
+            alt="BlueSealPro Logo"
+            class="h-28 w-auto select-none">
         </div>
 
 
@@ -77,20 +64,12 @@
           <% end %>
           <% end %>
 
-          <%# Theme toggle %>
-          <button id="theme-toggle"
-                  class="inline-flex items-center rounded-md border border-slate-300/60 dark:border-slate-700
-                        px-3 py-1.5 text-sm text-slate-700 dark:text-slate-200
-                        hover:bg-slate-100 dark:hover:bg-slate-800">
-          Light
-          </button>
-
           <% if user_signed_in? %>
             <%= button_to "Logout", destroy_user_session_path, method: :delete,
                   class: "ml-1 inline-flex items-center rounded-md bg-red-600 px-3 py-1.5 text-white hover:bg-red-700" %>
           <% else %>
             <%= link_to "Login", new_user_session_path,
-                  class: "inline-flex items-center rounded-md bg-brand-500 px-3 py-1.5 text-white hover:bg-brand-600" %>
+                  class: "inline-flex items-center rounded-md bg-blue-800 px-3 py-1.5 text-white hover:bg-blue-900" %>
           <% end %>
         </div>
       </div>
