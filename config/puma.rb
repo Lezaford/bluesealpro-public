@@ -4,8 +4,8 @@ max_threads_count = ENV.fetch("RAILS_MAX_THREADS", 5)
 min_threads_count = ENV.fetch("RAILS_MIN_THREADS") { max_threads_count }
 threads min_threads_count, max_threads_count
 
-port ENV.fetch("PORT") { 3000 }
-bind "tcp://0.0.0.0:#{ENV.fetch('PORT') { 3000 }}"
+# Bind to all interfaces on the port specified by PORT env var (default 8080 on Fly.io)
+bind "tcp://0.0.0.0:#{ENV.fetch('PORT', 8080)}"
 
 environment ENV.fetch("RAILS_ENV") { "development" }
 
