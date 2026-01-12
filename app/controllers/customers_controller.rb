@@ -43,8 +43,43 @@ class CustomersController < ApplicationController
               type: "text/csv"
   end
 
+  # GET /customers/search?q=...
+  def search
+    q = params[:q].to_s.strip
+    scope = Current.company.customers
+
+    if q.present?
+      q_lower = q.downcase
+      scope = scope.where(
+        "LOWER(first_name) LIKE :q OR LOWER(last_name) LIKE :q OR " \
+        "LOWER(display_name) LIKE :q OR LOWER(email) LIKE :q OR " \
+        "LOWER(phone) LIKE :q OR LOWER(mobile_number) LIKE :q",
+        q: "%#{q_lower}%"
+      )
+    else
+      # Return alphabetical customers
+      scope = scope.order(last_name: :asc, first_name: :asc)
+    end
+
+    customers = scope.limit(8).map do |c|
+      { id: c.id, name: c.full_name, email: c.email }
+    end
+
+    render json: customers
+  end
+
   # GET /customers/:id
   def show
+    respond_to do |format|
+      format.html
+      format.json do
+        render json: {
+          id: @customer.id,
+          name: @customer.full_name,
+          email: @customer.email
+        }
+      end
+    end
   end
 
   # GET /customers/new

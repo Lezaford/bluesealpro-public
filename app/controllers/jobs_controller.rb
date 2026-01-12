@@ -22,13 +22,11 @@ class JobsController < ApplicationController
   # GET /jobs/new
   def new
     @job = Current.company.jobs.new
-    @customers = Current.company.customers.order(:last_name, :first_name)
     @technicians = Current.company.technicians.where(active: true).order(:name)
   end
 
   # GET /jobs/:id/edit
   def edit
-    @customers = Current.company.customers.order(:last_name, :first_name)
     @technicians = Current.company.technicians.where(active: true).order(:name)
   end
 
@@ -38,7 +36,6 @@ class JobsController < ApplicationController
     if @job.save
       redirect_to @job, notice: "Job was created."
     else
-      @customers = Current.company.customers.order(:last_name, :first_name)
       @technicians = Current.company.technicians.where(active: true).order(:name)
       flash.now[:alert] = @job.errors.full_messages.to_sentence
       render :new, status: :unprocessable_entity
@@ -50,7 +47,6 @@ class JobsController < ApplicationController
     if @job.update(job_params)
       redirect_to @job, notice: "Job was updated."
     else
-      @customers = Current.company.customers.order(:last_name, :first_name)
       @technicians = Current.company.technicians.where(active: true).order(:name)
       flash.now[:alert] = @job.errors.full_messages.to_sentence
       render :edit, status: :unprocessable_entity

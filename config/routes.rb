@@ -22,6 +22,7 @@ Rails.application.routes.draw do
       collection do
         post :import # POST /customers/import
         get :export # GET /customers/export
+        get :search # GET /customers/search?q=...
       end
     end
 
