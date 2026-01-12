@@ -107,6 +107,45 @@
     const customerIdField = document.getElementById('customer_id_field');
     const selectedCustomerDisplay = document.getElementById('selected-customer');
 
+    // Fuzzy search scoring function
+    function fuzzyScore(searchStr, targetStr) {
+      const search = searchStr.toLowerCase();
+      const target = targetStr.toLowerCase();
+      
+      let score = 0;
+      let searchIdx = 0;
+      let lastMatchIdx = -1;
+      
+      for (let i = 0; i < target.length && searchIdx < search.length; i++) {
+        if (search[searchIdx] === target[i]) {
+          score += 100; // Base points for matching character
+          
+          // Bonus for consecutive matches
+          if (lastMatchIdx === i - 1) {
+            score += 50;
+          }
+          
+          // Bonus for matching at start or after space/punctuation
+          if (i === 0 || target[i - 1] === ' ' || target[i - 1] === '-') {
+            score += 30;
+          }
+          
+          lastMatchIdx = i;
+          searchIdx++;
+        }
+      }
+      
+      // If not all search characters were found, return 0
+      if (searchIdx !== search.length) {
+        return 0;
+      }
+      
+      // Penalty for match length difference (shorter matches score higher)
+      score -= (target.length - search.length);
+      
+      return score;
+    }
+
     // Initialize with selected customer if editing
     if (customerIdField.value) {
       const selected = customers.find(c => c.id == customerIdField.value);
@@ -118,32 +157,44 @@
 
     // Search functionality
     searchInput.addEventListener('input', function(e) {
-      const query = e.target.value.toLowerCase().trim();
+      const query = e.target.value.trim();
       
       if (query.length === 0) {
         dropdown.classList.add('hidden');
         return;
       }
 
-      // Filter customers
-      const filtered = customers.filter(customer => 
-        customer.name.toLowerCase().includes(query) || 
-        customer.email.toLowerCase().includes(query)
-      );
+      // Score and filter customers
+      const scored = customers
+        .map(customer => ({
+          ...customer,
+          nameScore: fuzzyScore(query, customer.name),
+          emailScore: fuzzyScore(query, customer.email),
+          score: Math.max(fuzzyScore(query, customer.name), fuzzyScore(query, customer.email))
+        }))
+        .filter(customer => customer.score > 0)
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 10); // Limit to top 10 results
 
-      if (filtered.length === 0) {
+      if (scored.length === 0) {
         dropdown.innerHTML = '<div class="px-3 py-2 text-slate-400 text-sm">No customers found</div>';
         dropdown.classList.remove('hidden');
         return;
       }
 
-      // Build dropdown options
-      dropdown.innerHTML = filtered.map(customer => `
-        <button type="button" class="w-full text-left px-3 py-2 hover:bg-slate-700 transition customer-option" data-id="${customer.id}" data-name="${customer.name}" data-email="${customer.email}">
-          <div class="font-medium text-slate-100">${customer.name}</div>
-          <div class="text-xs text-slate-400">${customer.email}</div>
-        </button>
-      `).join('');
+      // Build dropdown options with highlighting
+      dropdown.innerHTML = scored.map(customer => {
+        // Highlight matched characters in name
+        const highlightedName = highlightMatches(customer.name, query);
+        const highlightedEmail = highlightMatches(customer.email, query);
+        
+        return `
+          <button type="button" class="w-full text-left px-3 py-2 hover:bg-slate-700 transition customer-option" data-id="${customer.id}" data-name="${customer.name}" data-email="${customer.email}">
+            <div class="font-medium text-slate-100">${highlightedName}</div>
+            <div class="text-xs text-slate-400">${highlightedEmail}</div>
+          </button>
+        `;
+      }).join('');
 
       dropdown.classList.remove('hidden');
 
@@ -155,6 +206,24 @@
         });
       });
     });
+
+    // Highlight matched characters
+    function highlightMatches(str, query) {
+      const search = query.toLowerCase();
+      let result = '';
+      let searchIdx = 0;
+      
+      for (let i = 0; i < str.length && searchIdx < search.length; i++) {
+        if (search[searchIdx] === str[i].toLowerCase()) {
+          result += `<span class="bg-blue-500 text-white">${str[i]}</span>`;
+          searchIdx++;
+        } else {
+          result += str[i];
+        }
+      }
+      
+      return result + str.substring(str.length - (str.length - searchIdx > 0 ? str.length - searchIdx : 0));
+    }
 
     function selectCustomer(id, name, email) {
       searchInput.value = name;
