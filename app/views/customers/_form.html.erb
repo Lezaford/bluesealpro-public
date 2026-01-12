@@ -55,7 +55,7 @@
         <span class="text-sm <%= @customer.customer_is_contractor? ? 'text-slate-400' : 'font-semibold text-slate-200' %>">
           Homeowner
         </span>
-        <button type="button" id="customer-type-toggle" class="relative inline-flex h-8 w-14 items-center rounded-full bg-slate-700 transition cursor-pointer <%= @customer.customer_is_contractor? ? 'bg-blue-600' : 'bg-slate-700' %>" data-checked="<%= @customer.customer_is_contractor? %>">
+        <button type="button" id="customer-type-toggle" class="relative inline-flex h-8 w-14 items-center rounded-full <%= @customer.customer_is_contractor? ? 'bg-blue-600' : 'bg-slate-700' %> transition cursor-pointer" data-checked="<%= @customer.customer_is_contractor? %>">
           <span class="inline-block h-6 w-6 transform rounded-full bg-white transition <%= @customer.customer_is_contractor? ? 'translate-x-7' : 'translate-x-1' %>"></span>
         </button>
         <span class="text-sm <%= @customer.customer_is_contractor? ? 'font-semibold text-slate-200' : 'text-slate-400' %>">
@@ -342,35 +342,38 @@
   document.addEventListener('DOMContentLoaded', function() {
     // Helper function to initialize toggles
     function initToggle(selector, fieldSelector) {
-      const button = document.querySelector(selector);
-      if (!button) return;
+      const buttons = document.querySelectorAll(selector);
+      if (!buttons.length) return;
       
-      const field = document.querySelector(fieldSelector);
-      
-      button.addEventListener('click', function(e) {
-        e.preventDefault();
-        const isChecked = button.getAttribute('data-checked') === 'true';
-        const newState = !isChecked;
+      buttons.forEach(button => {
+        const field = button.closest('button').parentElement.querySelector(fieldSelector) || 
+                      document.querySelector(fieldSelector);
         
-        // Update button appearance
-        button.setAttribute('data-checked', newState);
-        button.classList.toggle('bg-blue-600');
-        button.classList.toggle('bg-slate-700');
-        
-        // Update slider position
-        const slider = button.querySelector('span');
-        if (newState) {
-          slider.classList.remove('translate-x-1');
-          slider.classList.add('translate-x-6');
-        } else {
-          slider.classList.remove('translate-x-6');
-          slider.classList.add('translate-x-1');
-        }
-        
-        // Update hidden field
-        if (field) {
-          field.value = newState ? '1' : '0';
-        }
+        button.addEventListener('click', function(e) {
+          e.preventDefault();
+          const isChecked = button.getAttribute('data-checked') === 'true';
+          const newState = !isChecked;
+          
+          // Update button appearance
+          button.setAttribute('data-checked', newState);
+          button.classList.toggle('bg-blue-600');
+          button.classList.toggle('bg-slate-700');
+          
+          // Update slider position
+          const slider = button.querySelector('span');
+          if (newState) {
+            slider.classList.remove('translate-x-1');
+            slider.classList.add('translate-x-6');
+          } else {
+            slider.classList.remove('translate-x-6');
+            slider.classList.add('translate-x-1');
+          }
+          
+          // Update hidden field
+          if (field) {
+            field.value = newState ? '1' : '0';
+          }
+        });
       });
     }
 
