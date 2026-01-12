@@ -22,6 +22,8 @@ class JobsController < ApplicationController
   # GET /jobs/new
   def new
     @job = Current.company.jobs.new
+    @job.status ||= "pending"
+    @job.starts_at ||= next_30_min_block_in_local_tz
     @technicians = Current.company.technicians.where(active: true).order(:name)
   end
 
@@ -33,8 +35,11 @@ class JobsController < ApplicationController
   # POST /jobs
   def create
     @job = Current.company.jobs.new(job_params)
+    apply_status_rule(@job)
     if @job.save
-      redirect_to @job, notice: "Job was created."
+      redirect_target = params[:commit_action] == "save_new" ? new_job_path : @job
+      notice = params[:commit_action] == "save_new" ? "Job created. Create another?" : "Job was created."
+      redirect_to redirect_target, notice: notice
     else
       @technicians = Current.company.technicians.where(active: true).order(:name)
       flash.now[:alert] = @job.errors.full_messages.to_sentence
@@ -44,8 +49,11 @@ class JobsController < ApplicationController
 
   # PATCH/PUT /jobs/:id
   def update
+    apply_status_rule(@job)
     if @job.update(job_params)
-      redirect_to @job, notice: "Job was updated."
+      redirect_target = params[:commit_action] == "save_new" ? new_job_path : @job
+      notice = params[:commit_action] == "save_new" ? "Job updated. Create another?" : "Job was updated."
+      redirect_to redirect_target, notice: notice
     else
       @technicians = Current.company.technicians.where(active: true).order(:name)
       flash.now[:alert] = @job.errors.full_messages.to_sentence
@@ -97,7 +105,24 @@ class JobsController < ApplicationController
       :work_performed,
       :model_number,
       :serial_number,
-      :notes
+      :notes,
+      :appliance_type,
+      :brand
     )
+  end
+
+  def next_30_min_block_in_local_tz
+    now = Time.current.in_time_zone(Current.user.timezone || "UTC")
+    minutes_past = now.min
+    minutes_to_next_block = (30 - (minutes_past % 30)) % 30
+    next_block = minutes_to_next_block.zero? ? now : now + (minutes_to_next_block * 60).seconds
+    next_block.beginning_of_minute
+  end
+
+  def apply_status_rule(job)
+    # If technician is assigned and status is blank or pending, set to in_progress
+    if job.technician_id.present? && (job.status.blank? || job.status == "pending")
+      job.status = "in_progress"
+    end
   end
 end

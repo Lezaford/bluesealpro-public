@@ -16,7 +16,7 @@
     
     <div class="grid md:grid-cols-2 gap-4">
       <div data-controller="customer-search">
-        <label class="block text-sm text-slate-300 mb-1">Customer *</label>
+        <label class="block text-sm font-medium text-slate-100 mb-1">Customer *</label>
         <div class="relative">
           <div class="w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500 px-3 py-2 flex flex-wrap gap-2 items-center min-h-[42px]">
             <input 
@@ -61,25 +61,84 @@
   <div class="space-y-4">
     <h2 class="text-lg font-semibold text-slate-200">Equipment Information</h2>
     
-    <div class="grid md:grid-cols-2 gap-4">
+    <div class="grid md:grid-cols-2 gap-4" data-controller="job-equipment-normalize">
       <div>
         <label class="block text-sm text-slate-300 mb-1">Model Number</label>
-        <%= f.text_field :model_number, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500", placeholder: "e.g. ABC-123" %>
+        <%= f.text_field :model_number, 
+            data: { "job-equipment-normalize-target" => "modelNumber" },
+            class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500", 
+            placeholder: "e.g. ABC-123",
+            "data-action" => "blur->job-equipment-normalize#normalizeModelNumber" %>
       </div>
       <div>
         <label class="block text-sm text-slate-300 mb-1">Serial Number</label>
-        <%= f.text_field :serial_number, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500", placeholder: "e.g. SN-987654" %>
+        <%= f.text_field :serial_number, 
+            data: { "job-equipment-normalize-target" => "serialNumber" },
+            class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500", 
+            placeholder: "e.g. SN-987654",
+            "data-action" => "blur->job-equipment-normalize#normalizeSerialNumber" %>
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">Appliance Type</label>
+        <%= f.select :appliance_type,
+            [ ["Washer", "washer"], ["Dryer", "dryer"], ["Refrigerator", "refrigerator"], 
+              ["Range", "range"], ["Dishwasher", "dishwasher"], ["Microwave", "microwave"], 
+              ["Other", "other"] ],
+            { prompt: "Select type" },
+            class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+      </div>
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">Brand</label>
+        <%= f.select :brand,
+            [ ["Whirlpool", "Whirlpool"], ["GE", "GE"], ["LG", "LG"], ["Samsung", "Samsung"],
+              ["Frigidaire", "Frigidaire"], ["Bosch", "Bosch"], ["KitchenAid", "KitchenAid"],
+              ["Maytag", "Maytag"], ["Amana", "Amana"], ["Electrolux", "Electrolux"],
+              ["Sub-Zero", "Sub-Zero"], ["Other", "Other"] ],
+            { prompt: "Select brand" },
+            class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
       </div>
     </div>
   </div>
 
   <!-- Service Details -->
-  <div class="space-y-4">
+  <div class="space-y-4" data-controller="job-complaint-helpers">
     <h2 class="text-lg font-semibold text-slate-200">Service Details</h2>
     
     <div>
-      <label class="block text-sm text-slate-300 mb-1">Customer Complaint *</label>
-      <%= f.text_area :complaint, rows: 3, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500", placeholder: "Describe the issue reported by the customer" %>
+      <label class="block text-sm font-medium text-slate-100 mb-2">Customer Complaint *</label>
+      
+      <!-- Quick fill buttons -->
+      <div class="flex flex-wrap gap-2 mb-2">
+        <button type="button" 
+                class="px-3 py-1.5 text-sm bg-slate-700 hover:bg-slate-600 rounded text-slate-200"
+                data-action="click->job-complaint-helpers#addComplaint"
+                data-complaint-text="Not cooling">Not cooling</button>
+        <button type="button" 
+                class="px-3 py-1.5 text-sm bg-slate-700 hover:bg-slate-600 rounded text-slate-200"
+                data-action="click->job-complaint-helpers#addComplaint"
+                data-complaint-text="Not draining">Not draining</button>
+        <button type="button" 
+                class="px-3 py-1.5 text-sm bg-slate-700 hover:bg-slate-600 rounded text-slate-200"
+                data-action="click->job-complaint-helpers#addComplaint"
+                data-complaint-text="Won't start">Won't start</button>
+        <button type="button" 
+                class="px-3 py-1.5 text-sm bg-slate-700 hover:bg-slate-600 rounded text-slate-200"
+                data-action="click->job-complaint-helpers#addComplaint"
+                data-complaint-text="Leaking">Leaking</button>
+        <button type="button" 
+                class="px-3 py-1.5 text-sm bg-slate-700 hover:bg-slate-600 rounded text-slate-200"
+                data-action="click->job-complaint-helpers#addComplaint"
+                data-complaint-text="No heat">No heat</button>
+      </div>
+
+      <%= f.text_area :complaint, 
+          data: { "job-complaint-helpers-target" => "complaintTextarea" },
+          rows: 3, 
+          class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500", 
+          placeholder: "Describe the issue reported by the customer" %>
     </div>
 
     <div>
@@ -100,7 +159,12 @@
 
   <div class="flex items-center gap-3 pt-4">
     <%= f.submit (@job.new_record? ? "Create Job" : "Save Changes"),
-        class: "rounded-md bg-blue-600 px-5 py-2.5 text-white hover:bg-blue-700" %>
+        class: "rounded-md bg-blue-600 px-5 py-2.5 text-white hover:bg-blue-700",
+        name: "commit" %>
+    <%= f.submit (@job.new_record? ? "Save & Create Another" : "Save & New"),
+        class: "rounded-md bg-slate-700 px-5 py-2.5 text-white hover:bg-slate-600",
+        name: "commit_action",
+        value: "save_new" %>
     <%= link_to "Cancel", (@job.new_record? ? jobs_path : @job),
         class: "rounded-md border border-slate-600 px-5 py-2.5 hover:bg-slate-800" %>
   </div>

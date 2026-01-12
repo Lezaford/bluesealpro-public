@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_04_220000) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_12_161200) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -98,10 +98,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_04_220000) do
     t.datetime "updated_at", null: false
     t.string "work_number"
     t.string "zip"
+    t.index ["company_id", "email"], name: "index_customers_on_company_id_and_email"
+    t.index ["company_id", "first_name"], name: "index_customers_on_company_id_and_first_name"
+    t.index ["company_id", "last_name"], name: "index_customers_on_company_id_and_last_name"
     t.index ["company_id"], name: "index_customers_on_company_id"
     t.index ["display_name"], name: "index_customers_on_display_name"
     t.index ["email"], name: "index_customers_on_email"
     t.index ["external_id"], name: "index_customers_on_external_id", unique: true
+    t.index ["first_name"], name: "index_customers_on_first_name"
+    t.index ["last_name"], name: "index_customers_on_last_name"
+    t.index ["mobile_number"], name: "index_customers_on_mobile_number"
+    t.index ["phone"], name: "index_customers_on_phone"
   end
 
   create_table "invoices", force: :cascade do |t|
@@ -118,6 +125,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_04_220000) do
   end
 
   create_table "jobs", force: :cascade do |t|
+    t.string "appliance_type"
+    t.string "brand"
     t.bigint "company_id", null: false
     t.text "complaint"
     t.datetime "created_at", null: false
