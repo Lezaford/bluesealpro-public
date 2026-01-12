@@ -18,22 +18,19 @@
       <div>
         <label class="block text-sm text-slate-300 mb-1">Customer *</label>
         <div class="relative">
-          <input type="text" id="customer-search" placeholder="Search customers..." 
-            class="w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500 px-3 py-2"
-            autocomplete="off" />
+          <div id="customer-input-wrapper" class="w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500 px-3 py-2 flex flex-wrap gap-2 items-center min-h-[42px]">
+            <input type="text" id="customer-search" placeholder="Type to search..." 
+              class="flex-1 bg-transparent outline-none text-sm min-w-[150px]"
+              autocomplete="off" />
+          </div>
           <div id="customer-dropdown" class="hidden absolute top-full left-0 right-0 mt-1 bg-slate-800 border border-slate-700 rounded-md shadow-lg z-10 max-h-64 overflow-y-auto">
           </div>
         </div>
         <%= f.hidden_field :customer_id, id: "customer_id_field" %>
-        <p id="selected-customer" class="text-xs text-slate-400 mt-1"></p>
       </div>
       <div>
-        <label class="block text-sm text-slate-300 mb-1">Scheduled Date</label>
-        <%= f.date_field :starts_at, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
-      </div>
-      <div>
-        <label class="block text-sm text-slate-300 mb-1">Scheduled Time</label>
-        <input type="time" id="job_starts_at_time" class="w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" />
+        <label class="block text-sm text-slate-300 mb-1">Scheduled Date & Time</label>
+        <%= f.datetime_local_field :starts_at, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
       </div>
     </div>
 
@@ -90,7 +87,7 @@
     </div>
 
     <div>
-      <label class="block text-sm text-slate-300 mb-1">Internal Notes</label>
+      <label class="block text-sm text-slate-300 mb-1">Internal Notes <span class="text-slate-500 font-normal">(optional)</span></label>
       <%= f.text_area :notes, rows: 3, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500", placeholder: "Internal notes for your team" %>
     </div>
   </div>
@@ -107,11 +104,10 @@
   document.addEventListener('DOMContentLoaded', function() {
     const customers = <%= @customers.map { |c| { id: c.id, name: c.full_name, email: c.email } }.to_json.html_safe %>;
     const searchInput = document.getElementById('customer-search');
+    const inputWrapper = document.getElementById('customer-input-wrapper');
     const dropdown = document.getElementById('customer-dropdown');
     const customerIdField = document.getElementById('customer_id_field');
-    const selectedCustomerDisplay = document.getElementById('selected-customer');
-
-    console.log('Customers loaded:', customers.length, customers);
+    let selectedCustomerId = customerIdField.value;
 
     // Fuzzy search scoring function
     function fuzzyScore(searchStr, targetStr) {
@@ -124,14 +120,12 @@
       
       for (let i = 0; i < target.length && searchIdx < search.length; i++) {
         if (search[searchIdx] === target[i]) {
-          score += 100; // Base points for matching character
+          score += 100;
           
-          // Bonus for consecutive matches
           if (lastMatchIdx === i - 1) {
             score += 50;
           }
           
-          // Bonus for matching at start or after space/punctuation
           if (i === 0 || target[i - 1] === ' ' || target[i - 1] === '-') {
             score += 30;
           }
@@ -141,12 +135,10 @@
         }
       }
       
-      // If not all search characters were found, return 0
       if (searchIdx !== search.length) {
         return 0;
       }
       
-      // Penalty for match length difference (shorter matches score higher)
       score -= (target.length - search.length);
       
       return score;
@@ -170,108 +162,93 @@
       return result;
     }
 
-    // Initialize with selected customer if editing
-    if (customerIdField.value) {
-      const selected = customers.find(c => c.id == customerIdField.value);
+    // Update selected customer display
+    function updateSelectedCustomerDisplay() {
+      const selected = customers.find(c => c.id == selectedCustomerId);
       if (selected) {
-        searchInput.value = selected.name;
-        selectedCustomerDisplay.textContent = `✓ ${selected.name} (${selected.email})`;
+        searchInput.value = '';
+        // Remove any existing customer chips
+        inputWrapper.querySelectorAll('.customer-chip').forEach(chip => chip.remove());
+        
+        const chip = document.createElement('div');
+        chip.className = 'customer-chip bg-blue-600/30 border border-blue-500 text-blue-200 px-3 py-1 rounded flex items-center gap-2 text-sm';
+        chip.innerHTML = `
+          <span>${selected.name}</span>
+          <button type="button" class="remove-customer text-blue-300 hover:text-blue-100 font-bold">×</button>
+        `;
+        inputWrapper.insertBefore(chip, searchInput);
+        
+        chip.querySelector('.remove-customer').addEventListener('click', function(e) {
+          e.preventDefault();
+          clearSelectedCustomer();
+        });
       }
     }
 
-    // Handle date/time fields
-    const startsAtField = document.getElementById('job_starts_at');
-    const timeField = document.getElementById('job_starts_at_time');
-    
-    // Populate time field from existing datetime
-    if (startsAtField.value) {
-      const dt = new Date(startsAtField.value);
-      const hours = String(dt.getHours()).padStart(2, '0');
-      const minutes = String(dt.getMinutes()).padStart(2, '0');
-      timeField.value = `${hours}:${minutes}`;
+    function clearSelectedCustomer() {
+      selectedCustomerId = null;
+      customerIdField.value = '';
+      inputWrapper.querySelectorAll('.customer-chip').forEach(chip => chip.remove());
+      searchInput.value = '';
+      searchInput.focus();
     }
-    
-    // Update starts_at when time changes
-    timeField.addEventListener('change', function() {
-      if (startsAtField.value && timeField.value) {
-        const [hours, minutes] = timeField.value.split(':');
-        const date = new Date(startsAtField.value);
-        date.setHours(parseInt(hours), parseInt(minutes), 0);
-        startsAtField.value = date.toISOString().slice(0, 16);
-      }
-    });
-    
-    // Update time field when date changes
-    startsAtField.addEventListener('change', function() {
-      if (startsAtField.value && !timeField.value) {
-        timeField.value = '09:00'; // Default to 9 AM
-      }
-    });
+
+    // Initialize with selected customer if editing
+    if (customerIdField.value) {
+      selectedCustomerId = customerIdField.value;
+      updateSelectedCustomerDisplay();
+    }
 
     // Show dropdown on focus
     searchInput.addEventListener('focus', function() {
-      if (searchInput.value.length === 0) {
-        // Show all customers when focused
-        dropdown.innerHTML = customers.slice(0, 10).map(customer => {
-          return `
-            <button type="button" class="w-full text-left px-3 py-2 hover:bg-slate-700 transition customer-option" data-id="${customer.id}" data-name="${customer.name}" data-email="${customer.email}">
-              <div class="font-medium text-slate-100">${customer.name}</div>
-              <div class="text-xs text-slate-400">${customer.email}</div>
-            </button>
-          `;
-        }).join('');
-        
-        // Add click handlers
-        document.querySelectorAll('.customer-option').forEach(option => {
-          option.addEventListener('click', function(e) {
-            e.preventDefault();
-            selectCustomer(this.dataset.id, this.dataset.name, this.dataset.email);
-          });
-        });
+      if (searchInput.value.length === 0 && !selectedCustomerId) {
+        showTopCustomers();
       }
       dropdown.classList.remove('hidden');
     });
 
+    function showTopCustomers() {
+      dropdown.innerHTML = customers.slice(0, 8).map(customer => {
+        return `
+          <button type="button" class="w-full text-left px-3 py-2 hover:bg-slate-700 transition customer-option" data-id="${customer.id}" data-name="${customer.name}" data-email="${customer.email}">
+            <div class="font-medium text-slate-100">${customer.name}</div>
+            <div class="text-xs text-slate-400">${customer.email}</div>
+          </button>
+        `;
+      }).join('');
+      
+      attachOptionHandlers();
+    }
+
+    function attachOptionHandlers() {
+      document.querySelectorAll('.customer-option').forEach(option => {
+        option.addEventListener('click', function(e) {
+          e.preventDefault();
+          selectedCustomerId = this.dataset.id;
+          customerIdField.value = this.dataset.id;
+          updateSelectedCustomerDisplay();
+          dropdown.classList.add('hidden');
+        });
+      });
+    }
+
     // Search functionality
     searchInput.addEventListener('input', function(e) {
       const query = e.target.value.trim();
-      console.log('Searching for:', query);
       
       if (query.length === 0) {
-        // Show all customers when search is empty
-        dropdown.innerHTML = customers.slice(0, 10).map(customer => {
-          return `
-            <button type="button" class="w-full text-left px-3 py-2 hover:bg-slate-700 transition customer-option" data-id="${customer.id}" data-name="${customer.name}" data-email="${customer.email}">
-              <div class="font-medium text-slate-100">${customer.name}</div>
-              <div class="text-xs text-slate-400">${customer.email}</div>
-            </button>
-          `;
-        }).join('');
-        dropdown.classList.remove('hidden');
-        
-        // Add click handlers
-        document.querySelectorAll('.customer-option').forEach(option => {
-          option.addEventListener('click', function(e) {
-            e.preventDefault();
-            selectCustomer(this.dataset.id, this.dataset.name, this.dataset.email);
-          });
-        });
+        showTopCustomers();
         return;
       }
 
-      // Score and filter customers
       const scored = customers
         .map(customer => ({
           ...customer,
-          nameScore: fuzzyScore(query, customer.name),
-          emailScore: fuzzyScore(query, customer.email),
           score: Math.max(fuzzyScore(query, customer.name), fuzzyScore(query, customer.email))
         }))
         .filter(customer => customer.score > 0)
         .sort((a, b) => b.score - a.score)
-        .slice(0, 10); // Limit to top 10 results
-
-      console.log('Scored results:', scored);
+        .slice(0, 8);
 
       if (scored.length === 0) {
         dropdown.innerHTML = '<div class="px-3 py-2 text-slate-400 text-sm">No customers found</div>';
@@ -279,9 +256,7 @@
         return;
       }
 
-      // Build dropdown options with highlighting
       dropdown.innerHTML = scored.map(customer => {
-        // Highlight matched characters in name
         const highlightedName = highlightMatches(customer.name, query);
         const highlightedEmail = highlightMatches(customer.email, query);
         
@@ -294,26 +269,12 @@
       }).join('');
 
       dropdown.classList.remove('hidden');
-
-      // Add click handlers
-      document.querySelectorAll('.customer-option').forEach(option => {
-        option.addEventListener('click', function(e) {
-          e.preventDefault();
-          selectCustomer(this.dataset.id, this.dataset.name, this.dataset.email);
-        });
-      });
+      attachOptionHandlers();
     });
-
-    function selectCustomer(id, name, email) {
-      searchInput.value = name;
-      customerIdField.value = id;
-      selectedCustomerDisplay.textContent = `✓ ${name} (${email})`;
-      dropdown.classList.add('hidden');
-    }
 
     // Close dropdown when clicking outside
     document.addEventListener('click', function(e) {
-      if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+      if (!searchInput.contains(e.target) && !dropdown.contains(e.target) && !inputWrapper.contains(e.target)) {
         dropdown.classList.add('hidden');
       }
     });
