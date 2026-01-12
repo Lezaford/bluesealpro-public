@@ -27,18 +27,18 @@ class AddCustomerSearchIndexes < ActiveRecord::Migration[7.1]
     end
 
     # Compound index for tenant-scoped first_name searches
-    unless index_exists?(:customers, [:company_id, :first_name])
-      add_index :customers, [:company_id, :first_name], name: "index_customers_on_company_id_and_first_name"
+    unless index_exists?(:customers, [ :company_id, :first_name ])
+      add_index :customers, [ :company_id, :first_name ], name: "index_customers_on_company_id_and_first_name"
     end
 
     # Compound index for tenant-scoped last_name searches
-    unless index_exists?(:customers, [:company_id, :last_name])
-      add_index :customers, [:company_id, :last_name], name: "index_customers_on_company_id_and_last_name"
+    unless index_exists?(:customers, [ :company_id, :last_name ])
+      add_index :customers, [ :company_id, :last_name ], name: "index_customers_on_company_id_and_last_name"
     end
 
     # Compound index for tenant-scoped email searches (if not exists)
-    unless index_exists?(:customers, [:company_id, :email])
-      add_index :customers, [:company_id, :email], name: "index_customers_on_company_id_and_email"
+    unless index_exists?(:customers, [ :company_id, :email ])
+      add_index :customers, [ :company_id, :email ], name: "index_customers_on_company_id_and_email"
     end
   end
 end

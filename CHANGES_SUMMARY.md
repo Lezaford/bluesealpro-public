@@ -10,21 +10,21 @@ The job form customer search has been successfully refactored from a client-side
 
 ## What Was Changed
 
-### 🔴 Removed
+###  Removed
 - Embedded `@customers` JSON array in job form view
 - ~280 lines of custom JavaScript search logic from _form.html.erb
 - `@customers` instance variable from JobsController (new, edit, create, update)
 - Client-side fuzzy scoring algorithm
 - Manual event listener management
 
-### 🟢 Added
+###  Added
 - `GET /customers/search?q=...` API endpoint
 - `GET /customers/:id.json` JSON response support
 - Stimulus controller: `app/javascript/controllers/customer_search_controller.js`
 - Database migration: `db/migrate/20260112160700_add_customer_search_indexes.rb`
 - Comprehensive documentation (4 guides)
 
-### 🔵 Modified
+###  Modified
 - `config/routes.rb` - Added search route
 - `app/controllers/customers_controller.rb` - Added search & JSON show actions
 - `app/controllers/jobs_controller.rb` - Removed @customers loading
@@ -338,7 +338,7 @@ rails db:migrate:down VERSION=20260112160700
 
 ---
 
-**Implementation Status**: ✅ **COMPLETE**
+**Implementation Status**:  **COMPLETE**
 
 All acceptance criteria met. Code is production-ready.
 

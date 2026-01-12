@@ -87,12 +87,12 @@ Added indexes for performance:
 
 ## Benefits
 
-✅ **Scalability**: Works with 10k+ customers without loading them into the page
-✅ **Performance**: Server-side filtering with indexed queries + debounced requests
-✅ **Security**: Multi-tenant scoped, HTML escaping, no embedded secrets
-✅ **Maintainability**: Stimulus controller in dedicated file, clean separation of concerns
-✅ **UX**: Real-time results, highlighting, chip-based selection, keyboard navigation
-✅ **Mobile-friendly**: Native datetime input for scheduling
+ **Scalability**: Works with 10k+ customers without loading them into the page
+ **Performance**: Server-side filtering with indexed queries + debounced requests
+ **Security**: Multi-tenant scoped, HTML escaping, no embedded secrets
+ **Maintainability**: Stimulus controller in dedicated file, clean separation of concerns
+ **UX**: Real-time results, highlighting, chip-based selection, keyboard navigation
+ **Mobile-friendly**: Native datetime input for scheduling
 
 ## Usage
 
