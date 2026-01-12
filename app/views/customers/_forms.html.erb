@@ -45,14 +45,45 @@
       </div>
     </div>
 
+    <!-- Customer Type Toggle: Homeowner vs Business -->
+    <div class="flex items-center justify-between rounded-lg bg-slate-800/50 border border-slate-700 p-4">
+      <div>
+        <label class="block text-sm font-semibold text-slate-200">Customer Type</label>
+        <p class="text-xs text-slate-400 mt-1">Choose between Homeowner and Business</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="text-sm <%= @customer.customer_is_contractor? ? 'text-slate-400' : 'font-semibold text-slate-200' %>">
+          Homeowner
+        </span>
+        <button type="button" id="customer-type-toggle" class="relative inline-flex h-8 w-14 items-center rounded-full bg-slate-700 transition cursor-pointer <%= @customer.customer_is_contractor? ? 'bg-blue-600' : 'bg-slate-700' %>" data-checked="<%= @customer.customer_is_contractor? %>">
+          <span class="inline-block h-6 w-6 transform rounded-full bg-white transition <%= @customer.customer_is_contractor? ? 'translate-x-7' : 'translate-x-1' %>"></span>
+        </button>
+        <span class="text-sm <%= @customer.customer_is_contractor? ? 'font-semibold text-slate-200' : 'text-slate-400' %>">
+          Business
+        </span>
+        <%= f.hidden_field :customer_is_contractor, id: "customer_is_contractor_field" %>
+      </div>
+    </div>
+
     <div class="grid md:grid-cols-2 gap-4">
       <div>
         <label class="block text-sm text-slate-300 mb-1">Company Name</label>
         <%= f.text_field :company_name, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
       </div>
       <div>
-        <label class="block text-sm text-slate-300 mb-1">Customer Type</label>
-        <%= f.text_field :customer_type, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500", placeholder: "e.g. Residential, Commercial" %>
+        <label class="block text-sm text-slate-300 mb-1">Role</label>
+        <%= f.text_field :role, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500", placeholder: "e.g. Manager, Owner" %>
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">Work Number</label>
+        <%= f.telephone_field :work_number, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+      </div>
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">Customer Type (Reference)</label>
+        <%= f.text_field :customer_type, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500", placeholder: "e.g. VIP, Regular, New" %>
       </div>
     </div>
   </div>
@@ -90,7 +121,165 @@
       <label class="block text-sm text-slate-300 mb-1">Address Notes</label>
       <%= f.text_area :address_1_notes, rows: 2, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
     </div>
+
+    <!-- Address 1 Billing Toggle -->
+    <div class="flex items-center justify-between rounded-lg bg-slate-800/50 border border-slate-700 p-3">
+      <div>
+        <label class="text-sm font-medium text-slate-200">Use for Billing</label>
+        <p class="text-xs text-slate-400 mt-1">Send invoices to this address</p>
+      </div>
+      <button type="button" class="address-1-billing-toggle relative inline-flex h-7 w-12 items-center rounded-full transition cursor-pointer <%= @customer.address_1_billing? ? 'bg-blue-600' : 'bg-slate-700' %>" data-checked="<%= @customer.address_1_billing? %>">
+        <span class="inline-block h-5 w-5 transform rounded-full bg-white transition <%= @customer.address_1_billing? ? 'translate-x-6' : 'translate-x-1' %>"></span>
+      </button>
+      <%= f.hidden_field :address_1_billing, id: "address_1_billing_field" %>
+    </div>
   </div>
+
+  <!-- Secondary Addresses (Optional) -->
+  <details class="group">
+    <summary class="cursor-pointer flex items-center gap-2 py-3 text-lg font-semibold text-slate-200 hover:text-slate-100">
+      <span class="inline-block transition group-open:rotate-90">▶</span>
+      Additional Addresses
+    </summary>
+    
+    <!-- Address 2 -->
+    <div class="mt-4 space-y-4 border-t border-slate-700 pt-4">
+      <h3 class="text-md font-semibold text-slate-200">Secondary Address (Optional)</h3>
+      
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">Street Line 1</label>
+        <%= f.text_field :address_2_street_line_1, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+      </div>
+
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">Street Line 2</label>
+        <%= f.text_field :address_2_street_line_2, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-4">
+        <div>
+          <label class="block text-sm text-slate-300 mb-1">City</label>
+          <%= f.text_field :address_2_city, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+        </div>
+        <div>
+          <label class="block text-sm text-slate-300 mb-1">State</label>
+          <%= f.text_field :address_2_state, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+        </div>
+        <div>
+          <label class="block text-sm text-slate-300 mb-1">Postal Code</label>
+          <%= f.text_field :address_2_postal_code, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">Address Notes</label>
+        <%= f.text_area :address_2_notes, rows: 2, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+      </div>
+
+      <!-- Address 2 Billing Toggle -->
+      <div class="flex items-center justify-between rounded-lg bg-slate-800/50 border border-slate-700 p-3">
+        <div>
+          <label class="text-sm font-medium text-slate-200">Use for Billing</label>
+        </div>
+        <button type="button" class="address-2-billing-toggle relative inline-flex h-7 w-12 items-center rounded-full transition cursor-pointer <%= @customer.address_2_billing? ? 'bg-blue-600' : 'bg-slate-700' %>" data-checked="<%= @customer.address_2_billing? %>">
+          <span class="inline-block h-5 w-5 transform rounded-full bg-white transition <%= @customer.address_2_billing? ? 'translate-x-6' : 'translate-x-1' %>"></span>
+        </button>
+        <%= f.hidden_field :address_2_billing, id: "address_2_billing_field" %>
+      </div>
+    </div>
+
+    <!-- Address 3 -->
+    <div class="mt-6 space-y-4 border-t border-slate-700 pt-4">
+      <h3 class="text-md font-semibold text-slate-200">Tertiary Address (Optional)</h3>
+      
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">Street Line 1</label>
+        <%= f.text_field :address_3_street_line_1, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+      </div>
+
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">Street Line 2</label>
+        <%= f.text_field :address_3_street_line_2, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-4">
+        <div>
+          <label class="block text-sm text-slate-300 mb-1">City</label>
+          <%= f.text_field :address_3_city, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+        </div>
+        <div>
+          <label class="block text-sm text-slate-300 mb-1">State</label>
+          <%= f.text_field :address_3_state, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+        </div>
+        <div>
+          <label class="block text-sm text-slate-300 mb-1">Postal Code</label>
+          <%= f.text_field :address_3_postal_code, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">Address Notes</label>
+        <%= f.text_area :address_3_notes, rows: 2, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+      </div>
+
+      <!-- Address 3 Billing Toggle -->
+      <div class="flex items-center justify-between rounded-lg bg-slate-800/50 border border-slate-700 p-3">
+        <div>
+          <label class="text-sm font-medium text-slate-200">Use for Billing</label>
+        </div>
+        <button type="button" class="address-3-billing-toggle relative inline-flex h-7 w-12 items-center rounded-full transition cursor-pointer <%= @customer.address_3_billing? ? 'bg-blue-600' : 'bg-slate-700' %>" data-checked="<%= @customer.address_3_billing? %>">
+          <span class="inline-block h-5 w-5 transform rounded-full bg-white transition <%= @customer.address_3_billing? ? 'translate-x-6' : 'translate-x-1' %>"></span>
+        </button>
+        <%= f.hidden_field :address_3_billing, id: "address_3_billing_field" %>
+      </div>
+    </div>
+
+    <!-- Address 4 -->
+    <div class="mt-6 space-y-4 border-t border-slate-700 pt-4">
+      <h3 class="text-md font-semibold text-slate-200">Quaternary Address (Optional)</h3>
+      
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">Street Line 1</label>
+        <%= f.text_field :address_4_street_line_1, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+      </div>
+
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">Street Line 2</label>
+        <%= f.text_field :address_4_street_line_2, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-4">
+        <div>
+          <label class="block text-sm text-slate-300 mb-1">City</label>
+          <%= f.text_field :address_4_city, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+        </div>
+        <div>
+          <label class="block text-sm text-slate-300 mb-1">State</label>
+          <%= f.text_field :address_4_state, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+        </div>
+        <div>
+          <label class="block text-sm text-slate-300 mb-1">Postal Code</label>
+          <%= f.text_field :address_4_postal_code, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">Address Notes</label>
+        <%= f.text_area :address_4_notes, rows: 2, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+      </div>
+
+      <!-- Address 4 Billing Toggle -->
+      <div class="flex items-center justify-between rounded-lg bg-slate-800/50 border border-slate-700 p-3">
+        <div>
+          <label class="text-sm font-medium text-slate-200">Use for Billing</label>
+        </div>
+        <button type="button" class="address-4-billing-toggle relative inline-flex h-7 w-12 items-center rounded-full transition cursor-pointer <%= @customer.address_4_billing? ? 'bg-blue-600' : 'bg-slate-700' %>" data-checked="<%= @customer.address_4_billing? %>">
+          <span class="inline-block h-5 w-5 transform rounded-full bg-white transition <%= @customer.address_4_billing? ? 'translate-x-6' : 'translate-x-1' %>"></span>
+        </button>
+        <%= f.hidden_field :address_4_billing, id: "address_4_billing_field" %>
+      </div>
+    </div>
+  </details>
 
   <!-- Additional Information -->
   <div class="space-y-4">
@@ -98,12 +287,12 @@
     
     <div class="grid md:grid-cols-2 gap-4">
       <div>
-        <label class="block text-sm text-slate-300 mb-1">Work Number</label>
-        <%= f.telephone_field :work_number, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
-      </div>
-      <div>
         <label class="block text-sm text-slate-300 mb-1">Lead Source</label>
         <%= f.text_field :lead_source, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500", placeholder: "e.g. Google, Referral, Facebook" %>
+      </div>
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">Additional Emails</label>
+        <%= f.text_field :additional_emails, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500", placeholder: "Comma-separated" %>
       </div>
     </div>
 
@@ -123,18 +312,21 @@
       <%= f.text_area :notes, rows: 4, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
     </div>
 
-    <div class="flex items-center gap-2">
-      <label class="flex items-center gap-2 text-sm text-slate-300">
-        <%= f.check_box :customer_notifications_enabled, class: "rounded" %>
-        Enable customer notifications
-      </label>
-    </div>
-
-    <div class="flex items-center gap-2">
-      <label class="flex items-center gap-2 text-sm text-slate-300">
-        <%= f.check_box :customer_is_contractor, class: "rounded" %>
-        Is contractor
-      </label>
+    <!-- Customer Preferences Toggles -->
+    <div class="space-y-3">
+      <h3 class="text-sm font-semibold text-slate-200">Customer Preferences</h3>
+      
+      <!-- Enable Notifications Toggle -->
+      <div class="flex items-center justify-between rounded-lg bg-slate-800/50 border border-slate-700 p-3">
+        <div>
+          <label class="text-sm font-medium text-slate-200">Customer Notifications</label>
+          <p class="text-xs text-slate-400 mt-1">Receive service updates and notifications</p>
+        </div>
+        <button type="button" class="notifications-toggle relative inline-flex h-7 w-12 items-center rounded-full transition cursor-pointer <%= @customer.customer_notifications_enabled? ? 'bg-blue-600' : 'bg-slate-700' %>" data-checked="<%= @customer.customer_notifications_enabled? %>">
+          <span class="inline-block h-5 w-5 transform rounded-full bg-white transition <%= @customer.customer_notifications_enabled? ? 'translate-x-6' : 'translate-x-1' %>"></span>
+        </button>
+        <%= f.hidden_field :customer_notifications_enabled, id: "customer_notifications_enabled_field" %>
+      </div>
     </div>
   </div>
 
@@ -145,3 +337,53 @@
         class: "rounded-md border border-slate-600 px-5 py-2.5 hover:bg-slate-800" %>
   </div>
 <% end %>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Helper function to initialize toggles
+    function initToggle(selector, fieldSelector) {
+      const button = document.querySelector(selector);
+      if (!button) return;
+      
+      const field = document.querySelector(fieldSelector);
+      
+      button.addEventListener('click', function(e) {
+        e.preventDefault();
+        const isChecked = button.getAttribute('data-checked') === 'true';
+        const newState = !isChecked;
+        
+        // Update button appearance
+        button.setAttribute('data-checked', newState);
+        button.classList.toggle('bg-blue-600');
+        button.classList.toggle('bg-slate-700');
+        
+        // Update slider position
+        const slider = button.querySelector('span');
+        if (newState) {
+          slider.classList.remove('translate-x-1');
+          slider.classList.add('translate-x-6');
+        } else {
+          slider.classList.remove('translate-x-6');
+          slider.classList.add('translate-x-1');
+        }
+        
+        // Update hidden field
+        if (field) {
+          field.value = newState ? '1' : '0';
+        }
+      });
+    }
+
+    // Initialize customer type toggle (Homeowner/Business)
+    initToggle('#customer-type-toggle', '#customer_is_contractor_field');
+
+    // Initialize notifications toggle
+    initToggle('.notifications-toggle', '#customer_notifications_enabled_field');
+
+    // Initialize address toggles
+    initToggle('.address-1-billing-toggle', '#address_1_billing_field');
+    initToggle('.address-2-billing-toggle', '#address_2_billing_field');
+    initToggle('.address-3-billing-toggle', '#address_3_billing_field');
+    initToggle('.address-4-billing-toggle', '#address_4_billing_field');
+  });
+</script>
