@@ -1,0 +1,95 @@
+<%= form_with model: @job, local: true, class: "space-y-6" do |f| %>
+  <% if @job.errors.any? %>
+    <div class="rounded-md border border-red-500/30 bg-red-50/5 px-4 py-3 text-red-300">
+      <p class="font-semibold mb-1"><%= pluralize(@job.errors.count, "error") %> prevented saving:</p>
+      <ul class="list-disc pl-5">
+        <% @job.errors.full_messages.each do |m| %>
+          <li><%= m %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <!-- Customer & Scheduling -->
+  <div class="space-y-4">
+    <h2 class="text-lg font-semibold text-slate-200">Customer & Scheduling</h2>
+    
+    <div class="grid md:grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">Customer *</label>
+        <%= f.collection_select :customer_id, @customers, :id, 
+            ->(customer) { "#{customer.full_name} - #{customer.email}" },
+            { prompt: "Select a customer" },
+            class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+      </div>
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">Scheduled Start</label>
+        <%= f.datetime_local_field :starts_at, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">Technician</label>
+        <%= f.collection_select :technician_id, @technicians, :id, :name,
+            { prompt: "Unassigned" },
+            class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+      </div>
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">Status</label>
+        <%= f.select :status, 
+            [ ["Pending", "pending"], ["In Progress", "in_progress"], ["Completed", "completed"], ["Cancelled", "cancelled"] ],
+            { prompt: "Select status" },
+            class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Equipment Information -->
+  <div class="space-y-4">
+    <h2 class="text-lg font-semibold text-slate-200">Equipment Information</h2>
+    
+    <div class="grid md:grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">Model Number</label>
+        <%= f.text_field :model_number, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500", placeholder: "e.g. ABC-123" %>
+      </div>
+      <div>
+        <label class="block text-sm text-slate-300 mb-1">Serial Number</label>
+        <%= f.text_field :serial_number, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500", placeholder: "e.g. SN-987654" %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Service Details -->
+  <div class="space-y-4">
+    <h2 class="text-lg font-semibold text-slate-200">Service Details</h2>
+    
+    <div>
+      <label class="block text-sm text-slate-300 mb-1">Customer Complaint *</label>
+      <%= f.text_area :complaint, rows: 3, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500", placeholder: "Describe the issue reported by the customer" %>
+    </div>
+
+    <div>
+      <label class="block text-sm text-slate-300 mb-1">Diagnosis</label>
+      <%= f.text_area :diagnosis, rows: 3, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500", placeholder: "What was found during inspection?" %>
+    </div>
+
+    <div>
+      <label class="block text-sm text-slate-300 mb-1">Work Performed</label>
+      <%= f.text_area :work_performed, rows: 3, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500", placeholder: "Describe the work completed" %>
+    </div>
+
+    <div>
+      <label class="block text-sm text-slate-300 mb-1">Internal Notes *</label>
+      <%= f.text_area :notes, rows: 3, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500", placeholder: "Internal notes for your team" %>
+    </div>
+  </div>
+
+  <div class="flex items-center gap-3 pt-4">
+    <%= f.submit (@job.new_record? ? "Create Job" : "Save Changes"),
+        class: "rounded-md bg-blue-600 px-5 py-2.5 text-white hover:bg-blue-700" %>
+    <%= link_to "Cancel", (@job.new_record? ? jobs_path : @job),
+        class: "rounded-md border border-slate-600 px-5 py-2.5 hover:bg-slate-800" %>
+  </div>
+<% end %>

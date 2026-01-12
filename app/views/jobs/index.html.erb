@@ -1,0 +1,87 @@
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
+    <h1 class="text-3xl font-extrabold">Jobs</h1>
+    <%= link_to "New Job", new_job_path, class: "rounded-md bg-blue-600 px-5 py-2.5 text-white hover:bg-blue-700" %>
+  </div>
+
+  <!-- Search and Filter -->
+  <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
+    <%= form_with url: jobs_path, method: :get, local: true, class: "space-y-4" do |f| %>
+      <div class="grid md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm text-slate-300 mb-2">Search</label>
+          <%= f.text_field :q, placeholder: "Customer name, model, serial...", value: @query,
+              class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+        </div>
+        <div>
+          <label class="block text-sm text-slate-300 mb-2">Status</label>
+          <%= f.select :status, [""] + @statuses, { selected: @status },
+              class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+        </div>
+      </div>
+      <div class="flex gap-2">
+        <%= f.submit "Search", class: "rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700" %>
+        <%= link_to "Clear", jobs_path, class: "rounded-md border border-slate-600 px-4 py-2 hover:bg-slate-800" %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Jobs List -->
+  <div class="rounded-2xl border border-slate-800 bg-slate-900 overflow-hidden">
+    <% if @jobs.any? %>
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead class="border-b border-slate-700 bg-slate-800">
+            <tr>
+              <th class="px-6 py-3 text-left text-sm font-semibold text-slate-200">Customer</th>
+              <th class="px-6 py-3 text-left text-sm font-semibold text-slate-200">Status</th>
+              <th class="px-6 py-3 text-left text-sm font-semibold text-slate-200">Scheduled</th>
+              <th class="px-6 py-3 text-left text-sm font-semibold text-slate-200">Technician</th>
+              <th class="px-6 py-3 text-left text-sm font-semibold text-slate-200">Model</th>
+              <th class="px-6 py-3 text-right text-sm font-semibold text-slate-200">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @jobs.each do |job| %>
+              <tr class="border-b border-slate-700 hover:bg-slate-800/50">
+                <td class="px-6 py-3 text-sm text-slate-300">
+                  <%= link_to job.customer.full_name, job_path(job), class: "text-blue-400 hover:underline" %>
+                </td>
+                <td class="px-6 py-3 text-sm">
+                  <span class="inline-flex rounded-full px-2 py-1 text-xs font-semibold <%= 
+                    case job.status
+                    when 'completed' then 'bg-green-500/20 text-green-300'
+                    when 'in_progress' then 'bg-yellow-500/20 text-yellow-300'
+                    when 'cancelled' then 'bg-red-500/20 text-red-300'
+                    else 'bg-slate-500/20 text-slate-300'
+                    end
+                  %>">
+                    <%= job.status %>
+                  </span>
+                </td>
+                <td class="px-6 py-3 text-sm text-slate-400">
+                  <%= job.starts_at&.strftime('%b %d, %Y') %>
+                </td>
+                <td class="px-6 py-3 text-sm text-slate-300">
+                  <%= job.technician&.name || '-' %>
+                </td>
+                <td class="px-6 py-3 text-sm text-slate-300">
+                  <%= job.model_number || '-' %>
+                </td>
+                <td class="px-6 py-3 text-right text-sm space-x-2">
+                  <%= link_to "View", job_path(job), class: "text-blue-400 hover:underline" %>
+                  <%= link_to "Edit", edit_job_path(job), class: "text-blue-400 hover:underline" %>
+                  <%= link_to "Delete", job_path(job), method: :delete, data: { confirm: "Are you sure?" }, class: "text-red-400 hover:underline" %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="px-6 py-12 text-center text-slate-400">
+        <p>No jobs found.</p>
+      </div>
+    <% end %>
+  </div>
+</div>
