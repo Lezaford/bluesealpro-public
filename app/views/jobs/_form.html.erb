@@ -17,10 +17,15 @@
     <div class="grid md:grid-cols-2 gap-4">
       <div>
         <label class="block text-sm text-slate-300 mb-1">Customer *</label>
-        <%= f.collection_select :customer_id, @customers, :id, 
-            ->(customer) { "#{customer.full_name} - #{customer.email}" },
-            { prompt: "Select a customer" },
-            class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+        <div class="relative">
+          <input type="text" id="customer-search" placeholder="Search customers..." 
+            class="w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500 px-3 py-2"
+            autocomplete="off" />
+          <div id="customer-dropdown" class="hidden absolute top-full left-0 right-0 mt-1 bg-slate-800 border border-slate-700 rounded-md shadow-lg z-10 max-h-64 overflow-y-auto">
+          </div>
+        </div>
+        <%= f.hidden_field :customer_id, id: "customer_id_field" %>
+        <p id="selected-customer" class="text-xs text-slate-400 mt-1"></p>
       </div>
       <div>
         <label class="block text-sm text-slate-300 mb-1">Scheduled Start</label>
@@ -93,3 +98,83 @@
         class: "rounded-md border border-slate-600 px-5 py-2.5 hover:bg-slate-800" %>
   </div>
 <% end %>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const customers = <%= @customers.map { |c| { id: c.id, name: c.full_name, email: c.email } }.to_json.html_safe %>;
+    const searchInput = document.getElementById('customer-search');
+    const dropdown = document.getElementById('customer-dropdown');
+    const customerIdField = document.getElementById('customer_id_field');
+    const selectedCustomerDisplay = document.getElementById('selected-customer');
+
+    // Initialize with selected customer if editing
+    if (customerIdField.value) {
+      const selected = customers.find(c => c.id == customerIdField.value);
+      if (selected) {
+        searchInput.value = selected.name;
+        selectedCustomerDisplay.textContent = `✓ ${selected.name} (${selected.email})`;
+      }
+    }
+
+    // Search functionality
+    searchInput.addEventListener('input', function(e) {
+      const query = e.target.value.toLowerCase().trim();
+      
+      if (query.length === 0) {
+        dropdown.classList.add('hidden');
+        return;
+      }
+
+      // Filter customers
+      const filtered = customers.filter(customer => 
+        customer.name.toLowerCase().includes(query) || 
+        customer.email.toLowerCase().includes(query)
+      );
+
+      if (filtered.length === 0) {
+        dropdown.innerHTML = '<div class="px-3 py-2 text-slate-400 text-sm">No customers found</div>';
+        dropdown.classList.remove('hidden');
+        return;
+      }
+
+      // Build dropdown options
+      dropdown.innerHTML = filtered.map(customer => `
+        <button type="button" class="w-full text-left px-3 py-2 hover:bg-slate-700 transition customer-option" data-id="${customer.id}" data-name="${customer.name}" data-email="${customer.email}">
+          <div class="font-medium text-slate-100">${customer.name}</div>
+          <div class="text-xs text-slate-400">${customer.email}</div>
+        </button>
+      `).join('');
+
+      dropdown.classList.remove('hidden');
+
+      // Add click handlers
+      document.querySelectorAll('.customer-option').forEach(option => {
+        option.addEventListener('click', function(e) {
+          e.preventDefault();
+          selectCustomer(this.dataset.id, this.dataset.name, this.dataset.email);
+        });
+      });
+    });
+
+    function selectCustomer(id, name, email) {
+      searchInput.value = name;
+      customerIdField.value = id;
+      selectedCustomerDisplay.textContent = `✓ ${name} (${email})`;
+      dropdown.classList.add('hidden');
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+        dropdown.classList.add('hidden');
+      }
+    });
+
+    // Handle keyboard navigation
+    searchInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        dropdown.classList.add('hidden');
+      }
+    });
+  });
+</script>
