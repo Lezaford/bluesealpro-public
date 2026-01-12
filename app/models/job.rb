@@ -6,7 +6,7 @@ class Job < ApplicationRecord
   has_many :line_items, through: :invoice
 
   validates :customer_id, presence: true
-  validates :notes, presence: true
+  validates :complaint, presence: true
 
   scope :by_technician, ->(technician) { where(technician: technician) }
   scope :on_date, ->(date) { where("DATE(starts_at) = ?", date) }
