@@ -16,6 +16,7 @@ Rails.application.routes.draw do
   # -------------------------------
   authenticate :user do
     get "/dashboard", to: "dashboard#show", as: :dashboard
+    get "/schedule", to: "schedule#index", as: :schedule
 
     resources :customers do
       collection do
@@ -28,6 +29,9 @@ Rails.application.routes.draw do
     resources :technicians
 
     resources :jobs do
+      member do
+        patch :reschedule
+      end
       resource :invoice, only: [ :show, :new, :create ]
     end
 

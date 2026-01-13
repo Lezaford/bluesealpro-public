@@ -90,10 +90,44 @@ class JobsController < ApplicationController
     redirect_to jobs_path, notice: "Job was deleted."
   end
 
+  # PATCH /jobs/:id/reschedule
+  def reschedule
+    @job = Current.company.jobs.find(params[:id])
+    authorize_dispatch!
+
+    # Validate customer belongs to current company
+    if reschedule_params[:technician_id].present?
+      unless Current.company.technicians.exists?(reschedule_params[:technician_id])
+        return render json: { ok: false, errors: { technician: "must belong to your company" } }, status: :unprocessable_entity
+      end
+    end
+
+    if @job.update(reschedule_params)
+      render json: {
+        ok: true,
+        job: {
+          id: @job.id,
+          technician_id: @job.technician_id,
+          starts_at: @job.starts_at,
+          customer_name: @job.customer&.full_name,
+          notes: @job.notes,
+          status: @job.status,
+          duration_minutes: @job.duration_minutes
+        }
+      }
+    else
+      render json: { ok: false, errors: @job.errors.messages }, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def set_job
     @job = Current.company.jobs.find(params[:id])
+  end
+
+  def authorize_dispatch!
+    redirect_to dashboard_path, alert: "Access denied." unless current_user.role_owner? || current_user.role_admin? || current_user.role_tech?
   end
 
   def base_scope
@@ -130,8 +164,13 @@ class JobsController < ApplicationController
       :serial_number,
       :notes,
       :appliance_type,
-      :brand
+      :brand,
+      :duration_minutes
     )
+  end
+
+  def reschedule_params
+    params.require(:job).permit(:technician_id, :starts_at, :duration_minutes)
   end
 
   def next_30_min_block_in_local_tz

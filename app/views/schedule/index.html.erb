@@ -1,82 +1,138 @@
-<div class="space-y-6">
+<div class="h-screen flex flex-col" data-controller="dispatch-board" data-dispatch-board-date-value="<%= @date.to_date %>">
   <!-- Header -->
-  <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-    <div>
-      <h1 class="text-3xl font-extrabold">Dispatch Schedule</h1>
-      <p class="mt-1 text-sm text-slate-400">
-        View and manage technician assignments for <%= @date.strftime("%A, %B %d, %Y") %>
-      </p>
-    </div>
+  <div class="flex-shrink-0 border-b border-slate-800 bg-slate-900/95 backdrop-blur p-4 sticky top-0 z-20">
+    <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <div>
+        <h1 class="text-2xl font-bold text-slate-100">Dispatch Board</h1>
+        <p class="text-sm text-slate-400 mt-1"><%= @date.strftime("%A, %B %d, %Y") %></p>
+      </div>
 
-    <!-- Date Navigation -->
-    <div class="flex items-center gap-3">
-      <%= link_to "← Previous", schedule_path(date: @date - 1.day),
-            class: "rounded-md border border-slate-600 px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" %>
-      
-      <span class="min-w-max text-sm font-semibold text-slate-200">
-        <%= @date.strftime("%b %d, %Y") %>
-      </span>
-      
-      <%= link_to "Next →", schedule_path(date: @date + 1.day),
-            class: "rounded-md border border-slate-600 px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" %>
+      <!-- Date Controls -->
+      <div class="flex items-center gap-2 flex-wrap">
+        <%= link_to "← Previous", schedule_path(date: @date - 1.day),
+              class: "rounded-md border border-slate-600 px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" %>
+        
+        <%= link_to "Today", schedule_path(date: Date.today),
+              class: "rounded-md border border-slate-600 px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" %>
+        
+        <input type="date" 
+               value="<%= @date.to_date %>"
+               onchange="window.location.href = '<%= schedule_path("") %>' + this.value"
+               class="rounded-md border border-slate-600 px-3 py-2 text-sm bg-slate-800 text-slate-100">
+        
+        <%= link_to "Next →", schedule_path(date: @date + 1.day),
+              class: "rounded-md border border-slate-600 px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" %>
+      </div>
     </div>
   </div>
 
-  <% if @technicians.empty? %>
-    <!-- Empty State -->
-    <div class="rounded-md border border-slate-700 bg-slate-800/50 px-6 py-8 text-center">
-      <p class="text-slate-300 mb-4">No technicians have been added yet.</p>
-      <%= link_to "Create your first technician", new_technician_path,
-            class: "inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700" %>
-    </div>
-  <% else %>
-    <!-- Schedule Grid -->
-    <div class="overflow-x-auto rounded-xl border border-slate-800">
-      <table class="min-w-full divide-y divide-slate-800 bg-slate-900">
-        <thead class="bg-slate-900/50">
-          <tr>
-            <th class="px-4 py-3 text-left text-sm font-semibold text-slate-300 bg-slate-800/30 w-48 sticky left-0 z-10">Technician</th>
-            <% @hours.each do |hour| %>
-              <th class="px-3 py-3 text-center text-xs font-semibold text-slate-300 bg-slate-800/20">
-                <%= hour < 12 ? "#{hour}:00 AM" : (hour == 12 ? "12:00 PM" : "#{hour - 12}:00 PM") %>
-              </th>
+  <!-- Main Board Area (Flex to fill remaining height) -->
+  <div class="flex-1 overflow-hidden flex flex-col">
+    <div class="flex gap-4 p-4 h-full overflow-hidden">
+      <!-- Left Column: Unassigned Jobs Queue -->
+      <div class="w-80 flex-shrink-0 flex flex-col bg-slate-800/50 rounded-lg border border-slate-700 overflow-hidden">
+        <div class="flex-shrink-0 px-4 py-3 border-b border-slate-700 bg-slate-800">
+          <h2 class="font-semibold text-slate-200">
+            Unassigned Jobs
+            <span class="text-xs font-normal text-slate-400 ml-1">(<%= @unassigned_jobs.count %>)</span>
+          </h2>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-3 space-y-2" 
+             data-dispatch-board-target="unassignedContainer"
+             class="unassigned-container"
+             ondrop="document.querySelector('[data-controller=dispatch-board]').dispatchEvent(new DragEvent('drop', { bubbles: true }))"
+             ondragover="event.preventDefault(); this.classList.add('bg-slate-700/50')"
+             ondragleave="this.classList.remove('bg-slate-700/50')">
+          <% if @unassigned_jobs.any? %>
+            <% @unassigned_jobs.each do |job| %>
+              <div class="job-card bg-amber-900/30 border border-amber-700/50 rounded-md p-3 cursor-move hover:bg-amber-900/50 hover:border-amber-700 transition-all"
+                   data-job-id="<%= job.id %>"
+                   draggable="true"
+                   data-action="dragstart->dispatch-board#dragStart dragend->dispatch-board#dragEnd">
+                <div class="font-semibold text-amber-200 text-sm truncate"><%= job.customer.full_name %></div>
+                <div class="text-amber-100/70 text-xs mt-1 line-clamp-2"><%= job.notes || job.complaint || "No details" %></div>
+                <div class="text-amber-100/50 text-xs mt-2">
+                  <%= link_to "View", job_path(job), class: "text-amber-300 hover:underline" %>
+                </div>
+              </div>
             <% end %>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-slate-800">
-          <% @technicians.each do |tech| %>
-            <tr class="hover:bg-slate-800/50">
-              <td class="px-4 py-4 text-sm font-semibold text-slate-100 bg-slate-800/20 w-48 sticky left-0 z-10">
-                <div><%= tech.name %></div>
-                <div class="text-xs text-slate-400 font-normal mt-1"><%= tech.phone %></div>
-              </td>
+          <% else %>
+            <div class="text-center text-slate-500 py-8">
+              <p class="text-sm">All jobs assigned</p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Right Column: Technician Grid Board -->
+      <div class="flex-1 flex flex-col overflow-hidden bg-slate-800/50 rounded-lg border border-slate-700">
+        <!-- Board Header (sticky) -->
+        <div class="flex-shrink-0 overflow-x-auto border-b border-slate-700 bg-slate-800">
+          <div class="inline-flex min-w-full">
+            <div class="w-40 flex-shrink-0 px-4 py-3 border-r border-slate-700 bg-slate-800/50">
+              <p class="text-xs font-semibold text-slate-400">TIME</p>
+            </div>
+            <% @technicians.each do |tech| %>
+              <div class="w-80 flex-shrink-0 px-4 py-3 border-r border-slate-700">
+                <div class="font-semibold text-slate-200"><%= tech.name %></div>
+                <div class="text-xs text-slate-400 mt-1"><%= tech.phone %></div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Board Scrollable Content -->
+        <div class="flex-1 overflow-auto">
+          <div class="inline-flex min-w-full">
+            <!-- Time Column -->
+            <div class="w-40 flex-shrink-0 border-r border-slate-700 bg-slate-800/30 divide-y divide-slate-700">
               <% @hours.each do |hour| %>
-                <td class="border-l border-slate-800 px-3 py-4 h-32 align-top">
-                  <div class="space-y-2 h-full flex flex-col">
-                    <% @schedule[tech.id][hour].each do |job| %>
-                      <div class="bg-blue-600/20 border border-blue-500/40 rounded-md p-2 text-xs cursor-pointer hover:bg-blue-600/30 hover:border-blue-500/60 transition-colors" 
-                           title="<%= job.customer.full_name %> - <%= job.notes %>">
-                        <div class="font-semibold text-blue-300 truncate"><%= job.customer.full_name %></div>
-                        <div class="text-blue-200/70 text-xs truncate mt-0.5"><%= job.notes %></div>
-                      </div>
-                    <% end %>
-                    <div class="mt-auto pt-2">
-                      <%= button_to "+", schedule_path(date: @date, technician_id: tech.id, hour: hour), method: :get,
-                            class: "w-full rounded-md bg-slate-700 px-2 py-1 text-xs font-medium text-slate-200 hover:bg-slate-600" %>
+                <div class="h-24 px-4 py-2 text-xs font-semibold text-slate-400 flex items-start">
+                  <%= hour < 12 ? "#{hour}:00 AM" : (hour == 12 ? "12:00 PM" : "#{hour - 12}:00 PM") %>
+                </div>
+              <% end %>
+            </div>
+
+            <!-- Technician Columns -->
+            <% @technicians.each do |tech| %>
+              <div class="w-80 flex-shrink-0 border-r border-slate-700 divide-y divide-slate-700">
+                <% @hours.each do |hour| %>
+                  <div class="h-24 px-3 py-2 relative bg-slate-700/10 hover:bg-slate-700/20 transition-colors"
+                       data-dispatch-board-target="timeSlot"
+                       data-technician-id="<%= tech.id %>"
+                       data-hour="<%= hour %>"
+                       ondrop="document.querySelector('[data-controller=dispatch-board]').dispatchEvent(new DragEvent('drop', { bubbles: true }))"
+                       ondragover="event.preventDefault(); this.classList.add('ring-2', 'ring-blue-400')"
+                       ondragleave="this.classList.remove('ring-2', 'ring-blue-400')">
+                    <!-- Jobs for this slot -->
+                    <div class="space-y-1">
+                      <% assigned_jobs = @assigned_jobs[tech.id] || [] %>
+                      <% slot_jobs = assigned_jobs.select do |job|
+                        job.starts_at && job.starts_at.hour == hour && job.starts_at.to_date == @date.to_date
+                      end %>
+                      
+                      <% slot_jobs.each do |job| %>
+                        <div class="job-card bg-blue-600/30 border border-blue-500/50 rounded-md p-2 text-xs cursor-move hover:bg-blue-600/40 hover:border-blue-500 transition-all"
+                             data-job-id="<%= job.id %>"
+                             draggable="true"
+                             data-action="dragstart->dispatch-board#dragStart dragend->dispatch-board#dragEnd"
+                             style="min-height: <%= (job.duration_minutes || 60) / 15 %>rem;">
+                          <div class="font-semibold text-blue-200 truncate"><%= job.customer.full_name %></div>
+                          <div class="text-blue-100/60 truncate mt-0.5"><%= job.notes || job.complaint || "—" %></div>
+                          <div class="text-blue-100/50 text-xs mt-1">
+                            <%= link_to "View", job_path(job), class: "text-blue-300 hover:underline" %>
+                          </div>
+                        </div>
+                      <% end %>
                     </div>
                   </div>
-                </td>
-              <% end %>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
     </div>
-  <% end %>
-
-  <!-- Footer Links -->
-  <div class="flex gap-2">
-    <%= link_to "Manage Technicians", technicians_path,
-          class: "rounded-md border border-slate-600 px-4 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" %>
   </div>
 </div>
