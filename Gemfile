@@ -82,5 +82,7 @@ gem "stripe", "~> 17.2"
 
 gem "dotenv-rails", "~> 3.1", groups: [ :development, :test ]
 
+gem "active_storage_validations"
+
 # reCAPTCHA v2 gem
 gem "recaptcha", require: "recaptcha/rails"
