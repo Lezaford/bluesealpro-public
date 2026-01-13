@@ -1,0 +1,175 @@
+<div class="p-6">
+  <div class="mb-6">
+    <h1 class="text-3xl font-bold">Company Settings</h1>
+    <p class="text-sm text-gray-600">Edit your company information and branding</p>
+  </div>
+
+  <% if @company.errors.any? %>
+    <div class="alert alert-error mb-4">
+      <div>
+        <h3 class="font-semibold"><%= pluralize(@company.errors.count, "error") %> prevented update:</h3>
+        <ul class="list-disc list-inside mt-2">
+          <% @company.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2">
+      <form action="<%= admin_company_path %>" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="_method" value="patch">
+        <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+
+        <!-- Business Identity Section -->
+        <div class="card bg-base-100 shadow-md mb-6">
+          <div class="card-body">
+            <h2 class="card-title mb-4">Business Identity</h2>
+
+            <div class="form-control mb-4">
+              <label class="label">
+                <span class="label-text">Company Name</span>
+              </label>
+              <input type="text" name="company[name]" value="<%= @company.name %>" 
+                     class="input input-bordered" required>
+            </div>
+
+            <div class="form-control mb-4">
+              <label class="label">
+                <span class="label-text">EIN (Employer ID Number)</span>
+              </label>
+              <input type="text" name="company[ein]" value="<%= @company.ein %>" 
+                     class="input input-bordered" placeholder="XX-XXXXXXX">
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact Information Section -->
+        <div class="card bg-base-100 shadow-md mb-6">
+          <div class="card-body">
+            <h2 class="card-title mb-4">Contact Information</h2>
+
+            <div class="form-control mb-4">
+              <label class="label">
+                <span class="label-text">Phone Number</span>
+              </label>
+              <input type="tel" name="company[phone]" value="<%= @company.phone %>" 
+                     class="input input-bordered" placeholder="(555) 123-4567">
+            </div>
+
+            <div class="form-control mb-4">
+              <label class="label">
+                <span class="label-text">Email Address</span>
+              </label>
+              <input type="email" name="company[email]" value="<%= @company.email %>" 
+                     class="input input-bordered">
+            </div>
+
+            <div class="form-control mb-4">
+              <label class="label">
+                <span class="label-text">Website URL</span>
+              </label>
+              <input type="url" name="company[website_url]" value="<%= @company.website_url %>" 
+                     class="input input-bordered" placeholder="https://example.com">
+            </div>
+          </div>
+        </div>
+
+        <!-- Address Section -->
+        <div class="card bg-base-100 shadow-md mb-6">
+          <div class="card-body">
+            <h2 class="card-title mb-4">Address</h2>
+
+            <div class="form-control mb-4">
+              <label class="label">
+                <span class="label-text">Street Address Line 1</span>
+              </label>
+              <input type="text" name="company[address_line1]" value="<%= @company.address_line1 %>" 
+                     class="input input-bordered">
+            </div>
+
+            <div class="form-control mb-4">
+              <label class="label">
+                <span class="label-text">Street Address Line 2 (optional)</span>
+              </label>
+              <input type="text" name="company[address_line2]" value="<%= @company.address_line2 %>" 
+                     class="input input-bordered">
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 mb-4">
+              <div class="form-control">
+                <label class="label">
+                  <span class="label-text">City</span>
+                </label>
+                <input type="text" name="company[city]" value="<%= @company.city %>" 
+                       class="input input-bordered">
+              </div>
+              <div class="form-control">
+                <label class="label">
+                  <span class="label-text">State</span>
+                </label>
+                <input type="text" name="company[state]" value="<%= @company.state %>" 
+                       class="input input-bordered" maxlength="2">
+              </div>
+            </div>
+
+            <div class="form-control mb-4">
+              <label class="label">
+                <span class="label-text">ZIP Code</span>
+              </label>
+              <input type="text" name="company[zip]" value="<%= @company.zip %>" 
+                     class="input input-bordered" placeholder="12345">
+            </div>
+
+            <div class="form-control">
+              <label class="label">
+                <span class="label-text">Time Zone</span>
+              </label>
+              <select name="company[time_zone]" class="select select-bordered">
+                <option value="America/New_York" <%= "selected" if @company.time_zone == "America/New_York" %>>Eastern</option>
+                <option value="America/Chicago" <%= "selected" if @company.time_zone == "America/Chicago" %>>Central</option>
+                <option value="America/Denver" <%= "selected" if @company.time_zone == "America/Denver" %>>Mountain</option>
+                <option value="America/Los_Angeles" <%= "selected" if @company.time_zone == "America/Los_Angeles" %>>Pacific</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Branding Section -->
+        <div class="card bg-base-100 shadow-md mb-6">
+          <div class="card-body">
+            <h2 class="card-title mb-4">Branding</h2>
+
+            <div class="form-control mb-4">
+              <label class="label">
+                <span class="label-text">Company Logo</span>
+              </label>
+              <input type="file" name="company[logo]" accept="image/*"
+                     class="file-input file-input-bordered w-full">
+              <label class="label">
+                <span class="label-text-alt">PNG, JPEG, or GIF (max 5 MB)</span>
+              </label>
+            </div>
+
+            <% if @company.logo.attached? %>
+              <div class="mb-4">
+                <p class="label-text mb-2">Current Logo:</p>
+                <img src="<%= url_for(@company.logo) %>" alt="Company Logo" class="h-20 rounded">
+              </div>
+            <% end %>
+          </div>
+        </div>
+
+        <div class="form-control">
+          <button type="submit" class="btn btn-primary">Save Settings</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="mt-6">
+    <%= link_to "Back to Admin", admin_dashboard_path, class: "btn btn-outline" %>
+  </div>
+</div>

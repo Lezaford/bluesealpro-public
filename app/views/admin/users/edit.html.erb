@@ -1,12 +1,13 @@
 <div class="p-6">
   <div class="mb-6">
-    <h1 class="text-3xl font-bold">Edit User</h1>
+    <h1 class="text-3xl font-bold">Edit User Permissions</h1>
+    <p class="text-sm text-gray-600"><%= @user.name %> (<%= @user.email %>)</p>
   </div>
 
   <% if @user.errors.any? %>
     <div class="alert alert-error mb-4">
       <div>
-        <h3 class="font-semibold"><%= pluralize(@user.errors.count, "error") %> prohibited this user:</h3>
+        <h3 class="font-semibold"><%= pluralize(@user.errors.count, "error") %> prohibited this update:</h3>
         <ul class="list-disc list-inside mt-2">
           <% @user.errors.full_messages.each do |message| %>
             <li><%= message %></li>
@@ -24,22 +25,6 @@
 
         <div class="form-control mb-4">
           <label class="label">
-            <span class="label-text">Name</span>
-          </label>
-          <input type="text" name="user[name]" value="<%= @user.name %>" 
-                 class="input input-bordered" required>
-        </div>
-
-        <div class="form-control mb-4">
-          <label class="label">
-            <span class="label-text">Email</span>
-          </label>
-          <input type="email" name="user[email]" value="<%= @user.email %>" 
-                 class="input input-bordered" required>
-        </div>
-
-        <div class="form-control mb-4">
-          <label class="label">
             <span class="label-text">Role</span>
           </label>
           <select name="user[role]" class="select select-bordered" required>
@@ -51,30 +36,23 @@
           </select>
         </div>
 
-        <div class="form-control mb-4">
-          <label class="label">
-            <span class="label-text">Password (Leave blank to keep current)</span>
-          </label>
-          <input type="password" name="user[password]" 
-                 class="input input-bordered">
-        </div>
-
         <div class="form-control mb-6">
-          <label class="label">
-            <span class="label-text">Confirm Password</span>
+          <label class="label cursor-pointer">
+            <span class="label-text">Active</span>
+            <input type="hidden" name="user[active]" value="0">
+            <input type="checkbox" name="user[active]" value="1" class="checkbox" 
+                   <%= "checked" if @user.active? %>>
           </label>
-          <input type="password" name="user[password_confirmation]" 
-                 class="input input-bordered">
         </div>
 
         <div class="form-control">
-          <button type="submit" class="btn btn-primary">Update User</button>
+          <button type="submit" class="btn btn-primary">Update</button>
         </div>
       </form>
     </div>
   </div>
 
   <div class="mt-6">
-    <%= link_to "Back to Users", admin_users_path, class: "btn btn-outline" %>
+    <%= link_to "Back to Employees", admin_users_path, class: "btn btn-outline" %>
   </div>
 </div>

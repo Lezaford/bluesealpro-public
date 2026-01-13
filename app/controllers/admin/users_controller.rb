@@ -1,56 +1,59 @@
-class Admin::UsersController < ApplicationController
-  before_action :authenticate_user!
-  before_action :authorize_admin!
-  before_action :set_user, only: [ :show, :edit, :update, :destroy ]
+class Admin::UsersController < Admin::BaseController
+  before_action :set_user, only: [ :edit, :update ]
 
   def index
-    @users = Current.company.users.order(:email)
-  end
-
-  def new
-    @user = Current.company.users.build
-  end
-
-  def create
-    @user = Current.company.users.build(user_params)
-
-    if @user.save
-      redirect_to admin_users_url, notice: "User was successfully created."
-    else
-      render :new, status: :unprocessable_entity
-    end
-  end
-
-  def show
+    @users = current_company.users.order(:name)
   end
 
   def edit
+    # @user is set by before_action
   end
 
   def update
-    if @user.update(user_params)
-      redirect_to admin_users_url, notice: "User was successfully updated."
-    else
-      render :edit, status: :unprocessable_entity
+    # @user is set by before_action
+    if params[:user][:role].present? || params[:user][:active].present?
+      # Check for guard condition: cannot remove last privileged user
+      if cannot_change_privilege?(@user, params[:user])
+        @user.errors.add(:base, "Cannot change the last owner/admin in this company.")
+        render :edit
+        return
+      end
     end
-  end
 
-  def destroy
-    @user.destroy
-    redirect_to admin_users_url, notice: "User was successfully deleted."
+    if @user.update(user_params)
+      redirect_to admin_users_path, notice: "User updated successfully."
+    else
+      render :edit
+    end
   end
 
   private
 
   def set_user
-    @user = Current.company.users.find(params[:id])
+    @user = current_company.users.find(params[:id])
   end
 
   def user_params
-    params.require(:user).permit(:name, :email, :role, :password, :password_confirmation)
+    params.require(:user).permit(:role, :active)
   end
 
-  def authorize_admin!
-    redirect_to dashboard_path, alert: "Not authorized" unless current_user.role_owner? || current_user.role_admin?
+  def cannot_change_privilege?(_user, new_params)
+    # If the user is currently privileged (owner or admin) and the update would make them not privileged,
+    # check if there's at least one other active privileged user
+    user_is_privileged = _user.role_owner? || _user.role_admin?
+    new_role = new_params[:role].presence || _user.role
+    new_active = new_params[:active].present? ? new_params[:active] == "1" : _user.active?
+
+    new_is_privileged = new_role.in?(%w[owner admin])
+
+    return false unless user_is_privileged && (!new_is_privileged || !new_active)
+
+    # Count other active privileged users in the company
+    other_privileged = current_company.users
+      .where(active: true)
+      .where("role IN (?) AND id != ?", %w[owner admin], _user.id)
+      .count
+
+    other_privileged.zero?
   end
 end

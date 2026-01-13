@@ -35,6 +35,18 @@ class JobsController < ApplicationController
   # POST /jobs
   def create
     @job = Current.company.jobs.new(job_params)
+
+    # Validate customer belongs to current company
+    if @job.customer_id.present?
+      unless Current.company.customers.exists?(@job.customer_id)
+        @job.errors.add(:customer, "must belong to your company")
+        @technicians = Current.company.technicians.where(active: true).order(:name)
+        flash.now[:alert] = @job.errors.full_messages.to_sentence
+        render :new, status: :unprocessable_entity
+        return
+      end
+    end
+
     apply_status_rule(@job)
     if @job.save
       redirect_target = params[:commit_action] == "save_new" ? new_job_path : @job
@@ -49,6 +61,17 @@ class JobsController < ApplicationController
 
   # PATCH/PUT /jobs/:id
   def update
+    # Validate customer belongs to current company
+    if job_params[:customer_id].present?
+      unless Current.company.customers.exists?(job_params[:customer_id])
+        @job.errors.add(:customer, "must belong to your company")
+        @technicians = Current.company.technicians.where(active: true).order(:name)
+        flash.now[:alert] = @job.errors.full_messages.to_sentence
+        render :edit, status: :unprocessable_entity
+        return
+      end
+    end
+
     apply_status_rule(@job)
     if @job.update(job_params)
       redirect_target = params[:commit_action] == "save_new" ? new_job_path : @job

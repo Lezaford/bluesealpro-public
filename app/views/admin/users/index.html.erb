@@ -1,7 +1,6 @@
 <div class="p-6">
   <div class="mb-6 flex items-center justify-between">
-    <h1 class="text-3xl font-bold">User Management</h1>
-    <%= link_to "Add User", new_admin_user_path, class: "btn btn-primary" %>
+    <h1 class="text-3xl font-bold">Employee Permissions</h1>
   </div>
 
   <% if notice %>
@@ -24,6 +23,7 @@
             <th>Name</th>
             <th>Email</th>
             <th>Role</th>
+            <th>Status</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -37,10 +37,15 @@
                   <%= user.role&.humanize || "No Role" %>
                 </span>
               </td>
-              <td class="space-x-2">
-                <%= link_to "View", admin_user_path(user), class: "btn btn-sm btn-ghost" %>
+              <td>
+                <% if user.active? %>
+                  <span class="badge badge-success">Active</span>
+                <% else %>
+                  <span class="badge badge-warning">Inactive</span>
+                <% end %>
+              </td>
+              <td>
                 <%= link_to "Edit", edit_admin_user_path(user), class: "btn btn-sm btn-ghost" %>
-                <%= link_to "Delete", admin_user_path(user), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-sm btn-error btn-outline" %>
               </td>
             </tr>
           <% end %>
@@ -48,6 +53,9 @@
       </table>
     </div>
   <% else %>
+    <p class="text-gray-500">No users found.</p>
+  <% end %>
+</div>
     <div class="alert alert-info">
       <p>No users yet. <%= link_to "Create one", new_admin_user_path, class: "link" %></p>
     </div>

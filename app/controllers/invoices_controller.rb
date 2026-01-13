@@ -1,17 +1,43 @@
 class InvoicesController < ApplicationController
   before_action :authenticate_user!
+  before_action :set_job, only: [ :show, :new, :create ]
+
   def index
-    @invoices = Invoice.where(company_id: current_user.company_id).order(created_at: :desc)
+    @invoices = Current.company.invoices.order(created_at: :desc)
   end
+
   def show
-    @invoice = Invoice.find(params[:id])
-    authorize_company!(@invoice.company_id)
+    @invoice = @job.invoice || not_found
   end
+
+  def new
+    if @job.invoice.present?
+      redirect_to job_invoice_path(@job), alert: "Invoice already exists for this job."
+      nil
+    end
+  end
+
   def create
-    # stub: create via Jobs#invoices nested later
+    if @job.invoice.present?
+      redirect_to job_invoice_path(@job), alert: "Invoice already exists for this job."
+      return
+    end
+
+    @invoice = Invoice.new(company: Current.company, job: @job)
+    if @invoice.save
+      redirect_to job_invoice_path(@job), notice: "Invoice created successfully."
+    else
+      redirect_to job_path(@job), alert: "Failed to create invoice: #{@invoice.errors.full_messages.to_sentence}"
+    end
   end
+
   private
-  def authorize_company!(company_id)
-    head :forbidden unless company_id == current_user.company_id
+
+  def set_job
+    @job = Current.company.jobs.find(params[:job_id])
+  end
+
+  def not_found
+    raise ActiveRecord::RecordNotFound
   end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_12_161200) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_12_190000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -28,11 +28,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_12_161200) do
 
   create_table "companies", force: :cascade do |t|
     t.string "address"
+    t.string "address_line1"
+    t.string "address_line2"
+    t.string "city"
     t.datetime "created_at", null: false
+    t.string "ein"
+    t.string "email"
     t.string "logo"
     t.string "name"
+    t.string "phone"
     t.string "slug", null: false
+    t.string "state"
+    t.string "time_zone", default: "America/New_York"
     t.datetime "updated_at", null: false
+    t.string "website_url"
+    t.string "zip"
     t.index ["slug"], name: "index_companies_on_slug", unique: true
   end
 
@@ -249,6 +259,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_12_161200) do
   end
 
   create_table "users", force: :cascade do |t|
+    t.boolean "active", default: true, null: false
     t.string "company_id"
     t.datetime "created_at", null: false
     t.string "email", default: "", null: false

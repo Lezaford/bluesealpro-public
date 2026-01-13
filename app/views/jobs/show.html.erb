@@ -3,6 +3,11 @@
     <h1 class="text-3xl font-extrabold">Job Details</h1>
     <div class="space-x-3">
       <%= link_to "Edit", edit_job_path(@job), class: "rounded-md bg-blue-600 px-5 py-2.5 text-white hover:bg-blue-700" %>
+      <% if @job.invoice.present? %>
+        <%= link_to "View Invoice", job_invoice_path(@job), class: "rounded-md bg-green-600 px-5 py-2.5 text-white hover:bg-green-700" %>
+      <% else %>
+        <%= link_to "Create Invoice", job_invoice_path(@job), method: :post, class: "rounded-md bg-purple-600 px-5 py-2.5 text-white hover:bg-purple-700" %>
+      <% end %>
       <%= link_to "Back", jobs_path, class: "rounded-md border border-slate-600 px-5 py-2.5 hover:bg-slate-800" %>
     </div>
   </div>
@@ -99,10 +104,13 @@
         </div>
         <div>
           <p class="text-sm text-slate-400">Technician</p>
-          <p class="text-slate-200">
-            <%= link_to @job.technician&.name || 'Unassigned', technician_path(@job.technician), class: "text-blue-400 hover:underline" if @job.technician %>
-            <span class="text-slate-400" unless @job.technician>Unassigned</span>
-          </p>
+          <% if @job.technician.present? %>
+            <p class="text-slate-200">
+              <%= link_to @job.technician.name, technician_path(@job.technician), class: "text-blue-400 hover:underline" %>
+            </p>
+          <% else %>
+            <span class="text-slate-400">Unassigned</span>
+          <% end %>
         </div>
       </div>
 

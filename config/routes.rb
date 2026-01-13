@@ -16,7 +16,6 @@ Rails.application.routes.draw do
   # -------------------------------
   authenticate :user do
     get "/dashboard", to: "dashboard#show", as: :dashboard
-    get "/schedule", to: "schedule#index", as: :schedule
 
     resources :customers do
       collection do
@@ -27,13 +26,18 @@ Rails.application.routes.draw do
     end
 
     resources :technicians
-    resources :jobs
-    # resources :invoices
-    # resources :settings, only: [:index, :update] # company settings panel
+
+    resources :jobs do
+      resource :invoice, only: [ :show, :new, :create ]
+    end
+
+    resources :invoices, only: [ :index ]
 
     # Admin panel (only owners/admins)
     namespace :admin do
-      resources :users
+      get "/", to: "dashboard#show", as: :dashboard
+      resource :company, only: [ :edit, :update ]
+      resources :users, only: [ :index, :edit, :update ]
     end
   end
 end
