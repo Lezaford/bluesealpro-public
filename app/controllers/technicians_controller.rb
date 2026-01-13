@@ -22,12 +22,11 @@ class TechniciansController < ApplicationController
     # Create user account for technician if email is provided
     if @technician.valid? && technician_params[:email].present?
       begin
-        temporary_password = SecureRandom.alphanumeric(12)
         user = Current.company.users.build(
           name: @technician.name,
           email: technician_params[:email],
-          password: temporary_password,
-          password_confirmation: temporary_password,
+          password: SecureRandom.alphanumeric(16),
+          password_confirmation: SecureRandom.alphanumeric(16),
           role: :tech,
           password_change_required: true
         )
@@ -35,9 +34,9 @@ class TechniciansController < ApplicationController
         if user.save
           @technician.user = user
           if @technician.save
-            # Send welcome email with temporary password
-            TechnicianMailer.welcome_email(user, temporary_password).deliver_later
-            redirect_to technicians_url, notice: "Technician created successfully. Login email sent to #{user.email}."
+            # Send reset password instructions (Devise flow with company-specific from)
+            user.send_reset_password_instructions
+            redirect_to technicians_url, notice: "Technician created successfully. Login instructions sent to #{user.email}."
           else
             user.destroy
             render :new, status: :unprocessable_entity

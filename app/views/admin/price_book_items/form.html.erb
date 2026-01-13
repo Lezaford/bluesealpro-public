@@ -1,0 +1,72 @@
+<div class="max-w-2xl mx-auto">
+  <div class="mb-6">
+    <h1 class="text-3xl font-bold">
+      <% if @price_book_item.new_record? %>
+        New Price Book Item
+      <% else %>
+        Edit Price Book Item
+      <% end %>
+    </h1>
+  </div>
+
+  <% if @price_book_item.errors.any? %>
+    <div class="alert alert-error mb-4">
+      <div>
+        <h3 class="font-semibold"><%= pluralize(@price_book_item.errors.count, "error") %> prevented save:</h3>
+        <ul class="list-disc list-inside mt-2">
+          <% @price_book_item.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="card bg-base-100 shadow-lg">
+    <div class="card-body">
+      <%= form_with model: [:admin, @price_book_item], local: true do |f| %>
+        <div class="form-control mb-4">
+          <%= f.label :name %>
+          <%= f.text_field :name, class: "input input-bordered", placeholder: "e.g., HVAC Service" %>
+        </div>
+
+        <div class="form-control mb-4">
+          <%= f.label :category %>
+          <%= f.select :category, 
+              [["Service", "service"], ["Labor", "labor"], ["Materials", "materials"], ["Discount", "discount"]],
+              { class: "select select-bordered" } %>
+        </div>
+
+        <div class="form-control mb-4">
+          <%= f.label :unit_price_cents, "Unit Price ($)" %>
+          <%= f.number_field :unit_price_cents, step: 1, class: "input input-bordered", 
+              placeholder: "Enter in cents (e.g., 5000 = $50.00)" %>
+        </div>
+
+        <div class="form-control mb-4">
+          <%= f.label :taxable %>
+          <%= f.check_box :taxable, { class: "checkbox" } %>
+          <span class="label-text ml-2">Include in tax calculation</span>
+        </div>
+
+        <div class="form-control mb-6">
+          <%= f.label :lock_policy, "Edit Policy" %>
+          <%= f.select :lock_policy, 
+              [["Admin Only (Locked)", "admin_only"], ["Technician Editable", "tech_editable"]],
+              { class: "select select-bordered" } %>
+        </div>
+
+        <div class="form-control mb-6">
+          <%= f.label :active %>
+          <%= f.check_box :active, { class: "checkbox" } %>
+          <span class="label-text ml-2">Active (available in invoices)</span>
+        </div>
+
+        <div class="form-control space-x-2">
+          <%= f.submit class: "btn btn-primary" %>
+          <%= link_to "Cancel", admin_price_book_items_path, class: "btn btn-outline" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

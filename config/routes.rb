@@ -35,13 +35,16 @@ Rails.application.routes.draw do
       resource :invoice, only: [ :show, :new, :create ]
     end
 
-    resources :invoices, only: [ :index ]
+    resources :invoices, only: [ :index, :show, :edit, :update ] do
+      resources :line_items, only: [ :create, :update, :destroy ]
+    end
 
     # Admin panel (only owners/admins)
     namespace :admin do
       get "/", to: "dashboard#show", as: :dashboard
       resource :company, only: [ :edit, :update ]
       resources :users, only: [ :index, :edit, :update ]
+      resources :price_book_items
     end
   end
 end

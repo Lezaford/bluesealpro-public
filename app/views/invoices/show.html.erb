@@ -1,0 +1,99 @@
+<div class="space-y-6 max-w-4xl mx-auto">
+  <!-- Header -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-bold">Invoice</h1>
+      <p class="text-sm text-slate-400 mt-1">Job: <%= link_to @invoice.job.customer.full_name, job_path(@invoice.job), class: "text-blue-400 hover:underline" %></p>
+    </div>
+    <div class="space-x-3">
+      <%= link_to "Edit", edit_invoice_path(@invoice), class: "rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700" %>
+      <%= link_to "Back to Job", job_path(@invoice.job), class: "rounded-md border border-slate-600 px-4 py-2 hover:bg-slate-800" %>
+    </div>
+  </div>
+
+  <!-- Company & Invoice Info -->
+  <div class="grid md:grid-cols-2 gap-6">
+    <div class="rounded-lg border border-slate-700 bg-slate-800/50 p-6">
+      <h2 class="font-semibold text-slate-200 mb-3">Company Info</h2>
+      <p class="text-slate-100"><%= @invoice.company.name %></p>
+      <p class="text-slate-400 text-sm"><%= @invoice.company.phone %></p>
+      <p class="text-slate-400 text-sm"><%= @invoice.company.email %></p>
+    </div>
+    
+    <div class="rounded-lg border border-slate-700 bg-slate-800/50 p-6">
+      <h2 class="font-semibold text-slate-200 mb-3">Customer Info</h2>
+      <p class="text-slate-100"><%= @invoice.job.customer.full_name %></p>
+      <p class="text-slate-400 text-sm"><%= @invoice.job.customer.phone %></p>
+      <p class="text-slate-400 text-sm"><%= @invoice.job.customer.email %></p>
+    </div>
+  </div>
+
+  <!-- Line Items by Category -->
+  <% %w[service labor materials discount].each do |cat| %>
+    <% cat_items = @invoice.line_items.by_category(cat) %>
+    <% if cat_items.any? %>
+      <div class="rounded-lg border border-slate-700 bg-slate-800/50 overflow-hidden">
+        <div class="bg-slate-800 px-6 py-3 border-b border-slate-700">
+          <h3 class="font-semibold text-slate-200 capitalize"><%= cat.humanize %></h3>
+        </div>
+        
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead class="bg-slate-800/50 border-b border-slate-700">
+              <tr>
+                <th class="px-6 py-3 text-left text-slate-300">Description</th>
+                <th class="px-6 py-3 text-right text-slate-300">Qty</th>
+                <th class="px-6 py-3 text-right text-slate-300">Unit Price</th>
+                <th class="px-6 py-3 text-right text-slate-300">Amount</th>
+                <th class="px-6 py-3 text-center text-slate-300">Tax</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-700">
+              <% cat_items.each do |item| %>
+                <tr class="hover:bg-slate-700/30">
+                  <td class="px-6 py-3 text-slate-200">
+                    <div class="flex items-center gap-2">
+                      <%= item.description %>
+                      <% if item.locked? %>
+                        <span class="text-xs bg-yellow-900/50 text-yellow-200 px-2 py-1 rounded" title="Locked - Admin only">🔒 Locked</span>
+                      <% end %>
+                    </div>
+                  </td>
+                  <td class="px-6 py-3 text-right text-slate-200"><%= item.quantity %></td>
+                  <td class="px-6 py-3 text-right text-slate-200">$<%= (item.unit_price_cents / 100.0).round(2) %></td>
+                  <td class="px-6 py-3 text-right text-slate-200">$<%= (item.total_cents / 100.0).round(2) %></td>
+                  <td class="px-6 py-3 text-center text-slate-200"><%= item.taxable? ? "✓" : "–" %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+
+  <!-- Totals -->
+  <div class="rounded-lg border border-slate-700 bg-slate-800/50 overflow-hidden">
+    <div class="px-6 py-4 space-y-3">
+      <div class="flex justify-between text-slate-200">
+        <span>Subtotal:</span>
+        <span class="font-semibold">$<%= @invoice.subtotal_dollars.round(2) %></span>
+      </div>
+      
+      <div class="flex justify-between text-slate-200">
+        <span>Tax Rate:</span>
+        <span><%= (@invoice.company.tax_rate * 100).round(1) %>%</span>
+      </div>
+      
+      <div class="flex justify-between text-slate-200">
+        <span>Tax:</span>
+        <span class="font-semibold">$<%= @invoice.tax_dollars.round(2) %></span>
+      </div>
+      
+      <div class="flex justify-between text-lg font-bold text-slate-100 border-t border-slate-700 pt-3">
+        <span>Total:</span>
+        <span>$<%= @invoice.total_dollars.round(2) %></span>
+      </div>
+    </div>
+  </div>
+</div>

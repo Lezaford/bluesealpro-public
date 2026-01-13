@@ -1,6 +1,7 @@
 class InvoicesController < ApplicationController
   before_action :authenticate_user!
   before_action :set_job, only: [ :show, :new, :create ]
+  before_action :set_invoice, only: [ :edit, :update ]
 
   def index
     @invoices = Current.company.invoices.order(created_at: :desc)
@@ -31,10 +32,30 @@ class InvoicesController < ApplicationController
     end
   end
 
+  def edit
+    @price_book_items_by_category = Current.company.price_book_items.active.group_by(&:category)
+  end
+
+  def update
+    if @invoice.update(invoice_params)
+      redirect_to @invoice, notice: "Invoice updated."
+    else
+      redirect_to edit_invoice_path(@invoice), alert: "Failed to update invoice: #{@invoice.errors.full_messages.to_sentence}"
+    end
+  end
+
   private
 
   def set_job
     @job = Current.company.jobs.find(params[:job_id])
+  end
+
+  def set_invoice
+    @invoice = Current.company.invoices.find(params[:id])
+  end
+
+  def invoice_params
+    params.require(:invoice).permit(:status)
   end
 
   def not_found
