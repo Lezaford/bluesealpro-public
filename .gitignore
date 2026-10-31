@@ -38,3 +38,30 @@
 !/app/assets/builds/.keep
 
 /node_modules
+
+# --- Secrets / sensitive material (never commit) ---
+/config/master.key
+/config/credentials/*.key
+/config/credentials/*.yml.enc
+*.pem
+*.key
+*.p12
+.env
+.env.*
+!.env.example
+.kamal/secrets.*
+!.kamal/secrets
+
+# Local databases, dumps and data exports
+*.sqlite3
+*.sqlite3-*
+*.dump
+*.sql
+/db/*.sql
+/public/uploads
+/public/system
+
+# Editor / OS noise
+.DS_Store
+.vscode/
+.idea/
