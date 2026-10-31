@@ -174,7 +174,7 @@ class JobsController < ApplicationController
   end
 
   def next_30_min_block_in_local_tz
-    now = Time.current.in_time_zone(Current.user.timezone || "UTC")
+    now = Time.current.in_time_zone(Current.user.try(:timezone).presence || "UTC")
     minutes_past = now.min
     minutes_to_next_block = (30 - (minutes_past % 30)) % 30
     next_block = minutes_to_next_block.zero? ? now : now + (minutes_to_next_block * 60).seconds

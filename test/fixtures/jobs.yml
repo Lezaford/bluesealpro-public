@@ -1,27 +1,13 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
-
 one:
   company: one
   customer: one
-  technician_id: 1
-  starts_at: 2025-11-09 16:05:47
-  status: MyString
-  notes: MyText
-  model_number: MyString
-  serial_number: MyString
-  complaint: MyText
-  diagnosis: MyText
-  work_performed: MyText
+  starts_at: 2026-01-05 16:00:00
+  status: pending
+  complaint: Washer will not drain
 
 two:
   company: two
   customer: two
-  technician_id: 1
-  starts_at: 2025-11-09 16:05:47
-  status: MyString
-  notes: MyText
-  model_number: MyString
-  serial_number: MyString
-  complaint: MyText
-  diagnosis: MyText
-  work_performed: MyText
+  starts_at: 2026-01-05 16:00:00
+  status: pending
+  complaint: Dryer not heating

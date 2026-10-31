@@ -2,6 +2,8 @@ class CustomersController < ApplicationController
   before_action :authenticate_user!
   before_action :set_customer, only: [ :show, :edit, :update, :destroy ]
 
+  PER_PAGE = 25
+
   # GET /customers
   def index
     @query         = params[:q].to_s.strip
@@ -13,8 +15,12 @@ class CustomersController < ApplicationController
     @customer_types = base.where.not(customer_type: nil).distinct.pluck(:customer_type).compact_blank.sort
     @lead_sources   = base.where.not(lead_source: nil).distinct.pluck(:lead_source).compact_blank.sort
 
-    scope = base_scope
-    @customers = scope.order(last_name: :asc, first_name: :asc)
+    scope = base_scope.order(last_name: :asc, first_name: :asc, id: :asc)
+    @total_count = scope.count
+    @per_page    = PER_PAGE
+    @total_pages = [ (@total_count / PER_PAGE.to_f).ceil, 1 ].max
+    @page        = params[:page].to_i.clamp(1, @total_pages)
+    @customers   = scope.offset((@page - 1) * PER_PAGE).limit(PER_PAGE)
   end
 
 
@@ -46,20 +52,7 @@ class CustomersController < ApplicationController
   # GET /customers/search?q=...
   def search
     q = params[:q].to_s.strip
-    scope = Current.company.customers
-
-    if q.present?
-      q_lower = q.downcase
-      scope = scope.where(
-        "LOWER(first_name) LIKE :q OR LOWER(last_name) LIKE :q OR " \
-        "LOWER(display_name) LIKE :q OR LOWER(email) LIKE :q OR " \
-        "LOWER(phone) LIKE :q OR LOWER(mobile_number) LIKE :q",
-        q: "%#{q_lower}%"
-      )
-    else
-      # Return alphabetical customers
-      scope = scope.order(last_name: :asc, first_name: :asc)
-    end
+    scope = Current.company.customers.search(q).order(last_name: :asc, first_name: :asc, id: :asc)
 
     customers = scope.limit(8).map do |c|
       { id: c.id, name: c.full_name, email: c.email }
@@ -114,8 +107,11 @@ class CustomersController < ApplicationController
 
   # DELETE /customers/:id
   def destroy
-    @customer.destroy
-    redirect_to customers_path, notice: "Customer was deleted."
+    if @customer.destroy
+      redirect_to customers_path, notice: "Customer was deleted."
+    else
+      redirect_to @customer, alert: @customer.errors.full_messages.to_sentence.presence || "Customer could not be deleted."
+    end
   end
 
   private
@@ -129,15 +125,7 @@ class CustomersController < ApplicationController
   def base_scope
     scope = Current.company.customers
 
-    if params[:q].present?
-      q = "%#{params[:q].strip.downcase}%"
-      scope = scope.where(
-        "LOWER(first_name) LIKE :q OR LOWER(last_name) LIKE :q OR " \
-        "LOWER(email) LIKE :q OR LOWER(phone) LIKE :q OR " \
-        "LOWER(display_name) LIKE :q OR LOWER(company_name) LIKE :q",
-        q: q
-      )
-    end
+    scope = scope.search(params[:q])
 
     if params[:customer_type].present?
       scope = scope.where(customer_type: params[:customer_type])
@@ -152,19 +140,11 @@ class CustomersController < ApplicationController
 
   def customer_params
     params.require(:customer).permit(
-      # existing fields
       :first_name,
       :last_name,
       :email,
-      :phone,
-      :address1,
-      :address2,
-      :city,
-      :state,
-      :zip,
       :notes,
 
-      # new CSV-related fields
       :display_name,
       :mobile_number,
       :home_number,

@@ -1,52 +1,52 @@
-<div class="space-y-6">
+<div class="page">
   <!-- Header -->
-  <div class="flex items-center justify-between">
+  <div class="page-header">
     <div>
-      <h1 class="text-3xl font-bold">Price Book</h1>
-      <p class="text-sm text-slate-400 mt-1"><%= @price_book_items.count %> items</p>
+      <h1 class="page-title">Price Book</h1>
+      <p class="text-sm text-muted mt-1"><%= @price_book_items.count %> items</p>
     </div>
     <%= link_to "Add Item", new_admin_price_book_item_path, class: "btn btn-primary" %>
   </div>
 
   <!-- Items Table -->
-  <div class="rounded-lg border border-slate-700 overflow-hidden">
+  <div class="rounded-lg border border-line overflow-hidden">
     <% if @price_book_items.any? %>
       <div class="overflow-x-auto">
-        <table class="w-full">
-          <thead class="bg-slate-800">
+        <table class="table">
+          <thead>
             <tr>
-              <th class="px-6 py-3 text-left text-slate-300">Name</th>
-              <th class="px-6 py-3 text-left text-slate-300">Category</th>
-              <th class="px-6 py-3 text-right text-slate-300">Unit Price</th>
-              <th class="px-6 py-3 text-center text-slate-300">Tax</th>
-              <th class="px-6 py-3 text-center text-slate-300">Policy</th>
-              <th class="px-6 py-3 text-center text-slate-300">Active</th>
-              <th class="px-6 py-3 text-center text-slate-300">Actions</th>
+              <th class="text-left">Name</th>
+              <th class="text-left">Category</th>
+              <th class="text-right">Unit Price</th>
+              <th class="text-center">Tax</th>
+              <th class="text-center">Policy</th>
+              <th class="text-center">Active</th>
+              <th class="text-center">Actions</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-slate-700">
+          <tbody>
             <% @price_book_items.each do |item| %>
-              <tr class="hover:bg-slate-700/30">
-                <td class="px-6 py-3 text-slate-200"><%= item.name %></td>
-                <td class="px-6 py-3 text-slate-400 capitalize"><%= item.category %></td>
-                <td class="px-6 py-3 text-right text-slate-200">$<%= (item.unit_price_cents / 100.0).round(2) %></td>
-                <td class="px-6 py-3 text-center text-slate-200"><%= item.taxable? ? "✓" : "–" %></td>
-                <td class="px-6 py-3 text-center text-slate-200 capitalize text-xs">
-                  <span class="<%= item.lock_policy == 'admin_only' ? 'text-yellow-300' : 'text-blue-300' %>">
+              <tr>
+                <td><%= item.name %></td>
+                <td><%= item.category %></td>
+                <td class="text-right">$<%= (item.unit_price_cents / 100.0).round(2) %></td>
+                <td class="text-center"><%= item.taxable? ? "✓" : "–" %></td>
+                <td class="text-center">
+                  <span class="<%= item.lock_policy == 'admin_only' ? 'text-yellow-700 dark:text-yellow-300' : 'text-link' %>">
                     <%= item.lock_policy.humanize %>
                   </span>
                 </td>
-                <td class="px-6 py-3 text-center">
+                <td class="text-center">
                   <% if item.active? %>
                     <span class="badge badge-success">Active</span>
                   <% else %>
                     <span class="badge badge-warning">Inactive</span>
                   <% end %>
                 </td>
-                <td class="px-6 py-3 text-center space-x-2">
+                <td class="text-center">
                   <%= link_to "Edit", edit_admin_price_book_item_path(item), class: "btn btn-xs btn-outline" %>
                   <%= button_to "Delete", admin_price_book_item_path(item), method: :delete, 
-                      data: { confirm: "Remove this item?" }, class: "btn btn-xs btn-error btn-outline" %>
+                      data: { turbo_confirm: "Remove this item?" }, class: "btn btn-xs btn-error btn-outline" %>
                 </td>
               </tr>
             <% end %>
@@ -54,7 +54,7 @@
         </table>
       </div>
     <% else %>
-      <div class="px-6 py-8 text-center text-slate-500">
+      <div class="px-6 py-8 text-center text-muted">
         <p class="text-sm mb-4">No price book items yet</p>
         <%= link_to "Create the first one", new_admin_price_book_item_path, class: "btn btn-sm btn-primary" %>
       </div>

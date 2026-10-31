@@ -10,9 +10,37 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_12_190000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_31_030854) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "active_storage_attachments", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.bigint "record_id", null: false
+    t.string "record_type", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", force: :cascade do |t|
+    t.bigint "byte_size", null: false
+    t.string "checksum"
+    t.string "content_type"
+    t.datetime "created_at", null: false
+    t.string "filename", null: false
+    t.string "key", null: false
+    t.text "metadata"
+    t.string "service_name", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
 
   create_table "beta_requests", force: :cascade do |t|
     t.string "company"
@@ -39,6 +67,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_12_190000) do
     t.string "phone"
     t.string "slug", null: false
     t.string "state"
+    t.decimal "tax_rate", precision: 5, scale: 4, default: "0.0"
     t.string "time_zone", default: "America/New_York"
     t.datetime "updated_at", null: false
     t.string "website_url"
@@ -142,6 +171,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_12_190000) do
     t.datetime "created_at", null: false
     t.bigint "customer_id", null: false
     t.text "diagnosis"
+    t.integer "duration_minutes", default: 60
     t.string "model_number"
     t.text "notes"
     t.string "serial_number"
@@ -156,12 +186,35 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_12_190000) do
 
   create_table "line_items", force: :cascade do |t|
     t.decimal "amount", precision: 10, scale: 2
+    t.string "category"
+    t.bigint "company_id"
     t.datetime "created_at", null: false
     t.string "description"
     t.bigint "invoice_id", null: false
-    t.string "item_type"
+    t.boolean "locked", default: false
+    t.integer "position"
+    t.bigint "price_book_item_id"
+    t.decimal "quantity", precision: 10, scale: 2, default: "1.0"
+    t.boolean "taxable", default: true
+    t.integer "unit_price_cents", default: 0
     t.datetime "updated_at", null: false
+    t.index ["company_id"], name: "index_line_items_on_company_id"
     t.index ["invoice_id"], name: "index_line_items_on_invoice_id"
+    t.index ["price_book_item_id"], name: "index_line_items_on_price_book_item_id"
+  end
+
+  create_table "price_book_items", force: :cascade do |t|
+    t.boolean "active", default: true
+    t.string "category", default: "materials", null: false
+    t.bigint "company_id", null: false
+    t.datetime "created_at", null: false
+    t.string "lock_policy", default: "admin_only"
+    t.string "name", null: false
+    t.boolean "taxable", default: true
+    t.integer "unit_price_cents", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id", "active"], name: "index_price_book_items_on_company_id_and_active"
+    t.index ["company_id"], name: "index_price_book_items_on_company_id"
   end
 
   create_table "solid_queue_blocked_executions", force: :cascade do |t|
@@ -260,7 +313,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_12_190000) do
 
   create_table "users", force: :cascade do |t|
     t.boolean "active", default: true, null: false
-    t.string "company_id"
+    t.bigint "company_id"
     t.datetime "created_at", null: false
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -269,18 +322,25 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_12_190000) do
     t.datetime "remember_created_at"
     t.datetime "reset_password_sent_at"
     t.string "reset_password_token"
-    t.string "role"
+    t.integer "role", default: 2, null: false
     t.datetime "updated_at", null: false
+    t.index ["company_id"], name: "index_users_on_company_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "customers", "companies"
   add_foreign_key "invoices", "companies"
   add_foreign_key "invoices", "jobs"
   add_foreign_key "jobs", "companies"
   add_foreign_key "jobs", "customers"
+  add_foreign_key "line_items", "companies"
   add_foreign_key "line_items", "invoices"
+  add_foreign_key "line_items", "price_book_items"
+  add_foreign_key "price_book_items", "companies"
   add_foreign_key "technicians", "companies"
   add_foreign_key "technicians", "users", on_delete: :nullify
+  add_foreign_key "users", "companies"
 end

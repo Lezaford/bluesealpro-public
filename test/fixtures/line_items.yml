@@ -1,13 +1,7 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
-
 one:
+  company: one
   invoice: one
-  item_type: MyString
-  description: MyString
-  amount: 9.99
-
-two:
-  invoice: two
-  item_type: MyString
-  description: MyString
-  amount: 9.99
+  category: labor
+  description: Diagnostic
+  quantity: 1
+  unit_price_cents: 1000

@@ -6,8 +6,8 @@ default: &default
 development:
   primary:
     <<: *default
-    host: 127.0.0.1
-    port: 5432
+    host: <%= ENV.fetch("DB_HOST", "127.0.0.1") %>
+    port: <%= ENV.fetch("DB_PORT", "5432") %>
     username: blueseal
     password: blueseal
     database: bluesealpro_development
@@ -15,8 +15,8 @@ development:
 test:
   primary:
     <<: *default
-    host: 127.0.0.1
-    port: 5432
+    host: <%= ENV.fetch("DB_HOST", "127.0.0.1") %>
+    port: <%= ENV.fetch("DB_PORT", "5432") %>
     username: blueseal
     password: blueseal
     database: bluesealpro_test

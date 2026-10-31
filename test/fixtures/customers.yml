@@ -1,17 +1,11 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
-
 one:
   company: one
-  name: MyString
-  phone: MyString
-  email: MyString
-  address: MyString
-  notes: MyText
+  first_name: Ada
+  last_name: Lovelace
+  email: ada@example.test
 
 two:
   company: two
-  name: MyString
-  phone: MyString
-  email: MyString
-  address: MyString
-  notes: MyText
+  first_name: Grace
+  last_name: Hopper
+  email: grace@example.test

@@ -1,0 +1,37 @@
+<div class="page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Work</p>
+      <h1 class="page-title mt-1">Invoices</h1>
+      <p class="page-sub">Invoices are created from a completed job.</p>
+    </div>
+  </header>
+
+  <div class="card overflow-hidden">
+    <% if @invoices.any? %>
+      <div class="overflow-x-auto">
+        <table class="table">
+          <thead>
+            <tr><th>Invoice</th><th>Job</th><th>Status</th><th class="text-right">Total</th><th></th></tr>
+          </thead>
+          <tbody>
+            <% @invoices.each do |invoice| %>
+              <tr>
+                <td>#<%= invoice.id %></td>
+                <td><%= link_to "Job ##{invoice.job_id}", job_path(invoice.job_id) %></td>
+                <td><%= invoice.status.presence || "draft" %></td>
+                <td class="text-right"><%= number_to_currency(invoice.total_dollars) %></td>
+                <td class="text-right"><%= link_to "Open", job_invoice_path(invoice.job_id), class: "btn btn-outline btn-sm" %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="empty">
+        <p class="empty-title">No invoices yet</p>
+        <p class="empty-text">Open a job and create an invoice from it.</p>
+      </div>
+    <% end %>
+  </div>
+</div>

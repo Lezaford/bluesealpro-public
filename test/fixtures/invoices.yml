@@ -1,17 +1,15 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
-
 one:
   company: one
   job: one
-  subtotal: 9.99
-  tax: 9.99
-  total: 9.99
-  status: MyString
+  subtotal: 10.00
+  tax: 0.00
+  total: 10.00
+  status: draft
 
 two:
   company: two
   job: two
-  subtotal: 9.99
-  tax: 9.99
-  total: 9.99
-  status: MyString
+  subtotal: 10.00
+  tax: 0.00
+  total: 10.00
+  status: draft

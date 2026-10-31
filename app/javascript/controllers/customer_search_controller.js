@@ -63,7 +63,7 @@ export default class extends Controller {
       })
       .catch(error => {
         console.error("Customer search failed:", error)
-        this.dropdownTarget.innerHTML = `<div class="px-3 py-2 text-slate-400 text-sm">Error loading customers</div>`
+        this.dropdownTarget.innerHTML = `<div class="px-3 py-2 text-muted text-sm">Error loading customers</div>`
         this.dropdownTarget.classList.remove("hidden")
       })
   }
@@ -71,20 +71,20 @@ export default class extends Controller {
   renderDropdown(customers, query) {
     if (customers.length === 0) {
       this.dropdownTarget.innerHTML = `
-        <div class="px-3 py-2 text-slate-400 text-sm">No customers found</div>
+        <div class="px-3 py-2 text-muted text-sm">No customers found</div>
       `
       this.dropdownTarget.classList.remove("hidden")
       return
     }
 
     const html = customers.map(customer => `
-      <button type="button" class="w-full text-left px-3 py-2 hover:bg-slate-700 transition customer-option" 
+      <button type="button" class="w-full text-left px-3 py-2 hover:bg-raised transition customer-option" 
         data-action="click->customer-search#selectCustomer"
         data-customer-id="${this.escapeHtml(customer.id)}"
         data-customer-name="${this.escapeHtml(customer.name)}"
         data-customer-email="${this.escapeHtml(customer.email)}">
-        <div class="font-medium text-slate-100">${this.highlightMatches(customer.name, query)}</div>
-        <div class="text-xs text-slate-400">${this.highlightMatches(customer.email, query)}</div>
+        <div class="font-medium text-ink">${this.highlightMatches(customer.name, query)}</div>
+        <div class="text-xs text-muted">${this.highlightMatches(customer.email, query)}</div>
       </button>
     `).join("")
 
@@ -120,10 +120,10 @@ export default class extends Controller {
 
     // Create chip
     const chip = document.createElement("div")
-    chip.className = "customer-chip bg-blue-600/30 border border-blue-500 text-blue-200 px-3 py-1 rounded flex items-center gap-2 text-sm"
+    chip.className = "customer-chip bg-brand-500/15 border border-brand-500/50 text-ink px-3 py-1 rounded flex items-center gap-2 text-sm"
     chip.innerHTML = `
       <span>${this.escapeHtml(name)}</span>
-      <button type="button" class="remove-customer text-blue-300 hover:text-blue-100 font-bold"
+      <button type="button" class="remove-customer text-link hover:text-ink font-bold"
         data-action="click->customer-search#clearSelection">×</button>
     `
 

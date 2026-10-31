@@ -9,11 +9,29 @@ class Customer < ApplicationRecord
   validates :first_name, :last_name, presence: true, unless: -> { display_name.present? }
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
 
+  before_validation :fill_display_name
+
+  # Case-insensitive search across the real (CSV-backed) name, email and phone columns.
+  # The legacy columns (name, phone, address, address1/2, city, state, zip) are no longer read by the app.
+  SEARCH_COLUMNS = %w[first_name last_name display_name company_name email
+                      mobile_number home_number work_number].freeze
+
+  scope :search, lambda { |term|
+    next all if term.blank?
+    pattern = "%#{sanitize_sql_like(term.to_s.strip.downcase)}%"
+    where(SEARCH_COLUMNS.map { |c| "LOWER(customers.#{c}) LIKE :q" }.join(" OR "), q: pattern)
+  }
+
   # Convenience name
   def full_name
     display_name.presence ||
-      [ first_name, last_name ].compact.join(" ").presence ||
+      [ first_name, last_name ].compact_blank.join(" ").presence ||
+      company_name.presence ||
       name
+  end
+
+  def primary_phone
+    mobile_number.presence || home_number.presence || work_number.presence
   end
 
   CSV_HEADERS = [
@@ -184,5 +202,13 @@ class Customer < ApplicationRecord
 
   def self.truthy?(value)
     value.to_s.strip.downcase.in?(%w[true t yes y 1])
+  end
+
+  private
+
+  # display_name is what lists/search/JSON show; derive it when the user left it blank.
+  def fill_display_name
+    return if display_name.present?
+    self.display_name = [ first_name, last_name ].compact_blank.join(" ").presence || company_name.presence
   end
 end

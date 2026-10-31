@@ -2,6 +2,8 @@ Rails.application.routes.draw do
   # Devise auth – normal login, no public registration
   devise_for :users, skip: [ :registrations ]
 
+  get "up" => "rails/health#show", as: :rails_health_check
+
   # Public landing page
   root "landing#index"
 
