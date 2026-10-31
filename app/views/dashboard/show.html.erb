@@ -1,47 +1,31 @@
-<div class="space-y-6">
-  <h1 class="text-4xl font-extrabold tracking-tight">BlueSealPro Dashboard</h1>
+<%
+  tiles = [
+    { title: "Customers",   text: "Manage your client list.",         path: customers_path,   icon: "users" },
+    { title: "Schedule",    text: "Create and assign service calls.", path: schedule_path,    icon: "calendar" },
+    { title: "Jobs",        text: "Track work and generate invoices.", path: jobs_path,        icon: "clipboard" },
+    { title: "Technicians", text: "Manage your service team.",        path: technicians_path, icon: "wrench" }
+  ]
+  tiles << { title: "Users", text: "Create and manage team members.", path: admin_users_path, icon: "shield" } if current_user&.role_owner? || current_user&.role_admin?
+%>
+<div class="page">
+  <header>
+    <p class="eyebrow">Overview</p>
+    <h1 class="page-title mt-1">Dashboard</h1>
+    <p class="page-sub">Pick up where you left off.</p>
+  </header>
 
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-    <%# Card component %>
-    <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 shadow-card">
-      <h2 class="text-xl font-semibold">Customers</h2>
-      <p class="text-sm text-slate-600 dark:text-slate-400 mt-1 mb-4">Manage your client list.</p>
-      <%= link_to "View Customers", customers_path,
-          class: "inline-block rounded-md bg-brand-500 px-3 py-2 text-white hover:bg-brand-600" %>
-    </div>
-    
-    <!-- Jobs card -->
-    <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 shadow-card">
-      <h2 class="text-xl font-semibold">Jobs / Scheduling</h2>
-      <p class="text-sm text-slate-600 dark:text-slate-400 mt-1 mb-4">Create & assign service calls.</p>
-      <%= link_to "View Jobs", schedule_path,
-          class: "inline-block rounded-md bg-brand-500 px-3 py-2 text-white hover:bg-brand-600" %>
-    </div>
-
-    <!-- Invoices card -->
-    <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 shadow-card">
-      <h2 class="text-xl font-semibold">Invoices & Payments</h2>
-      <p class="text-sm text-slate-600 dark:text-slate-400 mt-1 mb-4">Generate & track invoices.</p>
-      <%= link_to "View Invoices", jobs_path,
-         class: "inline-block rounded-md bg-brand-500 px-3 py-2 text-white hover:bg-brand-600" %>
-    </div>
-
-    <!-- Technicians card -->
-    <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 shadow-card">
-      <h2 class="text-xl font-semibold">Technicians</h2>
-      <p class="text-sm text-slate-600 dark:text-slate-400 mt-1 mb-4">Manage your service team.</p>
-      <%= link_to "View Technicians", technicians_path,
-          class: "inline-block rounded-md bg-brand-500 px-3 py-2 text-white hover:bg-brand-600" %>
-    </div>
-
-    <% if current_user&.role_owner? || current_user&.role_admin? %>
-      <!-- Admin Users card -->
-      <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 shadow-card">
-        <h2 class="text-xl font-semibold">User Management</h2>
-        <p class="text-sm text-slate-600 dark:text-slate-400 mt-1 mb-4">Create & manage team members.</p>
-        <%= link_to "Manage Users", admin_users_path,
-            class: "inline-block rounded-md bg-purple-600 px-3 py-2 text-white hover:bg-purple-700" %>
-      </div>
+  <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <% tiles.each do |t| %>
+      <%= link_to t[:path], class: "card card-body card-link group" do %>
+        <span class="grid h-10 w-10 place-items-center rounded-lg bg-brand-500/10 text-brand-600 dark:text-brand-300">
+          <%= icon t[:icon], css: "h-5 w-5" %>
+        </span>
+        <h2 class="mt-4 text-lg font-semibold text-ink"><%= t[:title] %></h2>
+        <p class="mt-1 text-sm text-muted"><%= t[:text] %></p>
+        <span class="mt-4 inline-flex items-center gap-1 text-sm font-medium text-link">
+          Open <%= icon "arrow-right", css: "h-4 w-4 transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none" %>
+        </span>
+      <% end %>
     <% end %>
   </div>
 </div>

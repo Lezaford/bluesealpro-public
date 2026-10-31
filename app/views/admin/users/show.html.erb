@@ -1,17 +1,17 @@
-<div class="p-6">
+<div class="page">
   <div class="mb-6">
-    <h1 class="text-3xl font-bold"><%= @user.name %></h1>
+    <h1 class="page-title"><%= @user.name %></h1>
   </div>
 
   <div class="card bg-base-100 shadow-lg max-w-md">
     <div class="card-body">
       <div class="mb-4">
-        <h2 class="text-sm font-semibold text-gray-600">Email</h2>
+        <h2 class="text-sm font-semibold text-muted">Email</h2>
         <p class="text-lg"><%= mail_to @user.email %></p>
       </div>
 
       <div class="mb-4">
-        <h2 class="text-sm font-semibold text-gray-600">Role</h2>
+        <h2 class="text-sm font-semibold text-muted">Role</h2>
         <p>
           <span class="badge <%= role_badge_class(@user.role) %>">
             <%= @user.role.humanize %>

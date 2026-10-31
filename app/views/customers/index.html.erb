@@ -1,9 +1,10 @@
-<div class="space-y-6">
+<div class="page">
   <!-- Header + actions -->
   <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
     <div>
-      <h1 class="text-3xl font-extrabold">Customers</h1>
-      <p class="mt-1 text-sm text-slate-400">
+      <p class="eyebrow">People</p>
+      <h1 class="page-title mt-1">Customers</h1>
+      <p class="page-sub">
         Search, filter, import, and export customer records for <%= Current.company.name %>.
       </p>
     </div>
@@ -11,8 +12,8 @@
     <div class="flex flex-wrap items-center gap-3">
       <!-- Export CSV -->
       <%= link_to "Export CSV",
-          export_customers_path(request.query_parameters),
-          class: "inline-flex items-center rounded-md border border-slate-600 px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800" %>
+          export_customers_path(request.query_parameters.except("page")),
+          class: "btn btn-outline" %>
 
       <!-- Import CSV -->
       <%= form_with url: import_customers_path,
@@ -20,7 +21,7 @@
                     local: true,
                     id: "import-form",
                     class: "contents" do |f| %>
-        <label class="inline-flex items-center rounded-md bg-slate-700 px-4 py-2 text-sm font-semibold text-slate-100 hover:bg-slate-600 cursor-pointer transition-colors">
+        <label class="btn btn-outline cursor-pointer">
           Import CSV
           <%= f.file_field :import_file,
                 accept: ".csv",
@@ -32,7 +33,7 @@
       <!-- New Customer -->
       <%= link_to "New Customer",
           new_customer_path,
-          class: "inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700" %>
+          class: "btn btn-primary" %>
     </div>
   </div>
 
@@ -43,15 +44,14 @@
       <div class="flex w-full gap-2">
         <%= text_field_tag :q, params[:q],
           placeholder: "Search name, email, phone…",
-          class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100
-                  focus:border-blue-500 focus:ring-blue-500 px-3 py-2" %>
+          class: "input", type: "search", "aria-label": "Search customers" %>
 
         <%= submit_tag "Search",
-          class: "rounded-md bg-slate-700 px-4 py-2 text-slate-100 hover:bg-slate-600" %>
+          class: "btn btn-outline" %>
 
         <% if params[:q].present? || params[:customer_type].present? || params[:lead_source].present? %>
           <%= link_to "Clear", customers_path,
-            class: "rounded-md border border-slate-600 px-4 py-2 text-sm text-slate-100 hover:bg-slate-800" %>
+            class: "btn btn-outline" %>
         <% end %>
       </div>
 
@@ -62,74 +62,75 @@
             [["All types", ""]] + @customer_types.map { |t| [t, t] },
             params[:customer_type]
           ),
-          class: "rounded-md bg-slate-800 border border-slate-700 text-sm text-slate-100 px-3 py-2" %>
+          class: "input !w-auto", "aria-label": "Filter by customer type" %>
 
         <%= select_tag :lead_source,
           options_for_select(
             [["All sources", ""]] + @lead_sources.map { |s| [s, s] },
             params[:lead_source]
           ),
-          class: "rounded-md bg-slate-800 border border-slate-700 text-sm text-slate-100 px-3 py-2" %>
+          class: "input !w-auto", "aria-label": "Filter by lead source" %>
       </div>
   </div>
 <% end %>
 
 
   <!-- Table -->
-  <div class="overflow-hidden rounded-xl border border-slate-800 bg-slate-900">
-    <table class="min-w-full divide-y divide-slate-800">
-      <thead class="bg-slate-900/50">
+  <div class="card overflow-hidden">
+    <div class="table-wrap"><table class="table">
+      <caption class="sr-only">Customers</caption>
+      <thead>
         <tr>
-          <th class="px-4 py-3 text-left text-sm font-semibold text-slate-300">Name</th>
-          <th class="px-4 py-3 text-left text-sm font-semibold text-slate-300">Email</th>
-          <th class="px-4 py-3 text-left text-sm font-semibold text-slate-300">Phone</th>
-          <th class="px-4 py-3 text-left text-sm font-semibold text-slate-300">City</th>
-          <th class="px-4 py-3 text-left text-sm font-semibold text-slate-300">Type</th>
-          <th class="px-4 py-3 text-left text-sm font-semibold text-slate-300">Last Service</th>
-          <th class="px-4 py-3 text-left text-sm font-semibold text-slate-300">Lifetime Value</th>
-          <th class="px-4 py-3"></th>
+          <th scope="col">Name</th>
+          <th scope="col">Email</th>
+          <th scope="col">Phone</th>
+          <th scope="col">City</th>
+          <th scope="col">Type</th>
+          <th scope="col">Last Service</th>
+          <th scope="col">Lifetime Value</th>
+          <th scope="col"><span class="sr-only">Actions</span></th>
         </tr>
       </thead>
-      <tbody class="divide-y divide-slate-800">
+      <tbody>
         <% @customers.each do |c| %>
-          <tr class="hover:bg-slate-800/60">
-            <td class="px-4 py-3">
+          <tr>
+            <td>
               <div class="flex flex-col">
-                <span class="font-medium text-slate-100"><%= c.display_name.presence || "#{c.first_name} #{c.last_name}" %></span>
+                <span class="font-medium text-ink"><%= c.full_name %></span>
                 <% if c.company_name.present? %>
-                  <span class="text-xs text-slate-400"><%= c.company_name %></span>
+                  <span class="text-xs text-muted"><%= c.company_name %></span>
                 <% end %>
               </div>
             </td>
-            <td class="px-4 py-3 text-sm text-slate-100"><%= c.email.presence || "—" %></td>
-            <td class="px-4 py-3 text-sm text-slate-100">
-              <%= c.phone.presence || c.mobile_number.presence || "—" %>
+            <td><%= c.email.presence || "—" %></td>
+            <td>
+              <%= c.primary_phone || "—" %>
             </td>
-            <td class="px-4 py-3 text-sm text-slate-100">
-              <%= c.city.presence || c.address_1_city.presence || "—" %>
+            <td>
+              <%= c.address_1_city.presence || "—" %>
             </td>
-            <td class="px-4 py-3 text-sm text-slate-100">
+            <td>
               <%= c.customer_type.presence || "—" %>
             </td>
-            <td class="px-4 py-3 text-sm text-slate-100">
+            <td>
               <%= c.last_service_date&.strftime("%b %-d, %Y") || "—" %>
             </td>
-            <td class="px-4 py-3 text-sm text-slate-100">
+            <td>
               <% if c.lifetime_value.present? && c.lifetime_value.to_f > 0 %>
                 <span class="font-mono">$<%= number_with_precision(c.lifetime_value, precision: 2) %></span>
               <% else %>
                 —
               <% end %>
             </td>
-            <td class="px-4 py-3 text-right">
+            <td class="text-right">
               <div class="inline-flex gap-2">
                 <%= link_to "View", c,
-                      class: "rounded-md border border-slate-600 px-3 py-1.5 text-xs text-slate-100 hover:bg-slate-800" %>
+                      class: "btn btn-outline btn-sm" %>
                 <%= link_to "Edit", edit_customer_path(c),
-                      class: "rounded-md border border-slate-600 px-3 py-1.5 text-xs text-slate-100 hover:bg-slate-800" %>
+                      class: "btn btn-outline btn-sm" %>
                 <%= button_to "Delete", c, method: :delete,
                       data: { turbo_confirm: "Delete this customer?" },
-                      class: "rounded-md bg-red-600 px-3 py-1.5 text-xs text-white hover:bg-red-700" %>
+                      class: "btn btn-danger btn-sm" %>
               </div>
             </td>
           </tr>
@@ -137,12 +138,34 @@
 
         <% if @customers.empty? %>
           <tr>
-            <td colspan="8" class="px-4 py-6 text-center text-slate-400">
-              No customers yet.
+            <td colspan="8">
+              <div class="empty">
+                <span class="empty-icon"><%= icon "users", css: "h-6 w-6" %></span>
+                <p class="empty-title"><%= params[:q].present? ? "No customers match your search" : "No customers yet" %></p>
+                <p class="empty-text">Add a customer or import a CSV to get started.</p>
+                <%= link_to "New customer", new_customer_path, class: "btn btn-primary btn-sm mt-2" %>
+              </div>
             </td>
           </tr>
         <% end %>
       </tbody>
-    </table>
+    </table></div>
   </div>
+
+  <% if @total_pages > 1 %>
+    <nav class="flex items-center justify-between" aria-label="Pagination">
+      <p class="text-sm text-muted">
+        Showing <%= (@page - 1) * @per_page + 1 %>&ndash;<%= [ @page * @per_page, @total_count ].min %> of <%= @total_count %>
+      </p>
+      <div class="flex items-center gap-2">
+        <% if @page > 1 %>
+          <%= link_to "Previous", customers_path(request.query_parameters.merge(page: @page - 1)), class: "btn btn-outline btn-sm", rel: "prev" %>
+        <% end %>
+        <span class="text-sm text-muted">Page <%= @page %> of <%= @total_pages %></span>
+        <% if @page < @total_pages %>
+          <%= link_to "Next", customers_path(request.query_parameters.merge(page: @page + 1)), class: "btn btn-outline btn-sm", rel: "next" %>
+        <% end %>
+      </div>
+    </nav>
+  <% end %>
 </div>

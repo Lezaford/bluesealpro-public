@@ -1,6 +1,6 @@
-<div class="p-6">
+<div class="page">
   <div class="mb-6">
-    <h1 class="text-3xl font-bold"><%= @user.persisted? ? "Edit" : "New" %> User</h1>
+    <h1 class="page-title"><%= @user.persisted? ? "Edit" : "New" %> User</h1>
   </div>
 
   <% if @user.errors.any? %>
@@ -25,26 +25,26 @@
         <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
 
         <div class="form-control mb-4">
-          <label class="label">
+          <label class="label" for="user_name">
             <span class="label-text">Name</span>
           </label>
-          <input type="text" name="user[name]" value="<%= @user.name %>" 
+          <input type="text" id="user_name" name="user[name]" value="<%= @user.name %>" 
                  class="input input-bordered" required>
         </div>
 
         <div class="form-control mb-4">
-          <label class="label">
+          <label class="label" for="user_email">
             <span class="label-text">Email</span>
           </label>
-          <input type="email" name="user[email]" value="<%= @user.email %>" 
+          <input type="email" id="user_email" name="user[email]" value="<%= @user.email %>" 
                  class="input input-bordered" required>
         </div>
 
         <div class="form-control mb-4">
-          <label class="label">
+          <label class="label" for="user_role">
             <span class="label-text">Role</span>
           </label>
-          <select name="user[role]" class="select select-bordered" required>
+          <select id="user_role" name="user[role]" class="select select-bordered" required>
             <option value="">Select a role</option>
             <option value="owner" <%= "selected" if @user.role == "owner" %>>Owner</option>
             <option value="admin" <%= "selected" if @user.role == "admin" %>>Admin</option>
@@ -54,18 +54,18 @@
         </div>
 
         <div class="form-control mb-4">
-          <label class="label">
+          <label class="label" for="user_password">
             <span class="label-text">Password<% unless @user.persisted? %> (Required)<% else %> (Leave blank to keep current)<% end %></span>
           </label>
-          <input type="password" name="user[password]" 
+          <input type="password" name="user[password]" id="user_password" 
                  class="input input-bordered" <%= "required" unless @user.persisted? %>>
         </div>
 
         <div class="form-control mb-6">
-          <label class="label">
+          <label class="label" for="user_password_confirmation">
             <span class="label-text">Confirm Password</span>
           </label>
-          <input type="password" name="user[password_confirmation]" 
+          <input type="password" id="user_password_confirmation" name="user[password_confirmation]" 
                  class="input input-bordered" <%= "required" unless @user.persisted? %>>
         </div>
 

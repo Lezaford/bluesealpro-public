@@ -1,0 +1,21 @@
+<%# About-this-demo dialog + footer link. Auto-opens once for signed-in users (see demo_notice_controller). %>
+<div data-controller="demo-notice" data-demo-notice-auto-value="<%= user_signed_in? %>">
+  <dialog class="demo-dialog" aria-labelledby="demo-notice-title" aria-describedby="demo-notice-body"
+          data-demo-notice-target="dialog" data-action="click->demo-notice#backdrop close->demo-notice#closed">
+    <div class="p-6 sm:p-7">
+      <h2 id="demo-notice-title" class="text-lg font-semibold text-ink">About this demo</h2>
+      <div id="demo-notice-body" class="mt-3 space-y-3 text-sm leading-relaxed text-ink-2">
+        <p>BlueSealPro is a retired app, shown here as a portfolio demo.</p>
+        <p>The customer data has been truncated and anonymized. Names, addresses, phone numbers and emails are masked or made up, and the original records can't be recovered.</p>
+        <p>Feel free to click around and add or edit anything.</p>
+      </div>
+      <div class="mt-6 flex justify-end">
+        <button type="button" class="btn btn-primary" data-action="demo-notice#dismiss" data-demo-notice-target="confirm">Got it</button>
+      </div>
+    </div>
+  </dialog>
+
+  <footer class="border-t border-line py-4 text-center text-xs text-muted">
+    <button type="button" class="rounded px-2 py-1 underline underline-offset-2 hover:text-ink" data-action="demo-notice#open">About this demo</button>
+  </footer>
+</div>

@@ -1,114 +1,97 @@
-<!-- Hero Section -->
-<section class="bg-slate-950 text-slate-100 border-b border-slate-800">
-  <div class="max-w-7xl mx-auto px-6 py-14">
+<%
+  features = [
+    "Model-specific troubleshooting",
+    "Offline-first with cloud sync",
+    "Flat-rate pricing and simple invoices",
+    "Built-in routing for technicians"
+  ]
+  route = [
+    ["08:00", "Johnson Residence", "Drain error"],
+    ["10:30", "Midtown Deli", "Warm case"],
+    ["13:00", "Rivera Residence", "No cool"],
+    ["15:30", "Lakeside Condos", "No drain"]
+  ]
+%>
+<div class="space-y-20">
+  <section class="grid items-center gap-12 pt-4 lg:grid-cols-2 lg:pt-10 animate-fade-up">
+    <div>
+      <p class="eyebrow">Field service CRM</p>
+      <h1 class="mt-3 text-4xl font-bold leading-[1.05] sm:text-5xl lg:text-6xl">
+        Smart CRM for appliance and HVAC pros
+      </h1>
+      <p class="mt-5 max-w-xl text-lg leading-relaxed text-ink-2">
+        Scheduling, troubleshooting, invoicing, and routing, built by a technician for technicians.
+      </p>
 
-    <!-- Hero Content -->
-    <div class="mt-14 grid lg:grid-cols-2 gap-10 items-center">
-      <div>
-        <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight">
-          Smart CRM for Appliance & HVAC Pros
-        </h1>
-
-        <p class="mt-5 text-slate-300 text-lg leading-relaxed">
-          Scheduling, troubleshooting, invoicing, and routing —
-          built by a technician for technicians.
-        </p>
-
-        <!-- Buttons -->
-        <div class="mt-8 flex flex-wrap gap-4">
-          <a href="#beta"
-             class="inline-flex items-center rounded-md bg-blue-600 px-6 py-3 text-white font-medium hover:bg-blue-700">
-            Sign Up for Beta
-          </a>
-        </div>
-
-        <!-- Feature Bullets -->
-        <ul class="mt-10 space-y-2 text-slate-400">
-          <li>• Model-specific troubleshooting</li>
-          <li>• Offline-first with cloud sync</li>
-          <li>• Flat-rate pricing + simple invoices</li>
-          <li>• Built-in routing for technicians</li>
-        </ul>
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a href="#beta" class="btn btn-primary !px-5 !py-2.5">Sign up for beta</a>
+        <%= link_to "Log in", new_user_session_path, class: "btn btn-outline !px-5 !py-2.5" %>
       </div>
 
-      <!-- Schedule Demo Card -->
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
-        <h3 class="font-semibold mb-4 text-lg">Today’s Route</h3>
-        <div class="divide-y divide-slate-800 text-slate-300">
-          <div class="py-3">
-            <span class="font-semibold text-blue-400">08:00</span> — Johnson Residence · Drain error
-          </div>
-          <div class="py-3">
-            <span class="font-semibold text-blue-400">10:30</span> — Midtown Deli · Warm case
-          </div>
-          <div class="py-3">
-            <span class="font-semibold text-blue-400">13:00</span> — Rivera Residence · No cool
-          </div>
-          <div class="py-3">
-            <span class="font-semibold text-blue-400">15:30</span> — Lakeside Condos · No drain
-          </div>
+      <ul class="mt-10 grid gap-3 text-ink-2 sm:grid-cols-2">
+        <% features.each do |f| %>
+          <li class="flex items-start gap-2.5 text-sm">
+            <span class="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-brand-500/15 text-brand-600 dark:text-brand-300"><%= icon "check", css: "h-3 w-3" %></span>
+            <%= f %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+
+    <%# Soft gradient frame around a product preview %>
+    <div class="rounded-2xl bg-gradient-to-br from-brand-500/20 via-brand-500/5 to-transparent p-3 sm:p-5">
+      <div class="card p-5 sm:p-6">
+        <div class="flex items-center justify-between">
+          <h2 class="card-title">Today’s route</h2>
+          <span class="badge badge-info">4 stops</span>
         </div>
+        <ol class="mt-4 divide-y divide-line">
+          <% route.each do |time, place, issue| %>
+            <li class="flex items-center gap-4 py-3">
+              <span class="w-14 shrink-0 font-mono text-sm font-medium tabular-nums text-link"><%= time %></span>
+              <span class="min-w-0">
+                <span class="block truncate text-sm font-medium text-ink"><%= place %></span>
+                <span class="block truncate text-xs text-muted"><%= issue %></span>
+              </span>
+            </li>
+          <% end %>
+        </ol>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- BETA SIGNUP FORM -->
-<section id="beta" class="mt-12">
-  <h2 class="text-2xl font-bold mb-4">Request Beta Access</h2>
+  <section id="beta" class="mx-auto max-w-2xl scroll-mt-24">
+    <div class="card card-body sm:p-8">
+      <h2 class="text-2xl font-bold">Request beta access</h2>
+      <p class="page-sub mb-6">Tell us a little about your shop and we will reach out when a slot opens.</p>
 
-  <%= form_with model: BetaRequest.new,
-                url: beta_requests_path,
-                local: true,
-                html: { class: "grid grid-cols-1 gap-6 max-w-3xl" } do |f| %>
-
-    <!-- Name -->
-    <div>
-      <%= f.label :name, "Name", class: "block text-sm font-medium text-slate-200" %>
-      <%= f.text_field :name,
-            class: "mt-1 w-full rounded-md bg-slate-900 border border-slate-700 text-slate-100" %>
+      <%= form_with model: BetaRequest.new, url: beta_requests_path, local: true, html: { class: "grid gap-5" } do |f| %>
+        <div class="grid gap-5 sm:grid-cols-2">
+          <div>
+            <%= f.label :name, "Name", class: "label" %>
+            <%= f.text_field :name, class: "input", autocomplete: "name" %>
+          </div>
+          <div>
+            <%= f.label :email, "Email", class: "label" %>
+            <%= f.email_field :email, class: "input", autocomplete: "email" %>
+          </div>
+          <div>
+            <%= f.label :company, "Company", class: "label" %>
+            <%= f.text_field :company, class: "input", autocomplete: "organization" %>
+          </div>
+          <div>
+            <%= f.label :phone, "Phone", class: "label" %>
+            <%= f.telephone_field :phone, class: "input", autocomplete: "tel" %>
+          </div>
+        </div>
+        <div>
+          <%= f.label :message, "Message", class: "label" %>
+          <%= f.text_area :message, rows: 4, class: "input" %>
+        </div>
+        <div>
+          <%= f.submit "Request beta access", class: "btn btn-primary !px-5 !py-2.5" %>
+        </div>
+      <% end %>
     </div>
-
-    <!-- Email -->
-    <div>
-      <%= f.label :email, "Email", class: "block text-sm font-medium text-slate-200" %>
-      <%= f.email_field :email,
-            class: "mt-1 w-full rounded-md bg-slate-900 border border-slate-700 text-slate-100" %>
-    </div>
-
-    <!-- Company -->
-    <div>
-      <%= f.label :company, "Company", class: "block text-sm font-medium text-slate-200" %>
-      <%= f.text_field :company,
-            class: "mt-1 w-full rounded-md bg-slate-900 border border-slate-700 text-slate-100" %>
-    </div>
-
-    <!-- Phone -->
-    <div>
-      <%= f.label :phone, "Phone", class: "block text-sm font-medium text-slate-200" %>
-      <%= f.telephone_field :phone,
-            class: "mt-1 w-full rounded-md bg-slate-900 border border-slate-700 text-slate-100" %>
-    </div>
-
-    <!-- Message -->
-    <div>
-      <%= f.label :message, "Message", class: "block text-sm font-medium text-slate-200" %>
-      <%= f.text_area :message, rows: 4,
-            class: "mt-1 w-full rounded-md bg-slate-900 border border-slate-700 text-slate-100" %>
-    </div>
-
-    <!-- reCAPTCHA -->
-    <div class="mt-2">
-      <%= recaptcha_tags %>
-    </div>
-
-    <!-- Submit -->
-    <div class="mt-4">
-      <%= f.submit "Request Beta Access",
-            class: "inline-flex items-center rounded-md bg-blue-600 px-6 py-3 text-white font-semibold hover:bg-blue-700" %>
-    </div>
-  <% end %>
-</section>
-
-  </div>
-</section>
+  </section>
+</div>

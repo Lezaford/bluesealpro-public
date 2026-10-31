@@ -1,67 +1,53 @@
-<div class="p-6">
-  <div class="mb-6 flex items-center justify-between">
-    <h1 class="text-3xl font-bold">Employee Permissions</h1>
-  </div>
-
-  <% if notice %>
-    <div class="alert alert-success mb-4">
-      <p><%= notice %></p>
+<div class="page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Admin</p>
+      <h1 class="page-title mt-1">Employee permissions</h1>
+      <p class="page-sub">Who can sign in, and what they can do.</p>
     </div>
-  <% end %>
+  </header>
 
-  <% if alert %>
-    <div class="alert alert-error mb-4">
-      <p><%= alert %></p>
-    </div>
-  <% end %>
-
-  <% if @users.any? %>
-    <div class="overflow-x-auto">
-      <table class="table table-zebra w-full">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% @users.each do |user| %>
+  <div class="card overflow-hidden">
+    <% if @users.any? %>
+      <div class="table-wrap">
+        <table class="table">
+          <caption class="sr-only">Users</caption>
+          <thead>
             <tr>
-              <td class="font-semibold"><%= user.name %></td>
-              <td><%= user.email %></td>
-              <td>
-                <span class="badge <%= role_badge_class(user.role) %>">
-                  <%= user.role&.humanize || "No Role" %>
-                </span>
-              </td>
-              <td>
-                <% if user.active? %>
-                  <span class="badge badge-success">Active</span>
-                <% else %>
-                  <span class="badge badge-warning">Inactive</span>
-                <% end %>
-              </td>
-              <td>
-                <%= link_to "Edit", edit_admin_user_path(user), class: "btn btn-sm btn-ghost" %>
-              </td>
+              <th scope="col">Name</th>
+              <th scope="col">Email</th>
+              <th scope="col">Role</th>
+              <th scope="col">Status</th>
+              <th scope="col"><span class="sr-only">Actions</span></th>
             </tr>
-          <% end %>
-        </tbody>
-      </table>
-    </div>
-  <% else %>
-    <p class="text-gray-500">No users found.</p>
-  <% end %>
-</div>
-    <div class="alert alert-info">
-      <p>No users yet. <%= link_to "Create one", new_admin_user_path, class: "link" %></p>
-    </div>
-  <% end %>
-
-  <div class="mt-6">
-    <%= link_to "Back to Dashboard", dashboard_path, class: "btn btn-outline" %>
+          </thead>
+          <tbody>
+            <% @users.each do |user| %>
+              <tr>
+                <td class="font-medium text-ink"><%= user.name %></td>
+                <td><%= user.email %></td>
+                <td><span class="badge <%= role_badge_class(user.role) %>"><%= user.role&.humanize || "No role" %></span></td>
+                <td>
+                  <% if user.active? %>
+                    <span class="badge badge-success">Active</span>
+                  <% else %>
+                    <span class="badge badge-warning">Inactive</span>
+                  <% end %>
+                </td>
+                <td class="text-right"><%= link_to "Edit", edit_admin_user_path(user), class: "btn btn-outline btn-sm" %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="empty">
+        <span class="empty-icon"><%= icon "users", css: "h-6 w-6" %></span>
+        <p class="empty-title">No users yet</p>
+        <p class="empty-text">Team members appear here once added.</p>
+      </div>
+    <% end %>
   </div>
+
+  <%= link_to "Back to dashboard", dashboard_path, class: "btn btn-ghost btn-sm" %>
 </div>

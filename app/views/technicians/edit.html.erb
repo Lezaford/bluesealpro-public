@@ -1,9 +1,9 @@
-<div class="space-y-6">
-  <h1 class="text-3xl font-extrabold">Edit Technician</h1>
-  <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
+<div class="page">
+  <h1 class="page-title">Edit Technician</h1>
+  <div class="card card-body">
     <%= form_with model: @technician, local: true, class: "space-y-6" do |f| %>
       <% if @technician.errors.any? %>
-        <div class="rounded-md border border-red-500/30 bg-red-50/5 px-4 py-3 text-red-300">
+        <div class="notice notice-error">
           <p class="font-semibold mb-1"><%= pluralize(@technician.errors.count, "error") %> prevented saving:</p>
           <ul class="list-disc pl-5">
             <% @technician.errors.full_messages.each do |m| %>
@@ -15,27 +15,27 @@
 
       <div class="grid md:grid-cols-2 gap-4">
         <div>
-          <label class="block text-sm text-slate-300 mb-1">Name *</label>
-          <%= f.text_field :name, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+          <%= f.label :name, "Name *", class: "label" %>
+          <%= f.text_field :name, class: "input" %>
         </div>
         <div>
-          <label class="block text-sm text-slate-300 mb-1">Phone *</label>
-          <%= f.telephone_field :phone, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+          <%= f.label :phone, "Phone *", class: "label" %>
+          <%= f.telephone_field :phone, class: "input" %>
         </div>
       </div>
 
       <div>
-        <label class="block text-sm text-slate-300 mb-1">Email</label>
-        <%= f.email_field :email, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+        <%= f.label :email, "Email", class: "label" %>
+        <%= f.email_field :email, class: "input" %>
       </div>
 
       <div>
-        <label class="block text-sm text-slate-300 mb-1">Notes</label>
-        <%= f.text_area :notes, rows: 4, class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
+        <%= f.label :notes, "Notes", class: "label" %>
+        <%= f.text_area :notes, rows: 4, class: "input" %>
       </div>
 
       <div class="flex items-center gap-2">
-        <label class="flex items-center gap-2 text-sm text-slate-300">
+        <label class="flex items-center gap-2 text-sm text-ink-2">
           <%= f.check_box :active, class: "rounded" %>
           Active technician
         </label>
@@ -43,9 +43,9 @@
 
       <div class="flex items-center gap-3 pt-4">
         <%= f.submit "Save Changes",
-            class: "rounded-md bg-blue-600 px-5 py-2.5 text-white hover:bg-blue-700" %>
+            class: "btn btn-primary" %>
         <%= link_to "Cancel", technicians_path,
-            class: "rounded-md border border-slate-600 px-5 py-2.5 hover:bg-slate-800" %>
+            class: "btn btn-outline" %>
       </div>
     <% end %>
   </div>

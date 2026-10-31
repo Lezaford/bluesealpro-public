@@ -2,7 +2,182 @@
 @tailwind components;
 @tailwind utilities;
 
-/* subtle tweaks for dark */
+/* ------------------------------------------------------------------ */
+/* Design tokens. Space-separated RGB channels so Tailwind can apply   */
+/* opacity modifiers (bg-surface/60). Dark is the default theme.       */
+/* ------------------------------------------------------------------ */
 @layer base {
-  :root { color-scheme: light dark; }
+  :root {
+    --canvas:  244 247 251;
+    --surface: 255 255 255;
+    --raised:  241 245 249;
+    --line:    217 225 236;
+    --ink:     15 23 42;
+    --ink-2:   51 65 85;
+    --muted:   89 104 128;
+    --link:    30 64 175;
+    color-scheme: light;
+  }
+  .dark {
+    --canvas:  9 14 26;
+    --surface: 15 23 42;
+    --raised:  23 33 58;
+    --line:    38 51 80;
+    --ink:     241 245 249;
+    --ink-2:   203 213 225;
+    --muted:   148 163 184;
+    --link:    131 166 255;
+    color-scheme: dark;
+  }
+
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+  body {
+    @apply bg-canvas text-ink font-sans antialiased;
+    font-feature-settings: "cv11", "ss01";
+    min-height: 100vh;
+  }
+  h1, h2, h3 { @apply tracking-tight; text-wrap: balance; }
+  a { @apply rounded-sm; }
+  main a:not([class]) { @apply text-link underline underline-offset-2 hover:no-underline; }
+  ::selection { @apply bg-brand-500/30; }
+
+  /* One visible focus style for everything keyboard-reachable. */
+  :focus-visible { @apply outline-none ring-2 ring-brand-400 ring-offset-2 ring-offset-canvas; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation-duration: .01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: .01ms !important;
+    }
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Components                                                          */
+/* ------------------------------------------------------------------ */
+@layer components {
+  /* Page scaffolding */
+  .page        { @apply space-y-6 animate-fade-up; }
+  .page-header { @apply flex flex-wrap items-end justify-between gap-4; }
+  .page-title  { @apply text-2xl sm:text-3xl font-bold text-ink; }
+  .page-sub    { @apply mt-1 text-sm text-muted; }
+  .eyebrow     { @apply font-mono text-[11px] uppercase tracking-[.14em] text-muted; }
+
+  /* Surfaces */
+  .card        { @apply rounded-xl border border-line bg-surface shadow-card; }
+  .card-body   { @apply p-5 sm:p-6; }
+  .card-title  { @apply text-base font-semibold text-ink; }
+  .card-link   { @apply block transition duration-150 hover:-translate-y-0.5 hover:border-brand-500/60; }
+  .panel       { @apply rounded-lg border border-line bg-raised/60 p-4; }
+
+  /* Buttons. Filled primary + outlined secondary. */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-transparent px-4 py-2
+           text-sm font-semibold leading-5 no-underline transition duration-150
+           disabled:cursor-not-allowed disabled:opacity-50 active:translate-y-px;
+  }
+  .btn-primary   { @apply bg-brand-600 text-white shadow-sm hover:bg-brand-500; }
+  .btn-outline,
+  .btn-secondary { @apply border-line bg-surface text-ink hover:bg-raised; }
+  .btn-ghost     { @apply text-ink-2 hover:bg-raised hover:text-ink; }
+  .btn-danger    { @apply bg-red-600 text-white hover:bg-red-500; }
+  .btn-danger-outline { @apply border-red-500/40 text-red-500 hover:bg-red-500/10 dark:text-red-300; }
+  .btn-sm        { @apply px-3 py-1.5 text-xs; }
+  .btn-block     { @apply w-full; }
+
+  /* Inline text actions in tables */
+  .link        { @apply text-link font-medium underline-offset-2 hover:underline; }
+  .link-danger { @apply font-medium text-red-600 underline-offset-2 hover:underline dark:text-red-300; }
+
+  /* Forms (also covers the legacy daisyUI-style names used in older views) */
+  .input, .select, .textarea,
+  .input-bordered, .select-bordered {
+    @apply block w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink
+           placeholder:text-muted/80 transition duration-150
+           focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/40
+           disabled:cursor-not-allowed disabled:opacity-60;
+  }
+  select.input, .select { @apply pr-8; }
+  .label, .field-label { @apply mb-1.5 block text-sm font-medium text-ink-2; }
+  .label-text   { @apply text-sm font-medium text-ink-2; }
+  .form-control { @apply flex flex-col; }
+  .field        { @apply space-y-1.5; }
+  .hint         { @apply mt-1 text-xs text-muted; }
+  .checkbox, input[type="checkbox"], input[type="radio"] {
+    @apply h-4 w-4 rounded border-line bg-surface text-brand-600 focus:ring-2 focus:ring-brand-500/40 focus:ring-offset-0;
+  }
+  input[type="radio"] { @apply rounded-full; }
+  fieldset { @apply min-w-0; }
+  legend   { @apply mb-2 text-sm font-semibold text-ink; }
+
+  /* Flash / inline messages */
+  .notice, .alert {
+    @apply flex items-start gap-3 rounded-lg border px-4 py-3 text-sm;
+  }
+  .notice-success { @apply border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300; }
+  .notice-error, .alert-error { @apply border-red-500/30 bg-red-500/10 text-red-700 dark:text-red-300; }
+  .notice-info    { @apply border-brand-500/30 bg-brand-500/10 text-brand-700 dark:text-brand-200; }
+
+  /* Tables */
+  .table-wrap { @apply overflow-x-auto; }
+  .table { @apply w-full border-collapse text-sm; }
+  .table thead th {
+    @apply whitespace-nowrap border-b border-line bg-raised/60 px-4 py-3 text-left font-mono
+           text-[11px] font-medium uppercase tracking-[.12em] text-muted;
+  }
+  .table tbody td { @apply border-b border-line/70 px-4 py-3 align-middle text-ink-2; }
+  .table tbody tr:last-child td { @apply border-b-0; }
+  .table tbody tr { @apply transition-colors duration-100 hover:bg-raised/50; }
+  .table .num { @apply text-right tabular-nums; }
+
+  /* Status pills */
+  .badge {
+    @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize
+           bg-slate-500/15 text-slate-700 dark:text-slate-300;
+  }
+  .badge::before { content: ""; @apply h-1.5 w-1.5 rounded-full bg-current opacity-80; }
+  .badge-success { @apply bg-emerald-500/15 text-emerald-700 dark:text-emerald-300; }
+  .badge-warning { @apply bg-amber-500/15 text-amber-700 dark:text-amber-300; }
+  .badge-danger  { @apply bg-red-500/15 text-red-700 dark:text-red-300; }
+  .badge-info    { @apply bg-brand-500/15 text-brand-700 dark:text-brand-200; }
+
+  /* Empty state */
+  .empty {
+    @apply flex flex-col items-center justify-center gap-2 px-6 py-14 text-center;
+  }
+  .empty-icon  { @apply mb-1 grid h-12 w-12 place-items-center rounded-full bg-brand-500/10 text-brand-500 dark:text-brand-300; }
+  .empty-title { @apply text-base font-semibold text-ink; }
+  .empty-text  { @apply max-w-sm text-sm text-muted; }
+
+  /* Key / value list for show pages */
+  .kv        { @apply grid gap-x-6 gap-y-4 sm:grid-cols-2; }
+  .kv dt     { @apply font-mono text-[11px] uppercase tracking-[.12em] text-muted; }
+  .kv dd     { @apply mt-1 text-sm text-ink; }
+
+  /* Dropdown menu */
+  .menu-panel { @apply absolute z-50 mt-2 w-56 origin-top rounded-xl border border-line bg-surface p-1.5 shadow-pop animate-pop-in; }
+  .menu-item  { @apply flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-ink-2 transition-colors hover:bg-raised hover:text-ink; }
+
+  .nav-link   { @apply rounded-lg px-3 py-2 text-sm font-medium text-ink-2 transition-colors hover:bg-raised hover:text-ink; }
+  .nav-link[aria-current="page"] { @apply bg-brand-500/10 text-brand-700 dark:text-brand-200; }
+}
+
+@layer components {
+  .badge-ghost, .badge-gray { @apply bg-slate-500/15 text-slate-700 dark:text-slate-300; }
+}
+
+@layer components {
+  .btn-xs    { @apply px-2 py-1 text-xs; }
+  .btn-error { @apply bg-red-600 text-white hover:bg-red-500; }
+  .btn-success { @apply bg-emerald-600 text-white hover:bg-emerald-500; }
+  .alert-success { @apply border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300; }
+  .alert-info    { @apply border-brand-500/30 bg-brand-500/10 text-brand-700 dark:text-brand-200; }
+}
+
+@layer components {
+  .demo-dialog { @apply m-auto w-[calc(100%-2rem)] max-w-md rounded-xl border border-line bg-surface p-0 text-ink shadow-pop; }
+  .demo-dialog[open] { @apply animate-pop-in; }
+  .demo-dialog::backdrop { background: rgb(9 14 26 / .6); backdrop-filter: blur(2px); }
 }

@@ -1,14 +1,14 @@
-<div class="space-y-6">
-  <div class="flex items-center justify-between">
-    <h1 class="text-3xl font-extrabold">Job Details</h1>
-    <div class="space-x-3">
-      <%= link_to "Edit", edit_job_path(@job), class: "rounded-md bg-blue-600 px-5 py-2.5 text-white hover:bg-blue-700" %>
+<div class="page">
+  <div class="page-header">
+    <h1 class="page-title">Job details</h1>
+    <div class="flex flex-wrap gap-2">
+      <%= link_to "Edit", edit_job_path(@job), class: "btn btn-primary" %>
       <% if @job.invoice.present? %>
-        <%= link_to "View Invoice", job_invoice_path(@job), class: "rounded-md bg-green-600 px-5 py-2.5 text-white hover:bg-green-700" %>
+        <%= link_to "View Invoice", job_invoice_path(@job), class: "btn btn-primary" %>
       <% else %>
-        <%= link_to "Create Invoice", job_invoice_path(@job), method: :post, class: "rounded-md bg-purple-600 px-5 py-2.5 text-white hover:bg-purple-700" %>
+        <%= link_to "Create Invoice", job_invoice_path(@job), data: { turbo_method: :post }, class: "btn btn-primary" %>
       <% end %>
-      <%= link_to "Back", jobs_path, class: "rounded-md border border-slate-600 px-5 py-2.5 hover:bg-slate-800" %>
+      <%= link_to "Back", jobs_path, class: "btn btn-outline" %>
     </div>
   </div>
 
@@ -16,26 +16,19 @@
     <!-- Main Content -->
     <div class="md:col-span-2 space-y-4">
       <!-- Customer & Status -->
-      <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
+      <div class="card card-body">
         <div class="grid md:grid-cols-2 gap-4">
           <div>
-            <p class="text-sm text-slate-400">Customer</p>
-            <p class="text-lg font-semibold text-slate-200">
-              <%= link_to @job.customer.full_name, customer_path(@job.customer), class: "text-blue-400 hover:underline" %>
+            <p class="text-sm text-muted">Customer</p>
+            <p class="text-lg font-semibold text-ink-2">
+              <%= link_to @job.customer.full_name, customer_path(@job.customer), class: "link" %>
             </p>
           </div>
           <div>
-            <p class="text-sm text-slate-400">Status</p>
+            <p class="text-sm text-muted">Status</p>
             <p class="text-lg font-semibold">
-              <span class="inline-flex rounded-full px-3 py-1 text-sm font-semibold <%= 
-                case @job.status
-                when 'completed' then 'bg-green-500/20 text-green-300'
-                when 'in_progress' then 'bg-yellow-500/20 text-yellow-300'
-                when 'cancelled' then 'bg-red-500/20 text-red-300'
-                else 'bg-slate-500/20 text-slate-300'
-                end
-              %>">
-                <%= @job.status %>
+              <span class="badge <%= { "completed" => "badge-success", "in_progress" => "badge-warning", "cancelled" => "badge-danger" }.fetch(@job.status.to_s, "badge-ghost") %>">
+                <%= @job.status.to_s.humanize %>
               </span>
             </p>
           </div>
@@ -43,49 +36,49 @@
       </div>
 
       <!-- Equipment Details -->
-      <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6 space-y-4">
-        <h2 class="text-lg font-semibold text-slate-200">Equipment</h2>
+      <div class="card card-body space-y-4">
+        <h2 class="text-lg font-semibold text-ink-2">Equipment</h2>
         <div class="grid md:grid-cols-2 gap-4">
           <div>
-            <p class="text-sm text-slate-400">Model Number</p>
-            <p class="text-slate-200"><%= @job.model_number || 'Not specified' %></p>
+            <p class="text-sm text-muted">Model Number</p>
+            <p class="text-ink-2"><%= @job.model_number || 'Not specified' %></p>
           </div>
           <div>
-            <p class="text-sm text-slate-400">Serial Number</p>
-            <p class="text-slate-200"><%= @job.serial_number || 'Not specified' %></p>
+            <p class="text-sm text-muted">Serial Number</p>
+            <p class="text-ink-2"><%= @job.serial_number || 'Not specified' %></p>
           </div>
         </div>
       </div>
 
       <!-- Service Details -->
-      <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6 space-y-4">
-        <h2 class="text-lg font-semibold text-slate-200">Service Details</h2>
+      <div class="card card-body space-y-4">
+        <h2 class="text-lg font-semibold text-ink-2">Service Details</h2>
         
         <% if @job.complaint.present? %>
           <div>
-            <p class="text-sm text-slate-400">Complaint</p>
-            <p class="text-slate-200 whitespace-pre-wrap"><%= @job.complaint %></p>
+            <p class="text-sm text-muted">Complaint</p>
+            <p class="text-ink-2 whitespace-pre-wrap"><%= @job.complaint %></p>
           </div>
         <% end %>
 
         <% if @job.diagnosis.present? %>
           <div>
-            <p class="text-sm text-slate-400">Diagnosis</p>
-            <p class="text-slate-200 whitespace-pre-wrap"><%= @job.diagnosis %></p>
+            <p class="text-sm text-muted">Diagnosis</p>
+            <p class="text-ink-2 whitespace-pre-wrap"><%= @job.diagnosis %></p>
           </div>
         <% end %>
 
         <% if @job.work_performed.present? %>
           <div>
-            <p class="text-sm text-slate-400">Work Performed</p>
-            <p class="text-slate-200 whitespace-pre-wrap"><%= @job.work_performed %></p>
+            <p class="text-sm text-muted">Work Performed</p>
+            <p class="text-ink-2 whitespace-pre-wrap"><%= @job.work_performed %></p>
           </div>
         <% end %>
 
         <% if @job.notes.present? %>
           <div>
-            <p class="text-sm text-slate-400">Notes</p>
-            <p class="text-slate-200 whitespace-pre-wrap"><%= @job.notes %></p>
+            <p class="text-sm text-muted">Notes</p>
+            <p class="text-ink-2 whitespace-pre-wrap"><%= @job.notes %></p>
           </div>
         <% end %>
       </div>
@@ -94,36 +87,36 @@
     <!-- Sidebar -->
     <div class="space-y-4">
       <!-- Scheduling -->
-      <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6 space-y-4">
-        <h3 class="font-semibold text-slate-200">Scheduling</h3>
+      <div class="card card-body space-y-4">
+        <h3 class="font-semibold text-ink-2">Scheduling</h3>
         <div>
-          <p class="text-sm text-slate-400">Scheduled For</p>
-          <p class="text-slate-200">
+          <p class="text-sm text-muted">Scheduled For</p>
+          <p class="text-ink-2">
             <%= @job.starts_at&.strftime('%b %d, %Y at %I:%M %p') || 'Not scheduled' %>
           </p>
         </div>
         <div>
-          <p class="text-sm text-slate-400">Technician</p>
+          <p class="text-sm text-muted">Technician</p>
           <% if @job.technician.present? %>
-            <p class="text-slate-200">
-              <%= link_to @job.technician.name, technician_path(@job.technician), class: "text-blue-400 hover:underline" %>
+            <p class="text-ink-2">
+              <%= link_to @job.technician.name, technician_path(@job.technician), class: "link" %>
             </p>
           <% else %>
-            <span class="text-slate-400">Unassigned</span>
+            <span class="text-muted">Unassigned</span>
           <% end %>
         </div>
       </div>
 
       <!-- Timeline -->
-      <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6 space-y-4">
-        <h3 class="font-semibold text-slate-200">Timeline</h3>
+      <div class="card card-body space-y-4">
+        <h3 class="font-semibold text-ink-2">Timeline</h3>
         <div>
-          <p class="text-sm text-slate-400">Created</p>
-          <p class="text-slate-200"><%= @job.created_at.strftime('%b %d, %Y') %></p>
+          <p class="text-sm text-muted">Created</p>
+          <p class="text-ink-2"><%= @job.created_at.strftime('%b %d, %Y') %></p>
         </div>
         <div>
-          <p class="text-sm text-slate-400">Updated</p>
-          <p class="text-slate-200"><%= @job.updated_at.strftime('%b %d, %Y') %></p>
+          <p class="text-sm text-muted">Updated</p>
+          <p class="text-ink-2"><%= @job.updated_at.strftime('%b %d, %Y') %></p>
         </div>
       </div>
     </div>

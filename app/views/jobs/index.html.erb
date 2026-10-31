@@ -1,77 +1,72 @@
-<div class="space-y-6">
-  <div class="flex items-center justify-between">
-    <h1 class="text-3xl font-extrabold">Jobs</h1>
-    <%= link_to "New Job", new_job_path, class: "rounded-md bg-blue-600 px-5 py-2.5 text-white hover:bg-blue-700" %>
-  </div>
+<%
+  status_badge = ->(status) {
+    case status
+    when "completed"   then "badge-success"
+    when "in_progress" then "badge-warning"
+    when "cancelled"   then "badge-danger"
+    else "badge-ghost"
+    end
+  }
+  filtering = @query.present? || @status.present?
+%>
+<div class="page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Work</p>
+      <h1 class="page-title mt-1">Jobs</h1>
+      <p class="page-sub">Service calls across your team.</p>
+    </div>
+    <%= link_to new_job_path, class: "btn btn-primary" do %><%= icon "plus", css: "h-4 w-4" %> New job<% end %>
+  </header>
 
-  <!-- Search and Filter -->
-  <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
-    <%= form_with url: jobs_path, method: :get, local: true, class: "space-y-4" do |f| %>
-      <div class="grid md:grid-cols-2 gap-4">
-        <div>
-          <label class="block text-sm text-slate-300 mb-2">Search</label>
-          <%= f.text_field :q, placeholder: "Customer name, model, serial...", value: @query,
-              class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
-        </div>
-        <div>
-          <label class="block text-sm text-slate-300 mb-2">Status</label>
-          <%= f.select :status, [""] + @statuses, { selected: @status },
-              class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:border-blue-500 focus:ring-blue-500" %>
-        </div>
+  <%= form_with url: jobs_path, method: :get, local: true, class: "card card-body", role: "search" do |f| %>
+    <div class="grid items-end gap-4 md:grid-cols-[1fr_14rem_auto]">
+      <div>
+        <%= label_tag :q, "Search", class: "label" %>
+        <%= f.text_field :q, placeholder: "Customer name, model, serial…", value: @query, class: "input", type: "search", autocomplete: "off" %>
+      </div>
+      <div>
+        <%= label_tag :status, "Status", class: "label" %>
+        <%= f.select :status, [""] + @statuses, { selected: @status }, class: "input" %>
       </div>
       <div class="flex gap-2">
-        <%= f.submit "Search", class: "rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700" %>
-        <%= link_to "Clear", jobs_path, class: "rounded-md border border-slate-600 px-4 py-2 hover:bg-slate-800" %>
+        <%= f.submit "Search", class: "btn btn-primary" %>
+        <%= link_to "Clear", jobs_path, class: "btn btn-outline" if filtering %>
       </div>
-    <% end %>
-  </div>
+    </div>
+  <% end %>
 
-  <!-- Jobs List -->
-  <div class="rounded-2xl border border-slate-800 bg-slate-900 overflow-hidden">
+  <div class="card overflow-hidden">
     <% if @jobs.any? %>
-      <div class="overflow-x-auto">
-        <table class="w-full">
-          <thead class="border-b border-slate-700 bg-slate-800">
+      <div class="table-wrap">
+        <table class="table">
+          <caption class="sr-only">Jobs</caption>
+          <thead>
             <tr>
-              <th class="px-6 py-3 text-left text-sm font-semibold text-slate-200">Customer</th>
-              <th class="px-6 py-3 text-left text-sm font-semibold text-slate-200">Status</th>
-              <th class="px-6 py-3 text-left text-sm font-semibold text-slate-200">Scheduled</th>
-              <th class="px-6 py-3 text-left text-sm font-semibold text-slate-200">Technician</th>
-              <th class="px-6 py-3 text-left text-sm font-semibold text-slate-200">Model</th>
-              <th class="px-6 py-3 text-right text-sm font-semibold text-slate-200">Actions</th>
+              <th scope="col">Customer</th>
+              <th scope="col">Status</th>
+              <th scope="col">Scheduled</th>
+              <th scope="col">Technician</th>
+              <th scope="col">Model</th>
+              <th scope="col" class="text-right"><span class="sr-only">Actions</span></th>
             </tr>
           </thead>
           <tbody>
             <% @jobs.each do |job| %>
-              <tr class="border-b border-slate-700 hover:bg-slate-800/50">
-                <td class="px-6 py-3 text-sm text-slate-300">
-                  <%= link_to job.customer.full_name, job_path(job), class: "text-blue-400 hover:underline" %>
+              <tr>
+                <td class="max-w-[16rem] truncate font-medium">
+                  <%= link_to job.customer.full_name, job_path(job), class: "link" %>
                 </td>
-                <td class="px-6 py-3 text-sm">
-                  <span class="inline-flex rounded-full px-2 py-1 text-xs font-semibold <%= 
-                    case job.status
-                    when 'completed' then 'bg-green-500/20 text-green-300'
-                    when 'in_progress' then 'bg-yellow-500/20 text-yellow-300'
-                    when 'cancelled' then 'bg-red-500/20 text-red-300'
-                    else 'bg-slate-500/20 text-slate-300'
-                    end
-                  %>">
-                    <%= job.status %>
-                  </span>
-                </td>
-                <td class="px-6 py-3 text-sm text-slate-400">
-                  <%= job.starts_at&.strftime('%b %d, %Y') %>
-                </td>
-                <td class="px-6 py-3 text-sm text-slate-300">
-                  <%= job.technician&.name || '-' %>
-                </td>
-                <td class="px-6 py-3 text-sm text-slate-300">
-                  <%= job.model_number || '-' %>
-                </td>
-                <td class="px-6 py-3 text-right text-sm space-x-2">
-                  <%= link_to "View", job_path(job), class: "text-blue-400 hover:underline" %>
-                  <%= link_to "Edit", edit_job_path(job), class: "text-blue-400 hover:underline" %>
-                  <%= link_to "Delete", job_path(job), method: :delete, data: { confirm: "Are you sure?" }, class: "text-red-400 hover:underline" %>
+                <td><span class="badge <%= status_badge.call(job.status) %>"><%= job.status.to_s.humanize %></span></td>
+                <td class="whitespace-nowrap"><%= job.starts_at&.strftime('%b %d, %Y') || "—" %></td>
+                <td><%= job.technician&.name || "—" %></td>
+                <td class="font-mono text-xs"><%= job.model_number.presence || "—" %></td>
+                <td class="text-right">
+                  <div class="inline-flex items-center gap-3 whitespace-nowrap">
+                    <%= link_to "View", job_path(job), class: "link" %>
+                    <%= link_to "Edit", edit_job_path(job), class: "link" %>
+                    <%= button_to "Delete", job_path(job), method: :delete, form: { data: { turbo_confirm: "Delete this job? This can't be undone." }, class: "inline" }, class: "link-danger" %>
+                  </div>
                 </td>
               </tr>
             <% end %>
@@ -79,8 +74,17 @@
         </table>
       </div>
     <% else %>
-      <div class="px-6 py-12 text-center text-slate-400">
-        <p>No jobs found.</p>
+      <div class="empty">
+        <span class="empty-icon"><%= icon "inbox", css: "h-6 w-6" %></span>
+        <% if filtering %>
+          <p class="empty-title">No jobs match your search</p>
+          <p class="empty-text">Try a different customer name, model, or status.</p>
+          <%= link_to "Clear filters", jobs_path, class: "btn btn-outline btn-sm mt-2" %>
+        <% else %>
+          <p class="empty-title">No jobs yet</p>
+          <p class="empty-text">Create your first service call to start scheduling work.</p>
+          <%= link_to "New job", new_job_path, class: "btn btn-primary btn-sm mt-2" %>
+        <% end %>
       </div>
     <% end %>
   </div>

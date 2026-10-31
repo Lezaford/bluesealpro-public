@@ -1,9 +1,9 @@
-<div class="space-y-6">
+<div class="page">
   <!-- Header -->
-  <div class="flex items-center justify-between">
+  <div class="page-header">
     <div>
-      <h1 class="text-3xl font-extrabold"><%= @customer.full_name %></h1>
-      <p class="text-slate-400 mt-1">
+      <h1 class="page-title"><%= @customer.full_name %></h1>
+      <p class="text-muted mt-1">
         <% if @customer.company_name.present? %>
           <%= @customer.company_name %>
         <% end %>
@@ -12,19 +12,19 @@
         <% end %>
       </p>
     </div>
-    <div class="inline-flex gap-2">
+    <div class="flex flex-wrap gap-2">
       <%= link_to "Edit", edit_customer_path(@customer),
-          class: "rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700" %>
+          class: "btn btn-primary" %>
       <%= link_to "All Customers", customers_path,
-          class: "rounded-md border border-slate-600 px-4 py-2 hover:bg-slate-800" %>
+          class: "btn btn-outline" %>
     </div>
   </div>
 
   <!-- Key Stats -->
   <div class="grid md:grid-cols-4 gap-4">
-    <div class="rounded-lg bg-slate-800 p-4">
-      <p class="text-sm text-slate-400">Lifetime Value</p>
-      <p class="text-2xl font-bold text-slate-100 mt-1">
+    <div class="panel">
+      <p class="text-sm text-muted">Lifetime Value</p>
+      <p class="mt-1 text-2xl font-bold tabular-nums text-ink">
         <% if @customer.lifetime_value.present? && @customer.lifetime_value.to_f > 0 %>
           $<%= number_with_precision(@customer.lifetime_value, precision: 2) %>
         <% else %>
@@ -32,21 +32,21 @@
         <% end %>
       </p>
     </div>
-    <div class="rounded-lg bg-slate-800 p-4">
-      <p class="text-sm text-slate-400">Last Service</p>
-      <p class="text-2xl font-bold text-slate-100 mt-1">
+    <div class="panel">
+      <p class="text-sm text-muted">Last Service</p>
+      <p class="mt-1 text-2xl font-bold tabular-nums text-ink">
         <%= @customer.last_service_date&.strftime("%b %-d, %Y") || "—" %>
       </p>
     </div>
-    <div class="rounded-lg bg-slate-800 p-4">
-      <p class="text-sm text-slate-400">Customer Since</p>
-      <p class="text-2xl font-bold text-slate-100 mt-1">
+    <div class="panel">
+      <p class="text-sm text-muted">Customer Since</p>
+      <p class="mt-1 text-2xl font-bold tabular-nums text-ink">
         <%= @customer.customer_created_at&.strftime("%b %Y") || "—" %>
       </p>
     </div>
-    <div class="rounded-lg bg-slate-800 p-4">
-      <p class="text-sm text-slate-400">Total Jobs</p>
-      <p class="text-2xl font-bold text-slate-100 mt-1">
+    <div class="panel">
+      <p class="text-sm text-muted">Total Jobs</p>
+      <p class="mt-1 text-2xl font-bold tabular-nums text-ink">
         <%= @customer.jobs.count %>
       </p>
     </div>
@@ -55,39 +55,35 @@
   <!-- Two Column Layout -->
   <div class="grid md:grid-cols-2 gap-6">
     <!-- Contact Info -->
-    <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
+    <div class="card card-body">
       <h2 class="font-semibold mb-4 text-lg">Contact Information</h2>
       <div class="space-y-3">
         <div>
-          <p class="text-sm text-slate-400">Email</p>
-          <p class="text-slate-100"><%= mail_to(@customer.email) if @customer.email.present? %><%= "—" if @customer.email.blank? %></p>
+          <p class="text-sm text-muted">Email</p>
+          <p class="text-ink"><%= mail_to(@customer.email) if @customer.email.present? %><%= "—" if @customer.email.blank? %></p>
         </div>
         <div>
-          <p class="text-sm text-slate-400">Phone</p>
-          <p class="text-slate-100"><%= link_to @customer.phone, "tel:#{@customer.phone}" if @customer.phone.present? %><%= "—" if @customer.phone.blank? %></p>
+          <p class="text-sm text-muted">Mobile</p>
+          <p class="text-ink"><%= link_to @customer.mobile_number, "tel:#{@customer.mobile_number}" if @customer.mobile_number.present? %><%= "—" if @customer.mobile_number.blank? %></p>
         </div>
         <div>
-          <p class="text-sm text-slate-400">Mobile</p>
-          <p class="text-slate-100"><%= link_to @customer.mobile_number, "tel:#{@customer.mobile_number}" if @customer.mobile_number.present? %><%= "—" if @customer.mobile_number.blank? %></p>
+          <p class="text-sm text-muted">Home Phone</p>
+          <p class="text-ink"><%= link_to @customer.home_number, "tel:#{@customer.home_number}" if @customer.home_number.present? %><%= "—" if @customer.home_number.blank? %></p>
         </div>
         <div>
-          <p class="text-sm text-slate-400">Home Phone</p>
-          <p class="text-slate-100"><%= link_to @customer.home_number, "tel:#{@customer.home_number}" if @customer.home_number.present? %><%= "—" if @customer.home_number.blank? %></p>
-        </div>
-        <div>
-          <p class="text-sm text-slate-400">Work Phone</p>
-          <p class="text-slate-100"><%= link_to @customer.work_number, "tel:#{@customer.work_number}" if @customer.work_number.present? %><%= "—" if @customer.work_number.blank? %></p>
+          <p class="text-sm text-muted">Work Phone</p>
+          <p class="text-ink"><%= link_to @customer.work_number, "tel:#{@customer.work_number}" if @customer.work_number.present? %><%= "—" if @customer.work_number.blank? %></p>
         </div>
       </div>
     </div>
 
     <!-- Address Info -->
-    <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
+    <div class="card card-body">
       <h2 class="font-semibold mb-4 text-lg">Address Information</h2>
       <div class="space-y-4">
         <div>
-          <p class="text-sm text-slate-400 font-semibold">Primary Address</p>
-          <p class="text-slate-100">
+          <p class="text-sm text-muted font-semibold">Primary Address</p>
+          <p class="text-ink">
             <% if @customer.address_1_street_line_1.present? %>
               <%= @customer.address_1_street_line_1 %><br>
               <% if @customer.address_1_street_line_2.present? %>
@@ -99,14 +95,14 @@
             <% end %>
           </p>
           <% if @customer.address_1_billing %>
-            <span class="inline-block mt-2 text-xs bg-blue-600/20 text-blue-300 px-2 py-1 rounded">Billing Address</span>
+            <span class="badge badge-info mt-2">Billing Address</span>
           <% end %>
         </div>
 
         <% if @customer.address_2_street_line_1.present? %>
-          <div class="pt-3 border-t border-slate-700">
-            <p class="text-sm text-slate-400 font-semibold">Secondary Address</p>
-            <p class="text-slate-100">
+          <div class="pt-3 border-t border-line">
+            <p class="text-sm text-muted font-semibold">Secondary Address</p>
+            <p class="text-ink">
               <%= @customer.address_2_street_line_1 %><br>
               <% if @customer.address_2_street_line_2.present? %>
                 <%= @customer.address_2_street_line_2 %><br>
@@ -114,7 +110,7 @@
               <%= [@customer.address_2_city, @customer.address_2_state, @customer.address_2_postal_code].compact_blank.join(", ") %>
             </p>
             <% if @customer.address_2_billing %>
-              <span class="inline-block mt-2 text-xs bg-blue-600/20 text-blue-300 px-2 py-1 rounded">Billing Address</span>
+              <span class="badge badge-info mt-2">Billing Address</span>
             <% end %>
           </div>
         <% end %>
@@ -124,84 +120,84 @@
 
   <!-- Additional Info -->
   <div class="grid md:grid-cols-2 gap-6">
-    <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
+    <div class="card card-body">
       <h2 class="font-semibold mb-4 text-lg">Details</h2>
       <div class="space-y-3 text-sm">
         <div>
-          <p class="text-slate-400">Lead Source</p>
-          <p class="text-slate-100"><%= @customer.lead_source.presence || "—" %></p>
+          <p class="text-muted">Lead Source</p>
+          <p class="text-ink"><%= @customer.lead_source.presence || "—" %></p>
         </div>
         <div>
-          <p class="text-slate-400">Tags</p>
-          <p class="text-slate-100"><%= @customer.tags.presence || "—" %></p>
+          <p class="text-muted">Tags</p>
+          <p class="text-ink"><%= @customer.tags.presence || "—" %></p>
         </div>
         <div>
-          <p class="text-slate-400">Contractor</p>
-          <p class="text-slate-100"><%= @customer.customer_is_contractor ? "Yes" : "No" %></p>
+          <p class="text-muted">Contractor</p>
+          <p class="text-ink"><%= @customer.customer_is_contractor ? "Yes" : "No" %></p>
         </div>
       </div>
     </div>
 
-    <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
+    <div class="card card-body">
       <h2 class="font-semibold mb-4 text-lg">Preferences</h2>
       <div class="space-y-3 text-sm">
         <div>
-          <p class="text-slate-400">Notifications Enabled</p>
-          <p class="text-slate-100"><%= @customer.customer_notifications_enabled ? "Yes" : "No" %></p>
+          <p class="text-muted">Notifications Enabled</p>
+          <p class="text-ink"><%= @customer.customer_notifications_enabled ? "Yes" : "No" %></p>
         </div>
         <div>
-          <p class="text-slate-400">Bills To</p>
-          <p class="text-slate-100"><%= @customer.bills_to.presence || "—" %></p>
+          <p class="text-muted">Bills To</p>
+          <p class="text-ink"><%= @customer.bills_to.presence || "—" %></p>
         </div>
         <div>
-          <p class="text-slate-400">Accepts Bills From</p>
-          <p class="text-slate-100"><%= @customer.accepts_bills_from.presence || "—" %></p>
+          <p class="text-muted">Accepts Bills From</p>
+          <p class="text-ink"><%= @customer.accepts_bills_from.presence || "—" %></p>
         </div>
       </div>
     </div>
   </div>
 
   <!-- Notes -->
-  <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
+  <div class="card card-body">
     <h2 class="font-semibold mb-3 text-lg">Notes</h2>
-    <p class="text-slate-300 whitespace-pre-wrap"><%= @customer.notes.presence || "—" %></p>
+    <p class="text-ink-2 whitespace-pre-wrap"><%= @customer.notes.presence || "—" %></p>
   </div>
 
   <!-- Work History -->
-  <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
+  <div class="card card-body">
     <h2 class="font-semibold mb-4 text-lg">Work History</h2>
     
     <% if @customer.jobs.any? %>
       <div class="overflow-x-auto">
-        <table class="w-full text-sm">
+        <table class="table">
           <thead>
-            <tr class="border-b border-slate-700">
-              <th class="text-left py-3 px-3 text-slate-400 font-semibold">Date</th>
-              <th class="text-left py-3 px-3 text-slate-400 font-semibold">Description</th>
-              <th class="text-left py-3 px-3 text-slate-400 font-semibold">Technician</th>
-              <th class="text-left py-3 px-3 text-slate-400 font-semibold">Status</th>
-              <th class="text-left py-3 px-3 text-slate-400 font-semibold">Actions</th>
+            <tr>
+              <th class="text-left">Date</th>
+              <th class="text-left">Description</th>
+              <th class="text-left">Technician</th>
+              <th class="text-left">Status</th>
+              <th class="text-left">Actions</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-slate-800">
+          <tbody>
             <% @customer.jobs.order(starts_at: :desc).each do |job| %>
-              <tr class="hover:bg-slate-800/30">
-                <td class="py-3 px-3 text-slate-100">
+              <tr>
+                <td>
                   <%= job.starts_at&.strftime("%b %-d, %Y") || "—" %>
                 </td>
-                <td class="py-3 px-3 text-slate-100">
+                <td>
                   <%= job.notes.presence || "—" %>
                 </td>
-                <td class="py-3 px-3 text-slate-100">
+                <td>
                   <%= job.technician&.name || "Unassigned" %>
                 </td>
-                <td class="py-3 px-3">
-                  <span class="inline-block px-2 py-1 rounded text-xs font-medium <%= job.status.present? ? 'bg-blue-600/20 text-blue-300' : 'text-slate-400' %>">
+                <td>
+                  <span class="badge <%= job.status.present? ? 'badge-info' : 'text-muted' %>">
                     <%= job.status.presence || "Pending" %>
                   </span>
                 </td>
-                <td class="py-3 px-3">
-                  <%= link_to "View", job_path(job), class: "text-blue-400 hover:text-blue-300" %>
+                <td>
+                  <%= link_to "View", job_path(job), class: "link" %>
                 </td>
               </tr>
             <% end %>
@@ -209,7 +205,7 @@
         </table>
       </div>
     <% else %>
-      <p class="text-slate-400 text-center py-8">No jobs yet for this customer.</p>
+      <p class="text-muted text-center py-8">No jobs yet for this customer.</p>
     <% end %>
   </div>
 </div>

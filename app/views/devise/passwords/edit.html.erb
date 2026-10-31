@@ -1,11 +1,11 @@
-<div class="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center px-4">
+<div class="flex min-h-[calc(100vh-14rem)] items-center justify-center">
   <div class="max-w-md w-full">
-    <div class="rounded-2xl bg-slate-900 border border-slate-800 p-8 shadow-xl">
-      <h1 class="text-2xl font-bold mb-2">Change Your Password</h1>
-      <p class="text-slate-400 mb-6">Enter your new password below.</p>
+    <div class="card p-8">
+      <h1 class="page-title !text-2xl mb-2">Change Your Password</h1>
+      <p class="text-muted mb-6">Enter your new password below.</p>
 
       <% if flash[:alert].present? %>
-        <div class="mb-4 rounded-md bg-red-50/5 border border-red-400/30 text-red-300 px-4 py-3">
+        <div class="notice notice-error mb-4">
           <%= flash[:alert] %>
         </div>
       <% end %>
@@ -14,24 +14,24 @@
         <%= render "devise/shared/error_messages", resource: resource %>
         <%= f.hidden_field :reset_password_token %>
 
-        <div class="mb-4">
-          <%= f.label :password, "New password", class: "block text-sm text-slate-300 mb-2" %>
+        <div class="field mb-4">
+          <%= f.label :password, "New password", class: "label" %>
           <% if @minimum_password_length %>
-            <p class="text-xs text-slate-500 mb-2">Minimum <%= @minimum_password_length %> characters</p>
+            <p class="text-xs text-muted mb-2">Minimum <%= @minimum_password_length %> characters</p>
           <% end %>
           <%= f.password_field :password, autofocus: true, autocomplete: "new-password",
-              class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 px-4 py-2 focus:border-blue-500 focus:ring-blue-500" %>
+              class: "input" %>
         </div>
 
         <div class="mb-6">
-          <%= f.label :password_confirmation, "Confirm new password", class: "block text-sm text-slate-300 mb-2" %>
+          <%= f.label :password_confirmation, "Confirm new password", class: "label" %>
           <%= f.password_field :password_confirmation, autocomplete: "new-password",
-              class: "w-full rounded-md bg-slate-800 border border-slate-700 text-slate-100 px-4 py-2 focus:border-blue-500 focus:ring-blue-500" %>
+              class: "input" %>
         </div>
 
         <div class="flex gap-3">
-          <%= f.submit "Update Password", class: "flex-1 rounded-md bg-blue-600 text-white font-medium py-2 hover:bg-blue-700" %>
-          <%= link_to "Back to login", new_session_path(resource_name), class: "flex-1 rounded-md border border-slate-700 bg-slate-800 text-slate-100 text-center font-medium py-2 hover:bg-slate-700" %>
+          <%= f.submit "Update Password", class: "btn btn-primary flex-1" %>
+          <%= link_to "Back to login", new_session_path(resource_name), class: "btn btn-outline flex-1" %>
         </div>
       <% end %>
     </div>

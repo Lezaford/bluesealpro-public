@@ -1,7 +1,7 @@
-<div class="p-6">
+<div class="page">
   <div class="mb-6">
-    <h1 class="text-3xl font-bold">Company Settings</h1>
-    <p class="text-sm text-gray-600">Edit your company information and branding</p>
+    <h1 class="page-title">Company Settings</h1>
+    <p class="text-sm text-muted">Edit your company information and branding</p>
   </div>
 
   <% if @company.errors.any? %>
@@ -29,18 +29,18 @@
             <h2 class="card-title mb-4">Business Identity</h2>
 
             <div class="form-control mb-4">
-              <label class="label">
+              <label class="label" for="company_name">
                 <span class="label-text">Company Name</span>
               </label>
-              <input type="text" name="company[name]" value="<%= @company.name %>" 
+              <input type="text" id="company_name" name="company[name]" value="<%= @company.name %>" 
                      class="input input-bordered" required>
             </div>
 
             <div class="form-control mb-4">
-              <label class="label">
+              <label class="label" for="company_ein">
                 <span class="label-text">EIN (Employer ID Number)</span>
               </label>
-              <input type="text" name="company[ein]" value="<%= @company.ein %>" 
+              <input type="text" id="company_ein" name="company[ein]" value="<%= @company.ein %>" 
                      class="input input-bordered" placeholder="XX-XXXXXXX">
             </div>
           </div>
@@ -52,26 +52,26 @@
             <h2 class="card-title mb-4">Contact Information</h2>
 
             <div class="form-control mb-4">
-              <label class="label">
+              <label class="label" for="company_phone">
                 <span class="label-text">Phone Number</span>
               </label>
-              <input type="tel" name="company[phone]" value="<%= @company.phone %>" 
+              <input type="tel" id="company_phone" name="company[phone]" value="<%= @company.phone %>" 
                      class="input input-bordered" placeholder="(555) 123-4567">
             </div>
 
             <div class="form-control mb-4">
-              <label class="label">
+              <label class="label" for="company_email">
                 <span class="label-text">Email Address</span>
               </label>
-              <input type="email" name="company[email]" value="<%= @company.email %>" 
+              <input type="email" id="company_email" name="company[email]" value="<%= @company.email %>" 
                      class="input input-bordered">
             </div>
 
             <div class="form-control mb-4">
-              <label class="label">
+              <label class="label" for="company_website_url">
                 <span class="label-text">Website URL</span>
               </label>
-              <input type="url" name="company[website_url]" value="<%= @company.website_url %>" 
+              <input type="url" id="company_website_url" name="company[website_url]" value="<%= @company.website_url %>" 
                      class="input input-bordered" placeholder="https://example.com">
             </div>
           </div>
@@ -83,51 +83,51 @@
             <h2 class="card-title mb-4">Address</h2>
 
             <div class="form-control mb-4">
-              <label class="label">
+              <label class="label" for="company_address_line1">
                 <span class="label-text">Street Address Line 1</span>
               </label>
-              <input type="text" name="company[address_line1]" value="<%= @company.address_line1 %>" 
+              <input type="text" id="company_address_line1" name="company[address_line1]" value="<%= @company.address_line1 %>" 
                      class="input input-bordered">
             </div>
 
             <div class="form-control mb-4">
-              <label class="label">
+              <label class="label" for="company_address_line2">
                 <span class="label-text">Street Address Line 2 (optional)</span>
               </label>
-              <input type="text" name="company[address_line2]" value="<%= @company.address_line2 %>" 
+              <input type="text" id="company_address_line2" name="company[address_line2]" value="<%= @company.address_line2 %>" 
                      class="input input-bordered">
             </div>
 
             <div class="grid grid-cols-2 gap-4 mb-4">
               <div class="form-control">
-                <label class="label">
+                <label class="label" for="company_city">
                   <span class="label-text">City</span>
                 </label>
-                <input type="text" name="company[city]" value="<%= @company.city %>" 
+                <input type="text" id="company_city" name="company[city]" value="<%= @company.city %>" 
                        class="input input-bordered">
               </div>
               <div class="form-control">
-                <label class="label">
+                <label class="label" for="company_state">
                   <span class="label-text">State</span>
                 </label>
-                <input type="text" name="company[state]" value="<%= @company.state %>" 
+                <input type="text" id="company_state" name="company[state]" value="<%= @company.state %>" 
                        class="input input-bordered" maxlength="2">
               </div>
             </div>
 
             <div class="form-control mb-4">
-              <label class="label">
+              <label class="label" for="company_zip">
                 <span class="label-text">ZIP Code</span>
               </label>
-              <input type="text" name="company[zip]" value="<%= @company.zip %>" 
+              <input type="text" id="company_zip" name="company[zip]" value="<%= @company.zip %>" 
                      class="input input-bordered" placeholder="12345">
             </div>
 
             <div class="form-control">
-              <label class="label">
+              <label class="label" for="company_time_zone">
                 <span class="label-text">Time Zone</span>
               </label>
-              <select name="company[time_zone]" class="select select-bordered">
+              <select id="company_time_zone" name="company[time_zone]" class="select select-bordered">
                 <option value="America/New_York" <%= "selected" if @company.time_zone == "America/New_York" %>>Eastern</option>
                 <option value="America/Chicago" <%= "selected" if @company.time_zone == "America/Chicago" %>>Central</option>
                 <option value="America/Denver" <%= "selected" if @company.time_zone == "America/Denver" %>>Mountain</option>
@@ -143,10 +143,10 @@
             <h2 class="card-title mb-4">Branding</h2>
 
             <div class="form-control mb-4">
-              <label class="label">
+              <label class="label" for="company_logo">
                 <span class="label-text">Company Logo</span>
               </label>
-              <input type="file" name="company[logo]" accept="image/*"
+              <input type="file" id="company_logo" name="company[logo]" accept="image/*"
                      class="file-input file-input-bordered w-full">
               <label class="label">
                 <span class="label-text-alt">PNG, JPEG, or GIF (max 5 MB)</span>

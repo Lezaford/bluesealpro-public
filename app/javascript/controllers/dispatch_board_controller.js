@@ -19,26 +19,26 @@ export default class extends Controller {
 
   // Handle dragend
   dragEnd(event) {
-    this.jobTargets.forEach(job => job.classList.remove("opacity-50"))
+    event.currentTarget.classList.remove("opacity-50")
   }
 
   // Allow drop on unassigned container
   dragOverUnassigned(event) {
     event.preventDefault()
     event.dataTransfer.dropEffect = "move"
-    event.currentTarget.classList.add("bg-slate-700/50")
+    event.currentTarget.classList.add("bg-raised")
   }
 
   dragLeaveUnassigned(event) {
     if (event.currentTarget === event.target) {
-      event.currentTarget.classList.remove("bg-slate-700/50")
+      event.currentTarget.classList.remove("bg-raised")
     }
   }
 
   // Drop on unassigned
   dropUnassigned(event) {
     event.preventDefault()
-    event.currentTarget.classList.remove("bg-slate-700/50")
+    event.currentTarget.classList.remove("bg-raised")
 
     if (!this.draggedJob) return
 
@@ -69,10 +69,13 @@ export default class extends Controller {
     const jobId = this.draggedJob.dataset.jobId
     const technicianId = event.currentTarget.dataset.technicianId
     const hour = parseInt(event.currentTarget.dataset.hour)
-    const minute = Math.round((event.offsetY / event.currentTarget.offsetHeight) * 60)
+    // Hour columns run left to right, so the drop position along x gives the minute (rounded to 15)
+    const rect = event.currentTarget.getBoundingClientRect()
+    const fraction = Math.min(Math.max((event.clientX - rect.left) / rect.width, 0), 0.999)
+    const minute = Math.floor(fraction * 4) * 15
 
-    const date = new Date(this.dateValue)
-    const startsAt = new Date(date.getFullYear(), date.getMonth(), date.getDate(), hour, minute, 0)
+    const [y, m, d] = this.dateValue.split("-").map(Number)
+    const startsAt = new Date(y, m - 1, d, hour, minute, 0)
 
     this.rescheduleJob(jobId, technicianId, startsAt.toISOString(), event.currentTarget)
   }
