@@ -1,0 +1,48 @@
+# Local development stack: Rails + Postgres.
+#   docker compose up --build      (or: podman compose up --build)
+# App is published on APP_PORT (default 3100) so it does not clash with anything on 3000.
+services:
+  db:
+    image: docker.io/library/postgres:17
+    environment:
+      POSTGRES_USER: blueseal
+      POSTGRES_PASSWORD: blueseal   # local demo only
+      POSTGRES_DB: bluesealpro_development
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U blueseal -d bluesealpro_development"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    ports:
+      # Loopback-only, for running Rails on the host (DB_PORT=5433 bin/rails ...). The web container uses db:5432.
+      - "127.0.0.1:${DB_PORT:-5433}:5432"
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      RAILS_ENV: development
+      DB_HOST: db
+      FORCE_SSL: "false"   # production.rb forces SSL otherwise
+      BINDING: 0.0.0.0
+    ports:
+      - "127.0.0.1:${APP_PORT:-3100}:3000"
+    volumes:
+      - .:/rails:z
+      - bundle:/usr/local/bundle
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:3000/up || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 120s
+
+volumes:
+  pgdata:
+  bundle:

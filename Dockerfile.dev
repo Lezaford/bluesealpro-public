@@ -1,0 +1,17 @@
+# Development image: Ruby + Node (for Tailwind) + Postgres client.
+# Source is bind-mounted by docker-compose.yml; gems and node_modules live in volumes.
+ARG RUBY_VERSION=3.4.7
+FROM docker.io/library/ruby:${RUBY_VERSION}-slim
+
+RUN apt-get update -qq && \
+    apt-get install --no-install-recommends -y \
+      build-essential git curl libpq-dev libyaml-dev libvips pkg-config \
+      postgresql-client nodejs npm && \
+    rm -rf /var/lib/apt/lists /var/cache/apt/archives
+
+WORKDIR /rails
+ENV BUNDLE_PATH=/usr/local/bundle \
+    RAILS_ENV=development
+
+ENTRYPOINT ["/rails/bin/dev-entrypoint"]
+CMD ["./bin/rails", "server", "-b", "0.0.0.0", "-p", "3000"]
