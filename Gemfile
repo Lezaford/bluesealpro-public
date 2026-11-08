@@ -78,7 +78,7 @@ gem "sidekiq", "~> 8.0"
 
 gem "prawn", "~> 2.5"
 
-gem "stripe", "~> 17.2"
+gem "stripe", "~> 20.1"
 
 gem "dotenv-rails", "~> 3.1", groups: [ :development, :test ]
 
