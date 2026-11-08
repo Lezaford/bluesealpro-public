@@ -70,7 +70,7 @@ end
 
 gem "csv"
 
-gem "devise", "~> 4.9"
+gem "devise", "~> 5.0"
 
 gem "pundit", "~> 2.5"
 

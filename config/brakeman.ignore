@@ -1,0 +1,21 @@
+{
+  "ignored_warnings": [
+    {
+      "warning_type": "Mass Assignment",
+      "warning_code": 70,
+      "fingerprint": "2ff6bb935db581ec6cca396c9193d9863f06cc2afd61e5fcdc79f4fc352cee75",
+      "check_name": "PermitAttributes",
+      "file": "app/controllers/customers_controller.rb",
+      "note": "False positive: Customer#role is a business-contact field (e.g. property manager), not an authorization role."
+    },
+    {
+      "warning_type": "Mass Assignment",
+      "warning_code": 70,
+      "fingerprint": "94b287e99c4ac12de805e56be220cc10fd2ecf48f33356777f9b9cd35cdfd855",
+      "check_name": "PermitAttributes",
+      "file": "app/controllers/admin/users_controller.rb",
+      "note": "Intentional: this is the admin user-role editor. Admin::BaseController requires an admin, records are scoped to the current company, and the last owner/admin cannot be demoted."
+    }
+  ],
+  "brakeman_version": "8.1.0"
+}

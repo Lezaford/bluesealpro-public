@@ -51,7 +51,8 @@ class Admin::UsersController < Admin::BaseController
     # Count other active privileged users in the company
     other_privileged = current_company.users
       .where(active: true)
-      .where("role IN (?) AND id != ?", %w[owner admin], _user.id)
+      .where(role: [ :owner, :admin ])
+      .where.not(id: _user.id)
       .count
 
     other_privileged.zero?
