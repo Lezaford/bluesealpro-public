@@ -186,9 +186,10 @@ cannot see another's data.
 
 ## Production notes
 
-`Dockerfile` is the production image (built for Kamal or Fly.io). The Fly.io app this project used has been
-deleted, so the deploy configuration is kept only as an example. Provide `DATABASE_URL` and
-`RAILS_MASTER_KEY` (or `SECRET_KEY_BASE`); SSL is forced unless `FORCE_SSL=false`.
+This demo is not deployed anywhere and is meant to be run locally with the Compose setup above. The
+`Dockerfile` is a production-style image and `config/deploy.yml` is an unused Kamal example. If you do run a
+production build, provide `DATABASE_URL` and `RAILS_MASTER_KEY` (or `SECRET_KEY_BASE`); SSL is forced unless
+`FORCE_SSL=false`.
 
 ## Status and roadmap
 
